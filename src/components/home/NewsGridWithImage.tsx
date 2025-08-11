@@ -169,7 +169,7 @@ export default function NewsGridWithImage({
                     </span>
                   </div>
 
-                  <h4 className={`font-urbanist text-lg font-medium line-clamp-2 transition-colors duration-300 text-[#C7C7C7] group-hover:text-white`}>
+                  <h4 className={`  text-lg font-medium line-clamp-2 transition-colors duration-300 text-[#C7C7C7] group-hover:text-white`}>
                     {cleanTitle(post.title.rendered)}
                   </h4>
                 </article>

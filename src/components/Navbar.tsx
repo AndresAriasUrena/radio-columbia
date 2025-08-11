@@ -35,10 +35,12 @@ export default function Navbar() {
   const menuItems: MenuItem[] = [
     { key: 'inicio', href: '/' },
     { key: 'noticias', href: '/news' },
+    { key: 'deportes', href: '/sports' },
     { key: 'podcasts', href: '/podcasts' },
-    { key: 'amplifiers', href: '/amplifiers' },
+    { key: 'radionovelas', href: '/podcasts#radionovelas' },
+    { key: 'contacto', href: '/contact' },
+    { key: 'nosotros', href: '/about-us' },
     { key: 'en-vivo', href: '#', isButton: true },
-    { key: 'Nosotros', href: '/about-us' },
   ];
 
   const toggleMenu = () => {
@@ -80,23 +82,24 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="w-full h-[11vh] px-8 mb-6 md:mb-12">
-        <div className="max-w-7xl mx-auto flex items-center justify-between py-5">
+      <nav className="flex items-center px-4 sm:px-6 py-4 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-4">
-            <img src="/assets/LogoColumbia.svg" alt="Amplify" width={120} height={80} className='mr-5 h-20 w-20 md:h-[100px] md:w-[120px]'/>
+            <img src="/assets/LogoColumbia.svg" alt="Columbia" width={120} height={80} className='mr-5 h-20 w-20 md:h-[60px] md:w-[120px]'/>
+          </div>
 
-          {/* Desktop Navigation Links - Hidden on mobile */}
-          <div className="hidden lg:flex items-center space-x-4">
+   {/* Desktop Navigation Links - Hidden on mobile */}
+   <div className="hidden lg:flex items-center space-x-6">
             {menuItems.map((item) => {
               if (item.isButton) {
                 return (
                   <button
                     key={item.key}
                     onClick={handleEnVivoClick}
-                    className="text-white hover:text-[#E5754C] transition-colors px-5 py-2 rounded-full flex items-center gap-2"
+                    className="text-[#2F3037] hover:text-[#D51F2F] transition-colors rounded-full flex items-center gap-2"
                   >
-                    <IoRadio className="w-4 h-4" />
+                    <div className='bg-[#D51F2F] rounded-full p-1'/>
                     {item.key.charAt(0).toUpperCase() + item.key.slice(1).replace('-', ' ')}
                   </button>
                 );
@@ -106,8 +109,8 @@ export default function Navbar() {
                   key={item.key}
                   href={item.href}
                   onClick={() => handleLinkClick(item.key)}
-                  className={`text-white hover:text-[#E5754C] transition-colors px-5 py-2 rounded-full ${
-                    pathname === item.href ? 'border-[1.6px] border-[#E5754C] text-[#E5754C]' : ''
+                  className={`text-[#2F3037] hover:text-[#D51F2F] transition-colors rounded-full ${
+                    pathname === item.href ? 'text-[#D51F2F] font-semibold' : ''
                   }`}
                 >
                   {item.key.charAt(0).toUpperCase() + item.key.slice(1)}
@@ -115,8 +118,6 @@ export default function Navbar() {
               );
             })}
           </div>
-          </div>
-
 
           {/* Desktop Search Bar - Hidden on mobile */}
           <div className="hidden lg:block relative">

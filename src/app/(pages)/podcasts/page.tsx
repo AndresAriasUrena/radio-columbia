@@ -4,7 +4,6 @@ import { useEffect, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PodcastGrid from '@/components/podcasts/PodcastGrid';
-import ScheduleGrid from '@/components/podcasts/ScheduleGrid';
 
 function PodcastsContent() {
   useEffect(() => {
@@ -39,14 +38,12 @@ function PodcastsContent() {
 export default function PodcastsPage() {
   return (
     <>
-      <div className="min-h-screen font-jost">
+      <div className="min-h-screen  ">
         <Navbar />
         <div className="mx-2">
         <PodcastsContent />
         </div>
-        <div className="mx-2">
-          <ScheduleGrid />
-        </div>
+
       </div>
       <Footer />
     </>

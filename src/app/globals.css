@@ -9,8 +9,8 @@
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE y Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;  
 }
 
 body {
@@ -29,7 +29,7 @@ body {
   appearance: none;
   width: 14px;
   height: 14px;
-  background: #E5754C;
+  background: #D51F2F;
   border-radius: 50%;
   cursor: pointer;
   margin-top: -4px;
@@ -38,7 +38,7 @@ body {
 .radio-volume-slider::-moz-range-thumb {
   width: 14px;
   height: 14px;
-  background: #E5754C;
+  background: #D51F2F;
   border-radius: 50%;
   cursor: pointer;
   border: none;
@@ -51,7 +51,7 @@ body {
 .radio-volume-slider::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #E5754C var(--progress, 70%), #6E6E6E var(--progress, 70%));
+  background: linear-gradient(90deg, #D51F2F var(--progress, 70%), #6E6E6E var(--progress, 70%));
 }
 .radio-volume-slider::-moz-range-track {
   height: 6px;
@@ -59,7 +59,7 @@ body {
   background: #4b5563;
 }
 .radio-volume-slider::-ms-fill-lower {
-  background: #E5754C;
+  background: #D51F2F;
   border-radius: 4px;
 }
 .radio-volume-slider::-ms-fill-upper {
@@ -67,7 +67,7 @@ body {
   border-radius: 4px;
 }
 .radio-volume-slider::-moz-range-progress {
-  background-color: #E5754C;
+  background-color: #D51F2F;
   height: 6px;
   border-radius: 4px;
 }
@@ -205,12 +205,11 @@ body {
   }
 }
 
-/* Barra de progreso del reproductor */
 .radio-progress-bar {
   background: linear-gradient(
     to right,
-    #E5754C 0%,
-    #E5754C var(--progress),
+    #D51F2F 0%,
+    #D51F2F var(--progress),
     transparent var(--progress)
   );
   transition: none;

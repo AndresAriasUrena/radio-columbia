@@ -102,7 +102,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
     return (
         <>
             <JsonLd data={newsSchema} />
-            <div className="min-h-screen font-jost">
+            <div className="min-h-screen  ">
                 <Navbar />
                 <div className="px-4 sm:px-8">
                     <div className="max-w-7xl mx-auto relative">

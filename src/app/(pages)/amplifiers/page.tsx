@@ -207,7 +207,7 @@ function AmplifiersFallback() {
 export default function Amplifiers() {
     return (
         <>
-            <div className="min-h-screen font-jost">
+            <div className="min-h-screen  ">
                 <Navbar />
                 <Suspense fallback={<AmplifiersFallback />}>
                     <AmplifiersContent />

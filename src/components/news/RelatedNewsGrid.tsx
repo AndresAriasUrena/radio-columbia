@@ -46,7 +46,7 @@ export default function RelatedNewsGrid({ posts }: RelatedNewsGridProps) {
                       {formatDate(post.date)}
                     </span>
                   </div>
-                  <h3 className="font-urbanist text-base font-medium text-[#B4B4B4] line-clamp-2 mb-2">
+                  <h3 className="  text-base font-medium text-[#B4B4B4] line-clamp-2 mb-2">
                     {cleanTitle(post.title.rendered)}
                   </h3>
                 </div>

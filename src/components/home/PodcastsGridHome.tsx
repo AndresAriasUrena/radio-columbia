@@ -8,8 +8,8 @@ import { IoReload } from 'react-icons/io5';
 import PodcastCard from '@/components/UI/PodcastCard';
 
 export default function PodcastsGridHome() {
-  const [currentPodcasts, setCurrentPodcasts] = useState<PodcastShow[]>([]);
-  const [historicalPodcasts, setHistoricalPodcasts] = useState<PodcastShow[]>([]);
+  const [podcasts, setPodcasts] = useState<PodcastShow[]>([]);
+  const [radionovelas, setRadionovelas] = useState<PodcastShow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,15 +17,13 @@ export default function PodcastsGridHome() {
     try {
       setLoading(true);
       setError(null);
-
-      // Cargar ambos tipos en paralelo para mejor rendimiento
-      const [currentShows, historicalShows] = await Promise.all([
-        RSSService.getCurrentPodcasts(),
-        RSSService.getHistoricalPodcasts()
+      const [podcastShows, radioshows] = await Promise.all([
+        RSSService.getPodcasts(),
+        RSSService.getRadionovelas()
       ]);
       
-      setCurrentPodcasts(currentShows);
-      setHistoricalPodcasts(historicalShows);
+      setPodcasts(podcastShows);
+      setRadionovelas(radioshows);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido al cargar podcasts');
     } finally {
@@ -42,18 +40,33 @@ export default function PodcastsGridHome() {
     fetchPodcasts();
   };
 
+  // Componente de skeleton mejorado
+  const PodcastSkeleton = () => (
+    <div className="animate-pulse">
+      <div className="bg-[#D4D5DD] aspect-[16/16] rounded-2xl mb-4 shadow-sm"></div>
+      <div className="space-y-3">
+        <div className="h-5 bg-[#D4D5DD] rounded w-3/4"></div>
+        <div className="h-4 bg-[#D4D5DD] rounded w-1/2"></div>
+        <div className="space-y-2">
+          <div className="h-3 bg-[#D4D5DD] rounded"></div>
+          <div className="h-3 bg-[#D4D5DD] rounded w-2/3"></div>
+        </div>
+      </div>
+    </div>
+  );
+
   if (error) {
     return (
       <section className="w-full max-w-7xl mx-auto px-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-lexend font-semibold text-xl">PODCASTS</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-lexend font-semibold text-xl text-black">Error al cargar los podcasts</h2>
         </div>
-        <div className="h-0.5 w-full bg-[#E5754C] mb-6" />
+        <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
         <div className="text-center py-8">
           <p className="text-[#C7C7C7] mb-4">{error}</p>
           <button
             onClick={handleRetry}
-            className="text-[#E5754C] border-[1.4px] border-[#E5754C] px-4 py-2 rounded-full hover:shadow-[#E5754C] hover:shadow-sm transition-all duration-300 flex items-center gap-2 mx-auto"
+            className="text-white bg-[#1E305F] px-4 py-2 rounded-md flex items-center gap-2 mx-auto hover:bg-[#D51F2F] transition-colors"
           >
             <IoReload className="w-4 h-4" />
             Reintentar
@@ -63,8 +76,7 @@ export default function PodcastsGridHome() {
     );
   }
 
-  // Ordenar podcasts actuales por fecha de último episodio
-  const recentCurrentPodcasts = currentPodcasts
+  const recentPodcasts = podcasts
     .sort((a, b) => {
       const dateA = new Date(a.lastBuildDate || '');
       const dateB = new Date(b.lastBuildDate || '');
@@ -72,8 +84,7 @@ export default function PodcastsGridHome() {
     })
     .slice(0, 4);
 
-  // Ordenar podcasts históricos por fecha de último episodio
-  const recentHistoricalPodcasts = historicalPodcasts
+  const recentRadionovelas = radionovelas
     .sort((a, b) => {
       const dateA = new Date(a.lastBuildDate || '');
       const dateB = new Date(b.lastBuildDate || '');
@@ -83,79 +94,69 @@ export default function PodcastsGridHome() {
 
   return (
     <section className="w-full max-w-7xl mx-auto px-8 space-y-12">
-      {/* Sección de Podcasts Actuales */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-lexend font-semibold text-xl">PODCASTS ACTUALES</h2>
-          <Link href="/podcasts" className="text-[#9A9898] hover:text-[#E5754C] text-sm flex items-center gap-1">
+        <div className="flex items-center justify-between">
+          <h2 className="font-lexend font-semibold text-xl text-black">Podcasts</h2>
+          <Link href="/podcasts" className="text-black/60 hover:text-[#1E305F] text-sm flex items-center gap-1 transition-colors">
             Ver todos <span aria-hidden>→</span>
           </Link>
         </div>
-        <div className="h-0.5 w-full bg-[#E5754C] mb-6" />
+        <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
         
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-[#232323] aspect-[16/11] rounded-2xl mb-4"></div>
-                <div className="h-4 bg-[#232323] rounded mb-2"></div>
-                <div className="h-4 bg-[#232323] rounded w-2/3"></div>
-              </div>
+              <PodcastSkeleton key={index} />
             ))}
           </div>
         )}
 
-        {!loading && recentCurrentPodcasts.length > 0 && (
+        {!loading && recentPodcasts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {recentCurrentPodcasts.map((podcast) => (
+            {recentPodcasts.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}
           </div>
         )}
 
-        {!loading && recentCurrentPodcasts.length === 0 && (
+        {!loading && recentPodcasts.length === 0 && (
           <div className="text-center py-8">
             <p className="text-[#C7C7C7] text-lg">
-              No se encontraron podcasts actuales
+              No se encontraron podcasts
             </p>
           </div>
         )}
       </div>
 
-      {/* Sección de Podcasts Históricos */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-lexend font-semibold text-xl">HISTORIAL DE PODCASTS</h2>
-          <Link href="/podcasts" className="text-[#9A9898] hover:text-[#E5754C] text-sm flex items-center gap-1">
+        <div className="flex items-center justify-between">
+          <h2 className="font-lexend font-semibold text-xl text-black">Radionovelas</h2>
+          <Link href="/podcasts#radionovelas" className="text-black/60 hover:text-[#1E305F] text-sm flex items-center gap-1 transition-colors">
             Ver todos <span aria-hidden>→</span>
           </Link>
         </div>
-        <div className="h-0.5 w-full bg-[#E5754C] mb-6" />
+        <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
         
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={`hist-${index}`} className="animate-pulse">
-                <div className="bg-[#232323] aspect-[16/11] rounded-2xl mb-4"></div>
-                <div className="h-4 bg-[#232323] rounded mb-2"></div>
-                <div className="h-4 bg-[#232323] rounded w-2/3"></div>
-              </div>
+              <PodcastSkeleton key={`radio-${index}`} />
             ))}
           </div>
         )}
 
-        {!loading && recentHistoricalPodcasts.length > 0 && (
+        {!loading && recentRadionovelas.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {recentHistoricalPodcasts.map((podcast) => (
+            {recentRadionovelas.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}
           </div>
         )}
 
-        {!loading && recentHistoricalPodcasts.length === 0 && (
+        {!loading && recentRadionovelas.length === 0 && (
           <div className="text-center py-8">
             <p className="text-[#C7C7C7] text-lg">
-              No se encontraron podcasts en el historial
+              No se encontraron radionovelas
             </p>
           </div>
         )}

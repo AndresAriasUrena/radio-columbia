@@ -203,7 +203,7 @@ const RadioPlayer = () => {
     playerState.currentIndex > 0;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#1C1C1C] text-[#C7C7C7] z-50">
+    <div className="fixed bottom-1 left-0 right-0 bg-[#1E305C] mx-1 rounded-xl rounded-t-none text-[#C7C7C7] z-50">
       <audio
         ref={audioRef}
         preload="none"
@@ -232,7 +232,7 @@ const RadioPlayer = () => {
       />
       
       {playerState.type === 'podcast' && (
-        <div className="w-full h-1 bg-gray-700 cursor-pointer">
+        <div className="w-full h-2 bg-white/30 rounded-full cursor-pointer">
           <div 
             ref={progressBarRef}
             className="relative h-full group"
@@ -240,7 +240,7 @@ const RadioPlayer = () => {
             onMouseDown={handleProgressMouseDown}
           >
             <div 
-              className="h-full bg-[#E5754C] relative radio-progress-bar"
+              className="h-full bg-[#D51F2F] relative radio-progress-bar"
               style={getProgressBackground()}
             >
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -254,7 +254,7 @@ const RadioPlayer = () => {
           <div className="flex items-center space-x-3">
             {playerState.type === 'radio' ? (
               <>
-                <Radio className="w-5 h-5 text-[#E5754C]" />
+                <Radio className="w-5 h-5 text-[#D51F2F]" />
                 <div className="min-w-0">
                   <p className="font-medium text-sm truncate">Radio en Vivo</p>
                   <p className="text-xs text-gray-400 truncate">
@@ -269,22 +269,15 @@ const RadioPlayer = () => {
                   alt={cleanHtml(playerState.currentShow.title)}
                   width={40}
                   height={40}
-                  className="rounded-lg"
+                  className="rounded-lg lg:w-16 lg:h-16"
                 />
                 <div className="min-w-0 hidden lg:block max-w-[300px]">
-                  <p className="font-medium text-sm truncate">{cleanHtml(playerState.currentEpisode.title)}</p>
+                  <p className="font-medium text-sm lg:text-base truncate">{cleanHtml(playerState.currentEpisode.title)}</p>
                   <p className="text-xs text-gray-400 truncate">{cleanHtml(playerState.currentShow.title)}</p>
                 </div>
               </>
             ) : null}
           </div>
-          {playerState.isPlaying && !isLoading && (
-            <div className="space-x-1 hidden lg:flex">
-              <div className="w-1 h-4 bg-[#E5754C] animate-pulse rounded-full"></div>
-              <div className="w-1 h-4 bg-[#E5754C] animate-pulse rounded-full animation-delay-200"></div>
-              <div className="w-1 h-4 bg-[#E5754C] animate-pulse rounded-full animation-delay-400"></div>
-            </div>
-          )}
         </div>
 
         {playerState.type === 'podcast' && (
@@ -299,7 +292,7 @@ const RadioPlayer = () => {
             disabled={!canGoNext}
             className={`p-2 rounded-full transition-colors ${
               canGoNext 
-                ? 'hover:bg-gray-700 hover:text-[#E5754C]' 
+                ? 'hover:bg-gray-700 hover:text-[#D51F2F]' 
                 : 'text-gray-500 cursor-not-allowed'
             }`}
             title={playerState.type === 'radio' ? 'No disponible para radio en vivo' : 'Episodio anterior'}
@@ -310,7 +303,7 @@ const RadioPlayer = () => {
           <button
             onClick={togglePlay}
             disabled={isLoading}
-            className="rounded-full hover:text-[#E5754C] duration-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-full hover:text-[#D51F2F] duration-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             title={playerState.isPlaying ? 'Pausar' : 'Reproducir'}
           >
             {isLoading ? (
@@ -327,7 +320,7 @@ const RadioPlayer = () => {
             disabled={!canGoPrevious}
             className={`p-2 rounded-full transition-colors ${
               canGoPrevious 
-                ? 'hover:bg-gray-700 hover:text-[#E5754C]' 
+                ? 'hover:bg-gray-700 hover:text-[#D51F2F]' 
                 : 'text-gray-500 cursor-not-allowed'
             }`}
             title={playerState.type === 'radio' ? 'No disponible para radio en vivo' : 'Siguiente episodio'}
@@ -336,7 +329,6 @@ const RadioPlayer = () => {
           </button>
         </div>
 
-        {/* Control de volumen */}
         <div className="hidden lg:flex items-center space-x-3 min-w-0 flex-1 justify-end">
           <button
             onClick={toggleMute}

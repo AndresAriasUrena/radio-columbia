@@ -201,7 +201,7 @@ const Hero = ({ tagSlug = "hero" }) => {
                             {category} | {formattedDate}
                           </span>
                         </div>
-                        <h3 className={`xl:text-2xl text-xl uppercase leading-tight text-[#E3E3E3] font-jost font-medium`}>
+                        <h3 className={`xl:text-2xl text-xl uppercase leading-tight text-[#E3E3E3]   font-medium`}>
                           {post.title.rendered}
                         </h3>
                       </Link>

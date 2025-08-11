@@ -39,7 +39,7 @@ export default function AboutUs() {
 
   return (
     <>
-      <div className="min-h-screen font-jost">
+      <div className="min-h-screen  ">
         <Navbar />
         <Hero />
         <Radios />

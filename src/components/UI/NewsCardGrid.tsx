@@ -30,7 +30,7 @@ export default function NewsCardGrid({ post }: NewsCardGridProps) {
           {/* Contenido */}
           <div className="flex flex-col justify-between md:order-2 order-3 w-full md:w-[45%]">
             <div>
-              <h3 className="font-urbanist text-lg md:text-2xl font-medium text-[#C7C7C7] line-clamp-2 md:line-clamp-3 mb-3 group-hover:text-white transition-colors">
+              <h3 className="  text-lg md:text-2xl font-medium text-[#C7C7C7] line-clamp-2 md:line-clamp-3 mb-3 group-hover:text-white transition-colors">
                 {cleanTitle(post.title.rendered)}
               </h3>
 

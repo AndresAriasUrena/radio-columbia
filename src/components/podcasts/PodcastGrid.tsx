@@ -12,8 +12,8 @@ interface PodcastGridProps {
 }
 
 export default function PodcastGrid() {
-  const [currentPodcasts, setCurrentPodcasts] = useState<PodcastShow[]>([]);
-  const [historicalPodcasts, setHistoricalPodcasts] = useState<PodcastShow[]>([]);
+  const [podcasts, setPodcasts] = useState<PodcastShow[]>([]);
+  const [radionovelas, setRadionovelas] = useState<PodcastShow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -23,20 +23,18 @@ export default function PodcastGrid() {
     setError(null);
     
     try {
-      // Cargar ambos tipos de podcasts en paralelo para mejor rendimiento
-      const [currentShows, historicalShows] = await Promise.all([
-        RSSService.getCurrentPodcasts(),
-        RSSService.getHistoricalPodcasts()
+      const [podcastShows, radioShows] = await Promise.all([
+        RSSService.getPodcasts(),
+        RSSService.getRadionovelas()
       ]);
       
-      setCurrentPodcasts(currentShows);
-      setHistoricalPodcasts(historicalShows);
-      setRetryCount(0); // Reset retry count on success
+      setPodcasts(podcastShows);
+      setRadionovelas(radioShows);
+      setRetryCount(0);
     } catch (err) {
       console.error('❌ Error loading podcasts:', err);
       setError('Error al cargar los podcasts. Por favor, intenta nuevamente.');
       
-      // Auto-retry hasta 3 veces
       if (retryCount < 3) {
         setTimeout(() => {
           setRetryCount(prev => prev + 1);
@@ -57,18 +55,33 @@ export default function PodcastGrid() {
     loadPodcasts();
   };
 
+  // Componente de skeleton mejorado
+  const PodcastSkeleton = () => (
+    <div className="animate-pulse">
+      <div className="bg-[#D4D5DD] aspect-[16/16] rounded-2xl mb-4 shadow-sm"></div>
+      <div className="space-y-3">
+        <div className="h-5 bg-[#D4D5DD] rounded w-3/4"></div>
+        <div className="h-4 bg-[#D4D5DD] rounded w-1/2"></div>
+        <div className="space-y-2">
+          <div className="h-3 bg-[#D4D5DD] rounded"></div>
+          <div className="h-3 bg-[#D4D5DD] rounded w-2/3"></div>
+        </div>
+      </div>
+    </div>
+  );
+
   if (error) {
     return (
       <div className="flex-1">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
           <div className="rounded-lg p-6 max-w-md">
-            <h3 className="text-lg font-semibold text-[#E5754C] mb-2">
+            <h3 className="text-lg font-semibold text-[#D51F2F] mb-2">
               Error al cargar podcasts
             </h3>
             <p className="text-[#C7C7C7] mb-4">{error}</p>
             <button
               onClick={handleRetry}
-              className="text-[#E5754C] border-[1.4px] border-[#E5754C] px-4 py-2 rounded-full hover:shadow-[#E5754C] hover:shadow-sm transition-all duration-300 flex items-center gap-2"
+              className="text-white bg-[#1E305F] px-4 py-2 rounded-md flex items-center gap-2 mx-auto hover:bg-[#D51F2F] transition-colors"
             >
               <IoReload className="w-4 h-4" />
               Reintentar
@@ -79,97 +92,89 @@ export default function PodcastGrid() {
     );
   }
 
-  const totalPodcasts = currentPodcasts.length + historicalPodcasts.length;
+  const totalShows = podcasts.length + radionovelas.length;
 
   return (
     <div className="flex-1">
-      {/* Sección de Podcasts Actuales */}
+      {/* Sección de Podcasts */}
       <div className="mb-12">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
           <div className="w-full">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-lexend font-semibold text-xl">PODCASTS ACTUALES</h2>
+              <h2 className="font-lexend font-semibold text-xl text-black">Podcasts</h2>
             </div>
-            <div className="h-0.5 w-full bg-[#E5754C] my-4" />
+            <div className="h-0.5 w-full bg-[#D4D5DD] my-4" />
             
-            <p className="text-[#C7C7C7]/50 mt-1">
-              {isLoading && currentPodcasts.length === 0 
-                ? 'Cargando podcasts actuales...' 
-                : `${currentPodcasts.length} podcast${currentPodcasts.length !== 1 ? 's' : ''} activo${currentPodcasts.length !== 1 ? 's' : ''}`}
+            <p className="text-black/60 mt-1">
+              {isLoading && podcasts.length === 0 
+                ? 'Cargando podcasts...' 
+                : `${podcasts.length} podcast${podcasts.length !== 1 ? 's' : ''}`}
             </p>
           </div>
         </div>
 
-        {isLoading && currentPodcasts.length === 0 && (
+        {isLoading && podcasts.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
             {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-[#232323] aspect-[16/11] rounded-2xl mb-4"></div>
-                <div className="h-4 bg-[#232323] rounded mb-2"></div>
-                <div className="h-4 bg-[#232323] rounded w-2/3"></div>
-              </div>
+              <PodcastSkeleton key={index} />
             ))}
           </div>
         )}
 
-        {currentPodcasts.length > 0 && (
+        {podcasts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {currentPodcasts.map((podcast) => (
+            {podcasts.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}
           </div>
         )}
 
-        {!isLoading && currentPodcasts.length === 0 && (
+        {!isLoading && podcasts.length === 0 && (
           <div className="text-center py-8">
             <p className="text-[#C7C7C7] text-lg">
-              No se encontraron podcasts actuales
+              No se encontraron podcasts
             </p>
           </div>
         )}
       </div>
 
-      {/* Sección de Podcasts Históricos */}
+      {/* Sección de Radionovelas */}
       <div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+        <div id="radionovelas" className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
           <div className="w-full">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-lexend font-semibold text-xl">HISTORIAL DE PODCASTS</h2>
+              <h2 className="font-lexend font-semibold text-xl text-black">Radionovelas</h2>
             </div>
-            <div className="h-0.5 w-full bg-[#E5754C] my-4" />
+            <div className="h-0.5 w-full bg-[#D4D5DD] my-4" />
             
-            <p className="text-[#C7C7C7]/50 mt-1">
-              {isLoading && historicalPodcasts.length === 0 
-                ? 'Cargando historial...' 
-                : `${historicalPodcasts.length} podcast${historicalPodcasts.length !== 1 ? 's' : ''} en el historial`}
+            <p className="text-black/60 mt-1">
+              {isLoading && radionovelas.length === 0 
+                ? 'Cargando radionovelas...' 
+                : `${radionovelas.length} radionovela${radionovelas.length !== 1 ? 's' : ''}`}
             </p>
           </div>
         </div>
 
-        {isLoading && historicalPodcasts.length === 0 && (
+        {isLoading && radionovelas.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {Array.from({ length: 6 }).map((_, index) => (
-              <div key={`historical-${index}`} className="animate-pulse">
-                <div className="bg-[#232323] aspect-[16/11] rounded-2xl mb-4"></div>
-                <div className="h-4 bg-[#232323] rounded mb-2"></div>
-                <div className="h-4 bg-[#232323] rounded w-2/3"></div>
-              </div>
+              <PodcastSkeleton key={`radio-${index}`} />
             ))}
           </div>
         )}
 
-        {historicalPodcasts.length > 0 && (
+        {radionovelas.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {historicalPodcasts.map((podcast) => (
+            {radionovelas.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}
           </div>
         )}
 
-        {!isLoading && historicalPodcasts.length === 0 && (
+        {!isLoading && radionovelas.length === 0 && (
           <div className="text-center py-8">
             <p className="text-[#C7C7C7] text-lg">
-              No se encontraron podcasts en el historial
+              No se encontraron radionovelas
             </p>
           </div>
         )}

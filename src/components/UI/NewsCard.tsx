@@ -44,7 +44,7 @@ export default function NewsCard({ post }: NewsCardProps) {
           </div>
 
           {/* Título */}
-          <h3 className="font-urbanist text-xl font-medium text-[#B4B4B4] line-clamp-2 mb-2">
+          <h3 className="  text-xl font-medium text-[#B4B4B4] line-clamp-2 mb-2">
             {cleanTitle(post.title.rendered)}
           </h3>
 

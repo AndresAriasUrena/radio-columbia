@@ -27,7 +27,7 @@ function PodcastsContent() {
       <div className="max-w-7xl mx-auto relative">
         <div className="flex">
           <Suspense>
-            <PodcastGrid onOpenFilters={() => {}} />
+            <PodcastGrid />
           </Suspense>
         </div>
       </div>
@@ -43,7 +43,6 @@ export default function PodcastsPage() {
         <div className="mx-2">
         <PodcastsContent />
         </div>
-
       </div>
       <Footer />
     </>

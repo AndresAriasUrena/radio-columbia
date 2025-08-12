@@ -38,7 +38,7 @@ export default function Contact() {
 
   return (
     <>
-      <div className="min-h-screen  ">
+      <div className="min-h-screen">
         <Navbar />
         <ContactForm />
         <Location />

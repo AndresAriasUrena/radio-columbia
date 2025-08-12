@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -13,8 +13,8 @@ interface NewsGridWithImageProps {
   tagSlug?: string;
 }
 
-export default function NewsGridWithImage({ 
-  title, 
+export default function NewsGridWithImage({
+  title,
   maxPosts = 4,
   posts: externalPosts,
   tagSlug
@@ -37,7 +37,7 @@ export default function NewsGridWithImage({
 
         const result = await WordPressService.getTags();
         const id = result.tagsMap[tagSlug];
-        
+
         if (id) {
           setTagId(id);
         } else {
@@ -55,7 +55,7 @@ export default function NewsGridWithImage({
 
   const fetchPosts = useCallback(async () => {
     if (externalPosts) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -95,25 +95,38 @@ export default function NewsGridWithImage({
     );
   }
 
-    if (loading && !externalPosts) {
+  if (loading && !externalPosts) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-8">
-        {title && (
-          <div className="mb-6">
-            <h2 className="font-lexend font-semibold text-xl text-[#C7C7C7]">{title}</h2>
-            <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-          </div>
-        )}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="animate-pulse">
-            <div className="bg-[#232323] aspect-[4/3] rounded-2xl"></div>
-          </div>
-          <div className="space-y-4">
-            {Array.from({ length: maxPosts }).map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="bg-[#232323] h-20 rounded-xl"></div>
+      <div className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+        <div className="w-full max-w-7xl mx-auto">
+          {title && (
+            <div className="mb-6">
+              <div className="flex justify-between items-end gap-2">
+                <div className="flex flex-col gap-2">
+                  <div className="h-8 bg-[#D4D5DD] rounded w-48 animate-pulse"></div>
+                  <div className="h-4 bg-[#D4D5DD] rounded w-64 animate-pulse"></div>
+                </div>
+                <div className="h-10 bg-[#D4D5DD] rounded w-24 animate-pulse"></div>
               </div>
-            ))}
+              <div className="h-0.5 w-full bg-[#D4D5DD] my-4" />
+            </div>
+          )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+            <div className="space-y-4">
+              {Array.from({ length: maxPosts }).map((_, index) => (
+                <article key={index} className="py-4 border-b border-[#D4D5DD] animate-pulse">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="h-6 bg-[#D4D5DD] rounded-full w-20"></div>
+                    <div className="h-4 bg-[#D4D5DD] rounded w-16"></div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-5 bg-[#D4D5DD] rounded w-full"></div>
+                    <div className="h-5 bg-[#D4D5DD] rounded w-3/4"></div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="relative w-full h-full min-h-[400px] bg-[#D4D5DD] rounded-2xl animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -129,53 +142,62 @@ export default function NewsGridWithImage({
   const cleanTitle = WordPressService.cleanHtml;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-8">
-      {title && (
-        <div className="mb-6">
-          <h2 className="font-lexend font-semibold text-xl text-[#C7C7C7]">{title}</h2>
-          <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-        </div>
-      )}
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="relative aspect-[4/3] bg-[#232323] rounded-2xl overflow-hidden">
-          <Image
-            src={featuredImage}
-            alt={cleanTitle(displayPosts[selectedPostIndex].title.rendered)}
-            fill
-            className="object-cover rounded-2xl"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
-        </div>
-
-        <div className="space-y-4 h-full">
-          {displayPosts.map((post, index) => {
-            const category = WordPressService.getCategory(post);
-            
-            return (
-              <Link 
-                key={post.id} 
-                href={`/news/${post.slug}`}
-                onMouseEnter={() => setSelectedPostIndex(index)}
-                className="group block"
-              >
-                <article className={`p-4 border-b border-[#333030]`}>
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="inline-block text-[#E5754C] bg-transparent text-xs font-medium">
-                      {category}
-                    </span>
-                    <span className="text-xs font-medium text-[#B4B4B4]">
-                      {formatDate(post.date)}
-                    </span>
-                  </div>
-
-                  <h4 className={`  text-lg font-medium line-clamp-2 transition-colors duration-300 text-[#C7C7C7] group-hover:text-white`}>
-                    {cleanTitle(post.title.rendered)}
-                  </h4>
-                </article>
+    <div className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+      <div className="w-full max-w-7xl mx-auto">
+        {title && (
+          <div className="mb-6">
+            <div className="flex justify-between items-end gap-2">
+              <div className="flex flex-col gap-2">
+                <h2 className="font-semibold text-lg md:text-2xl text-[#1B1B1B]">{title}</h2>
+                <p className="text-xs font-medium text-[#64748B] mt-1 hidden md:block">Infórmate de las últimas noticias en Costa Rica</p>
+              </div>
+              <Link href="/news" className="text-[#9A9898] border border-[#9A9898] rounded-md px-2 py-1 md:px-4 md:py-2 hover:text-[#1E305F] hover:border-[#1E305F] text-xs md:text-sm flex items-center transition-all duration-300">
+                Ver todas <span aria-hidden>→</span>
               </Link>
-            );
-          })}
+            </div>
+            <div className="h-0.5 w-full bg-[#D4D5DD] my-4" />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+          <div className="space-y-4 h-full">
+            {displayPosts.map((post, index) => {
+              const category = WordPressService.getCategory(post);
+
+              return (
+                <Link
+                  key={post.id}
+                  href={`/news/${post.slug}`}
+                  onMouseEnter={() => setSelectedPostIndex(index)}
+                  className="group block"
+                >
+                  <article className={`py-4 border-b border-[#D4D5DD]`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[#01A299] border-[1.4px] border-[#01A299] px-4 py-2 rounded-full bg-transparent text-sm font-medium">
+                        {category}
+                      </span>
+                      <span className="text-sm font-medium text-[#000000]/30">
+                        {formatDate(post.date)}
+                      </span>
+                    </div>
+
+                    <h4 className={`text-lg md:text-2xl font-medium line-clamp-2 transition-colors duration-300 text-[#000000]/60 group-hover:text-[#000000]`}>
+                      {cleanTitle(post.title.rendered)}
+                    </h4>
+                  </article>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="relative h-48 w-full lg:h-full bg-[#D4D5DD] rounded-2xl overflow-hidden">
+            <Image
+              src={featuredImage}
+              alt={cleanTitle(displayPosts[selectedPostIndex].title.rendered)}
+              fill
+              className="object-cover rounded-2xl"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Facebook, Instagram, X, Search } from 'lucide-react';
+import { Facebook, Instagram, X, Search, Youtube, Mail } from 'lucide-react';
 import { IoClose } from 'react-icons/io5';
 import { SearchContext } from '@/lib/SearchContext';
 import WordPressService from '@/lib/wordpressService';
@@ -28,6 +28,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
   });
 
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(8);
 
   const updateURL = (filters: FilterData) => {
     const params = new URLSearchParams();
@@ -107,97 +108,85 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
     updateURL(selectedFilters);
   };
 
+  // Lista de redes sociales (mapea para renderizar)
+  const socialLinks: Array<{ label: string; href: string; Icon: any; external?: boolean }> = [
+    { label: 'Twitter (X)', href: 'https://x.com/webcolumbia?lang=es', Icon: X, external: true },
+    { label: 'Instagram', href: 'https://www.instagram.com/noticiascolumbia/?hl=es', Icon: Instagram, external: true },
+    { label: 'Facebook', href: 'https://www.facebook.com/NoticiasColumbia/?locale2=pt_PT&_rdr', Icon: Facebook, external: true },
+    { label: 'YouTube', href: 'https://www.youtube.com/channel/UCo2Fr8GUPmevyi7uih-0oTg/featured?view_as=subscriber', Icon: Youtube, external: true },
+    { label: 'Email', href: 'mailto:ventas@grupocolumbia.co.cr', Icon: Mail, external: false },
+  ];
+
   return (
-    <div className="w-full lg:w-72 text-[#C7C7C7]">
-      <div className="lg:hidden flex items-center justify-between mb-6">
-        <h2 className="font-lexend font-semibold text-xl">FILTROS</h2>
-        <button
-          onClick={() => setIsMobileOpen(false)}
-          className="p-2 hover:bg-[#232323] rounded-lg transition-colors"
-        >
-          <IoClose className="w-6 h-6" />
-        </button>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="font-lexend font-semibold text-xl">BUSCAR NOTICIAS</h2>
-        <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-        <form onSubmit={handleSearch} className="relative">
-          <button type="submit" className="absolute left-3 top-2">
-            <Search className="w-5 h-5 text-[#C7C7C7]" />
+    <div className="mx-2">
+      <div className="w-full lg:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#1E305F] my-4 rounded-2xl">
+        <div className="lg:hidden flex items-center justify-between mb-6">
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="p-2 hover:bg-[#FFFFFF]/15 rounded-lg transition-colors"
+          >
+            <IoClose className="w-6 h-6" />
           </button>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="¿Qué estás buscando?"
-            className="w-full bg-black border border-[#C7C7C7] pl-10 rounded-lg px-4 py-2 text-sm text-[#C7C7C7] placeholder-[#C7C7C7] focus:outline-none focus:ring-"
-          />
-        </form>
-      </div>
+        </div>
 
-      <div className="mb-8">
-        <h2 className="font-lexend font-semibold text-xl">CATEGORÍAS</h2>
-        <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-        {loading ? (
-          <div className="text-[#C7C7C7] text-sm">Cargando categorías...</div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {availableFilters.categories.map((category) => (
-              <a 
-                key={category.slug}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleCheckboxChange('categories', category.slug);
-                }}
-                className={`
-                  px-3 py-2 rounded-lg text-sm hover:scale-105 transition-all duration-300
-                  flex items-center justify-between
-                  ${selectedFilters.categories.includes(category.slug) 
-                    ? 'bg-[#C7C7C7] text-[#0a0a0a]' 
-                    : 'bg-[#E5754C] text-[#0a0a0a]'
-                  }
-                `}
+        <div className="mb-8">
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Categorías</h2>
+          <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+          {loading ? (
+            <div className="text-[#D4D5DD] text-sm">Cargando categorías...</div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {availableFilters.categories.slice(0, visibleCount).map((category) => (
+                <a 
+                  key={category.slug}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleCheckboxChange('categories', category.slug);
+                  }}
+                  className={`
+                    w-full px-3 py-2 rounded-md text-sm transition-colors border border-[#FFFFFF]/10
+                    flex items-center gap-2
+                    ${selectedFilters.categories.includes(category.slug) 
+                      ? 'bg-[#D51F2F] text-white' 
+                      : 'bg-transparent text-[#D4D5DD] hover:bg-[#D51F2F] hover:text-white'
+                    }
+                  `}
+                >
+                  <span className="truncate">{category.label}</span>
+                  <span className="text-sm ml-1 flex-shrink-0">({category.count})</span>
+                </a>
+              ))}
+              {availableFilters.categories.length > visibleCount && (
+                <button
+                  onClick={() => setVisibleCount((c) => Math.min(c + 8, availableFilters.categories.length))}
+                  className="w-full py-2 mt-2 rounded-md text-sm hover:bg-[#D51F2F] text-[#D4D5DD] bg-[#D51F2F]/80 transition-all duration-300"
+                >
+                  Cargar más
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Nuestras Redes</h2>
+          <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+          <div className="grid grid-cols-1 gap-2">
+            {socialLinks.map(({ label, href, Icon, external }) => (
+              <a
+                key={label}
+                href={href}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+                className="flex items-center justify-start gap-3 text-[#D4D5DD] bg-[#FFFFFF]/10 hover:bg-[#D51F2F] rounded-md px-4 py-3 transition-colors"
               >
-                <span className="truncate">{category.label}</span>
-                <span className="text-xs ml-2 flex-shrink-0">({category.count})</span>
+                <Icon className="w-5 h-5" />
+                <span className="text-sm">{label}</span>
               </a>
             ))}
           </div>
-        )}
-      </div>
-
-      <div>
-        <h2 className="font-lexend font-semibold text-xl">SÍGUENOS</h2>
-        <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <a
-            href="https://x.com/amplifyradiofm"
-            target="_blank"
-            className="flex items-center border border-[#C7C7C7] text-[#C7C7C7] rounded-lg px-4 py-2 space-x-2 hover:border-[#E5754C] hover:text-[#E5754C] transition-colors"
-          >
-            <X className="w-5 h-5" />
-            <span className="text-sm">Twitter (X)</span>
-          </a>
-
-          <a
-            href="https://www.instagram.com/amplifyradiofm/"
-            target="_blank"
-            className="flex items-center border border-[#C7C7C7] text-[#C7C7C7] rounded-lg px-4 py-2 space-x-2 hover:border-[#E5754C] hover:text-[#E5754C] transition-colors"
-          >
-            <Instagram className="w-5 h-5" />
-            <span className="text-sm">Instagram</span>
-          </a>
-
-          <a
-            href="https://www.facebook.com/amplifyradiofm/"
-            target="_blank"
-            className="flex items-center border border-[#C7C7C7] text-[#C7C7C7] rounded-lg px-4 py-2 space-x-2 hover:border-[#E5754C] hover:text-[#E5754C] transition-colors"
-          >
-            <Facebook className="w-5 h-5" />
-            <span className="text-sm">Facebook</span>
-          </a>
         </div>
       </div>
     </div>

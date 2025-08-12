@@ -1,29 +1,14 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import Image from "next/image";
+import { IoArrowForward } from "react-icons/io5";
 import WordPressService from "@/lib/wordpressService";
 
 const Hero = ({ tagSlug = "hero" }) => {
-  const [activeSlide, setActiveSlide] = useState(0);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
   const [tagId, setTagId] = useState(null);
-  const sliderRef = useRef(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     const getTagId = async () => {
@@ -32,10 +17,8 @@ const Hero = ({ tagSlug = "hero" }) => {
           setTagId(null);
           return;
         }
-
         const result = await WordPressService.getTags();
         const id = result.tagsMap[tagSlug];
-        
         if (id) {
           setTagId(id);
         } else {
@@ -43,201 +26,145 @@ const Hero = ({ tagSlug = "hero" }) => {
           setTagId(null);
         }
       } catch (error) {
-        console.error('Error loading tags map:', error);
+        console.error("Error loading tags map:", error);
         setTagId(null);
       }
     };
-
     getTagId();
   }, [tagSlug]);
 
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      
-      if (!tagId) {
-        setPosts([]);
-        return;
-      }
-
-      const result = await WordPressService.getPosts({
-        page: 1,
-        perPage: 3,
-        tags: [tagId],
-        orderBy: 'date'
-      });
-      
-      const data = result.posts;
-      
-      if (data.length === 3) {
-        const reorderedPosts = [data[2], data[0], data[1]];
-        setPosts(reorderedPosts);
-      } else {
-        setPosts(data);
-      }
-    } catch (error) {
-      console.error('Error loading posts:', error);
-      setPosts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (tagId !== undefined) {
-      fetchPosts();
-    }
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        if (!tagId) {
+          setPosts([]);
+          return;
+        }
+        const result = await WordPressService.getPosts({
+          page: 1,
+          perPage: 4,
+          tags: [tagId],
+          orderBy: "date",
+        });
+        setPosts(result.posts);
+      } catch (error) {
+        console.error("Error loading posts:", error);
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (tagId !== undefined) fetchPosts();
   }, [tagId]);
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    centerMode: false,
-    centerPadding: "0",
-    initialSlide: 0,
-    afterChange: (current) => setActiveSlide(current),
-    autoplay: true,           
-    autoplaySpeed: 5000,  
-    arrows: false,
-    responsive: [
-      {
-        breakpoint: 1280,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          centerPadding: "0",
-        },
-      },
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          centerPadding: "0",
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          centerPadding: "60px",
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          centerPadding: "10px",
-        },
-      },
-    ],
-  };
-
-  const formatDate = WordPressService.formatDateShort;
-  const getCategory = WordPressService.getCategory;
   const getFeaturedImage = WordPressService.getFeaturedImage;
+  const getCategory = WordPressService.getCategory;
+  const formatDate = WordPressService.formatDate;
+  const cleanHtml = WordPressService.cleanHtml;
 
   if (loading) {
     return (
-      <section className="my-8 overflow-hidden h-[60vh] flex items-center justify-center">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E5754C]"></div>
+      <section className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="relative aspect-[4/3] bg-[#D4D5DD] rounded-2xl animate-pulse"></div>
+            <div className="space-y-3 animate-pulse">
+              <div className="h-4 bg-[#D4D5DD] rounded w-40" />
+              <div className="h-8 bg-[#D4D5DD] rounded w-3/4" />
+              <div className="h-8 bg-[#D4D5DD] rounded w-2/3" />
+              <div className="h-4 bg-[#D4D5DD] rounded w-full" />
+              <div className="h-4 bg-[#D4D5DD] rounded w-5/6" />
+              <div className="h-10 bg-[#D4D5DD] rounded w-32 mt-4" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="space-y-3 animate-pulse">
+                <div className="aspect-[16/11] bg-[#D4D5DD] rounded-2xl" />
+                <div className="h-6 bg-[#D4D5DD] rounded-full w-24" />
+                <div className="h-5 bg-[#D4D5DD] rounded w-3/4" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
     );
   }
 
+  if (!posts || posts.length === 0) return null;
+
+  const [featured, ...rest] = posts;
+  const secondary = rest.slice(0, 3);
+
   return (
-    <section className="overflow-hidden h-[60vh] flex items-center mt-8 mb-2">
-      <div className="container mx-auto px-4 flex justify-center flex-col">
+    <section className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+          <div className="relative h-48 sm:h-64 lg:h-full bg-[#D4D5DD] rounded-2xl overflow-hidden">
+            <Image
+              src={getFeaturedImage(featured)}
+              alt={cleanHtml(featured.title.rendered)}
+              fill
+              className="object-cover rounded-2xl"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </div>
 
-        <div className="relative lg:left-1/2 lg:-translate-x-1/2 lg:w-[170vw] overflow-x-visible">
-          <Slider ref={sliderRef} {...settings} className="news-slider">
-            {posts.map((post, index) => {
-              const getCenterIndex = (currentSlide, totalSlides) => {
-                if (isMobile) {
-                  return currentSlide;
-                }
-                if (totalSlides === 3) {
-                  return (currentSlide + 1) % totalSlides;
-                }
-                return currentSlide;
-              };
+          <div className="flex flex-col justify-between py-3">
+            <div>
+              <p className="text-sm font-medium uppercase text-[#1B1B1B]/60 tracking-wide mb-2">
+                {getCategory(featured)} | {formatDate(featured.date)}
+              </p>
+              <h2 className="text-2xl lg:text-3xl xl:text-4xl font-semibold text-[#1B1B1B] leading-snug my-5">
+                {cleanHtml(featured.title.rendered)}
+              </h2>
+              {featured.excerpt?.rendered && (
+                <p className="text-md md:text-lg text-[#000000]/60 leading-none">
+                  {cleanHtml(featured.excerpt.rendered).slice(0, 320)}
+                  {cleanHtml(featured.excerpt.rendered).length > 320 ? "…" : ""}
+                </p>
+              )}
+              <Link
+                href={`/news/${featured.slug}`}
+                className="mt-5 inline-flex items-center gap-2 bg-[#01A299] text-white px-4 py-2 rounded-md hover:opacity-90 transition-colors"
+              >
+                Leer noticia <IoArrowForward className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
 
-              const centerIndex = getCenterIndex(activeSlide, posts.length);
-              const isActive = index === centerIndex;
+        <div className="h-0.5 w-full bg-[#D4D5DD] my-6" />
 
-              const featuredImage = getFeaturedImage(post);
-              const category = getCategory(post);
-              const formattedDate = formatDate(post.date);
-
-              return (
-                <div key={post.id} className="px-3 outline-none h-[58vh]">
-                  <div
-                    className={`
-                        relative transition-all rounded-2xl overflow-hidden h-full
-                        ${isActive
-                        ? "scale-100 z-10 shadow-xl rounded-2xl"
-                        : "scale-[85%] opacity-90"}
-                      `}
-                  >
-                    <div
-                      className="absolute inset-0 bg-cover bg-center rounded-2xl"
-                      style={{ backgroundImage: `url(${featuredImage})` }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <Link href={`/news/${post.slug}`} className="cursor-pointer">
-                        <div className="mb-1">
-                          <span className="text-[#C4C4C4] text-sm uppercase font-normal">
-                            {category} | {formattedDate}
-                          </span>
-                        </div>
-                        <h3 className={`xl:text-2xl text-xl uppercase leading-tight text-[#E3E3E3]   font-medium`}>
-                          {post.title.rendered}
-                        </h3>
-                      </Link>
-                    </div>
-                  </div>
+        {/* Secundarias */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {secondary.map((post) => (
+            <Link key={post.id} href={`/news/${post.slug}`} className="group hover:scale-[1.02] transition-all duration-700 block">
+              <article>
+                <div className="relative aspect-[16/11] bg-[#D4D5DD] rounded-2xl overflow-hidden mb-1">
+                  <Image
+                    src={getFeaturedImage(post)}
+                    alt={cleanHtml(post.title.rendered)}
+                    fill
+                    className="object-cover rounded-2xl"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
                 </div>
-              );
-            })}
-          </Slider>
+                <div className="py-3">
+                  <span className="text-[#1E305E] border-[1.4px] border-[#1E305E] px-4 py-2 rounded-full bg-transparent text-sm font-medium">
+                    {getCategory(post)}
+                  </span>
+
+                  <h3 className="mt-3 text-md md:text-xl font-medium text-[#2F3037] line-clamp-2 group-hover:text-[#1E305F] transition-colors">
+                    {cleanHtml(post.title.rendered)}
+                  </h3>
+                </div>
+              </article>
+            </Link>
+          ))}
         </div>
       </div>
-
-      <style jsx>{`
-        .news-slider .slick-track {
-          display: flex !important;
-          align-items: center !important;
-        }
-        .news-slider .slick-slide {
-          transition: all 0.3s ease;
-          height: inherit !important;
-        }
-        .news-slider .slick-current {
-          z-index: 10;
-        }
-        .news-slider .slick-dots {
-          bottom: -40px;
-        }
-        .news-slider .slick-dots li button:before {
-          color: #E5754C;
-          opacity: 0.5;
-        }
-        .news-slider .slick-dots li.slick-active button:before {
-          color: #E5754C;
-          opacity: 1;
-        }
-      `}</style>
     </section>
   );
 };

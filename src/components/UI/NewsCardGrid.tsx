@@ -18,48 +18,44 @@ export default function NewsCardGrid({ post }: NewsCardGridProps) {
 
   return (
     <Link href={`/news/${post.slug}`}>
-      <article className="group overflow-hidden border-b border-[#333030]">
-        <div className="flex flex-col md:flex-row py-5 gap-5">
-          {/* Categoría */}
-          <div className="flex md:justify-start items-start w-full md:w-[20%]">
-            <span className="inline-block text-[#E5754C] bg-transparent text-xs font-medium px-3 py-1 rounded-full border border-[#E5754C] whitespace-nowrap">
-              {category}
-            </span>
+      <article className="py-3 group overflow-hidden border-b border-[#D4D5DD]">
+        <div className="flex flex-col md:flex-row py-5 gap-6 md:gap-10">
+          {/* Imagen */}
+          <div className="relative h-44 md:h-auto md:aspect-[12/6] bg-[#D4D5DD] rounded-xl overflow-hidden w-full md:w-[45%]">
+            <Image
+              src={featuredImage}
+              alt={cleanTitle(post.title.rendered)}
+              fill
+              className="object-cover rounded-xl transition-transform duration-300"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
           </div>
 
-          {/* Contenido */}
-          <div className="flex flex-col justify-between md:order-2 order-3 w-full md:w-[45%]">
+          <div className="flex flex-col justify-between w-full md:w-[55%]">
             <div>
-              <h3 className="  text-lg md:text-2xl font-medium text-[#C7C7C7] line-clamp-2 md:line-clamp-3 mb-3 group-hover:text-white transition-colors">
+            <span className="text-[#D71E30] border-[1.4px] border-[#D71E30] px-4 py-2 rounded-full bg-transparent text-sm font-medium">
+                      {category}
+              </span>
+
+              <h3 className="leading-none text-md md:text-2xl lg:text-3xl font-medium text-[#2F3037]/80 line-clamp-2 md:line-clamp-3 my-6 group-hover:text-[#2F3037] transition-colors">
                 {cleanTitle(post.title.rendered)}
               </h3>
 
               <div 
-                className="text-[#C7C7C7]/70 text-xs line-clamp-2 md:line-clamp-3 mb-4 md:mb-0"
+                className="text-[#000000]/60 text-sm md:text-md line-clamp-2 mb-4 md:mb-0 leading-tight"
                 dangerouslySetInnerHTML={{ 
                   __html: post.excerpt.rendered.replace(/<\/?[^>]+(>|$)/g, "") 
                 }}
               />
             </div>
 
-            <div className="mt-auto pt-8">
-              <div className="flex flex-col gap-1 text-white/30">
-                <span className="text-xs font-medium">
+            <div className="md:mt-auto">
+              <div className="flex flex-col gap-1 text-[#000000]/40">
+                <span className="text-md font-medium">
                   {formatDate(post.date)}
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* Imagen */}
-          <div className="relative h-48 md:h-56 bg-[#232323] rounded-xl overflow-hidden md:order-3 order-2 w-full md:w-[35%]">
-            <Image
-              src={featuredImage}
-              alt={cleanTitle(post.title.rendered)}
-              fill
-              className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
           </div>
         </div>
       </article>

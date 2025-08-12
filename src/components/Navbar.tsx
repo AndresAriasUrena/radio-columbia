@@ -124,7 +124,7 @@ export default function Navbar() {
             <form onSubmit={(e) => handleSearch(e, localSearchTerm)}>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                  <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[#000000]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -133,17 +133,16 @@ export default function Navbar() {
                   placeholder="¿Qué estás buscando hoy?"
                   value={localSearchTerm}
                   onChange={(e) => handleSearchInputChange(e.target.value)}
-                  className="bg-zinc-900 text-white rounded-full pl-10 pr-4 py-1.5 text-sm w-64 focus:outline-none focus:ring-1 focus:ring-[#E5754C] placeholder-zinc-400"
+                  className="border border-[#000000]/30 bg-transparent text-black rounded-md pl-10 pr-4 py-1.5 text-sm w-64 focus:outline-none placeholder-[#000000]/20"
                 />
               </div>
             </form>
           </div>
 
-          {/* Mobile Hamburger Button - Only visible on mobile */}
           <div className="lg:hidden">
             <button
               onClick={toggleMenu}
-              className="text-white hover:text-[#E5754C] transition-colors p-2"
+              className="text-[#2F3037] hover:text-[#D51F2F] transition-colors p-2"
               aria-label="Abrir menú"
             >
               <svg 
@@ -182,17 +181,17 @@ export default function Navbar() {
       )}
 
       {/* Mobile Menu Sidebar */}
-      <div className={`fixed top-0 right-0 h-full w-80 bg-zinc-900 shadow-lg z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+      <div className={`fixed top-0 right-0 h-full w-80 bg-[#F8FBFF] shadow-lg z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
         isMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Menu Header */}
-          <div className="p-6 border-b border-zinc-800">
+          <div className="p-6 border-b border-[#D4D5DD]">
             <div className="flex items-center justify-between">
               <img src="/assets/LogoColumbia.svg" alt="Amplify" width={80} height={60} />
               <button
                 onClick={closeMenu}
-                className="text-white hover:text-[#E5754C] transition-colors p-2"
+                className="text-[#2F3037] hover:text-[#D51F2F] transition-colors p-2"
                 aria-label="Cerrar menú"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -203,12 +202,12 @@ export default function Navbar() {
           </div>
 
           {/* Search Bar - Mobile */}
-          <div className="p-6 border-b border-zinc-800">
+          <div className="p-6 border-b border-[#D4D5DD]">
             <div className="relative">
               <form onSubmit={(e) => handleSearch(e, localSearchTerm)}>
                 <div className="relative">
                   <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                    <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[#000000]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
@@ -217,7 +216,7 @@ export default function Navbar() {
                     placeholder="¿Qué estás buscando hoy?"
                     value={localSearchTerm}
                     onChange={(e) => handleSearchInputChange(e.target.value)}
-                    className="w-full bg-zinc-800 text-white rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#E5754C] placeholder-zinc-400"
+                    className="w-full bg-transparent border border-[#000000]/30 text-black rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none placeholder-[#000000]/20"
                   />
                 </div>
               </form>
@@ -234,9 +233,9 @@ export default function Navbar() {
                     <button
                       key={item.key}
                       onClick={handleEnVivoClick}
-                      className="flex items-center px-6 py-3 text-lg transition-colors text-[#E5754C] font-bold w-full text-left"
+                      className="flex items-center px-6 py-3 text-lg transition-colors text-[#2F3037] font-medium w-full text-left hover:text-[#D51F2F]"
                     >
-                      <IoRadio className="w-5 h-5 mr-2" />
+                      <IoRadio className="w-5 h-5 mr-2 text-[#D51F2F]" />
                       {item.key.charAt(0).toUpperCase() + item.key.slice(1).replace('-', ' ')}
                     </button>
                   );
@@ -249,10 +248,10 @@ export default function Navbar() {
                       handleLinkClick(item.key);
                       closeMenu();
                     }}
-                    className={`flex items-center px-6 py-3 text-lg transition-colors ${
+                    className={`flex items-center px-6 text-lg transition-colors ${
                       isActive
-                        ? 'text-[#E5754C] font-bold'
-                        : 'text-white hover:text-[#E5754C]'
+                        ? 'text-[#D51F2F] font-semibold'
+                        : 'text-[#2F3037] hover:text-[#D51F2F]'
                     }`}
                   >
                     {item.key.charAt(0).toUpperCase() + item.key.slice(1)}

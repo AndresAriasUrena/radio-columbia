@@ -19,7 +19,6 @@ export default function NewsCard({ post }: NewsCardProps) {
   return (
     <Link href={`/news/${post.slug}`}>
       <article className="group overflow-hidden hover:scale-[1.02] transition-all duration-700">
-        {/* Imagen de la noticia */}
         <div className="relative aspect-[16/11] bg-[#232323] rounded-2xl">
           <Image
             src={featuredImage}
@@ -30,31 +29,20 @@ export default function NewsCard({ post }: NewsCardProps) {
           />
         </div>
 
-        {/* Contenido de la noticia */}
         <div className="py-5">
-          <div className="flex justify-between items-center mb-2">
-            {/* Categoría */}
-            <span className="inline-block text-[#E5754C] bg-transparent text-xs font-medium px-0 py-0 rounded">
-              {category}
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-[#01A299] border-[1.4px] border-[#01A299] px-4 py-2 rounded-full bg-transparent text-sm font-medium">
+                 {category}
             </span>
-            {/* Fecha */}
-            <span className="text-xs font-medium text-[#B4B4B4]">
+
+            <span className="text-sm font-medium text-[#272727]/50">
               {formatDate(post.date)}
             </span>
           </div>
 
-          {/* Título */}
-          <h3 className="  text-xl font-medium text-[#B4B4B4] line-clamp-2 mb-2">
+          <h3 className="text-md md:text-xl font-medium text-[#2F3037] line-clamp-2">
             {cleanTitle(post.title.rendered)}
           </h3>
-
-          {/* Extracto 
-          <div 
-            className="mt-1 text-gray-300 text-sm line-clamp-2"
-            dangerouslySetInnerHTML={{ 
-              __html: post.excerpt.rendered.replace(/<\/?[^>]+(>|$)/g, "") 
-            }}
-          />*/}
         </div>
       </article>
     </Link>

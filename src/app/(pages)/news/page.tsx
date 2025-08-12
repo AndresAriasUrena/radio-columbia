@@ -89,7 +89,7 @@ function NewsContent() {
 export default function NewsPage() {
   return (
     <>
-      <div className="min-h-screen  ">
+      <div className="min-h-screen">
         <Navbar />
         <NewsContent />
       </div>

@@ -9,6 +9,7 @@ import Link from 'next/link';
 
 interface CategoryNewsGridProps {
   title: string;
+  description?: string;
   tagSlug?: string;
   maxPosts?: number;
   showLoadMore?: boolean;
@@ -19,6 +20,7 @@ interface CategoryNewsGridProps {
 
 export default function CategoryNewsGrid({
   title,
+  description,
   tagSlug,
   showLoadMore = true,
   showCategories = false,
@@ -191,13 +193,13 @@ export default function CategoryNewsGrid({
       <div className="flex-1 px-8">
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center max-w-7xl mx-auto">
           <div className="rounded-lg p-6 max-w-md">
-            <h3 className="text-lg font-semibold text-[#E5754C] mb-2">
+            <h3 className="text-lg font-semibold text-[#D51F2F] mb-2">
               Error al cargar noticias
             </h3>
             <p className="text-[#C7C7C7] mb-4">{error}</p>
             <button
               onClick={handleRetry}
-              className="text-[#E5754C] border-[1.4px] border-[#E5754C] px-4 py-2 rounded-full hover:shadow-[#E5754C] hover:shadow-sm transition-all duration-300"
+              className="text-white bg-[#1E305F] px-4 py-2 rounded-md hover:bg-[#D51F2F] transition-colors"
             >
               Reintentar
             </button>
@@ -208,105 +210,83 @@ export default function CategoryNewsGrid({
   }
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto px-8">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-        <div className="w-full">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-lexend font-semibold text-xl text-[#C7C7C7] uppercase">{title}</h2>
-            <Link href="/news" className="text-[#9A9898] hover:text-[#E5754C] text-sm flex items-center gap-1">
-              Ver todas <span aria-hidden>→</span>
-            </Link>
-          </div>
-          <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-
-          {showCategories && categories.length > 0 && (
-            <div className="">
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
-                <button
-                  onClick={() => handleCategoryClick('todas')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${selectedCategory === 'todas'
-                      ? 'bg-gradient-to-r from-[#E5754C] to-[#FF8A65] text-white'
-                      : 'bg-transparent border border-[#868686] text-[#868686] hover:border-[#E5754C] hover:text-[#E5754C]'
-                    }`}
-                >
-                  Todas
-                </button>
-                {categories.map((category) => (
-                  <button
-                    key={category.slug}
-                    onClick={() => handleCategoryClick(category.slug)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${selectedCategory === category.slug
-                        ? 'bg-gradient-to-r from-[#E5754C] to-[#FF8A65] text-white'
-                        : 'bg-transparent border border-[#868686] text-[#868686] hover:border-[#E5754C] hover:text-[#E5754C]'
-                      }`}
-                  >
-                    {category.name}
-                  </button>
-                ))}
+    <div className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+      <div className="flex-1 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
+          <div className="w-full">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col gap-2">
+                <h2 className="font-semibold text-lg md:text-2xl text-[#1B1B1B]">{title}</h2>
+                {description && <p className="text-sm text-[#64748B] hidden md:block">{description}</p>}
               </div>
+              <Link href="/news" className="text-[#9A9898] border border-[#9A9898] rounded-md px-2 py-1 md:px-4 md:py-2 hover:text-[#1E305F] hover:border-[#1E305F] text-xs md:text-sm flex items-center transition-all duration-300">
+                Ver todas <span aria-hidden>→</span>
+              </Link>
             </div>
-          )}
-        </div>
-      </div>
+            <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
 
-      {loading && posts.length === 0 && (
-        <div className={`grid ${
-          cardType === 'grid' 
-            ? 'grid-cols-1' 
-            : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
-        }`}>
-          {Array.from({ length: POSTS_PER_PAGE }).map((_, index) => (
-            <div key={index} className="animate-pulse">
-              {cardType === 'grid' ? (
-                <div className="bg-[#232323] h-32 rounded-2xl"></div>
-              ) : (
-                <>
-                  <div className="bg-[#232323] aspect-[16/11] rounded-2xl mb-4"></div>
-                  <div className="h-4 bg-[#232323] rounded mb-2"></div>
-                  <div className="h-4 bg-[#232323] rounded w-2/3"></div>
-                </>
-              )}
-            </div>
-          ))}
+          </div>
         </div>
-      )}
 
-      {posts.length > 0 && (
-        <>
-          <div className={`grid  ${
+        {loading && posts.length === 0 && (
+          <div className={`grid ${
             cardType === 'grid' 
-              ? 'grid-cols-1' 
+              ? 'grid-cols-1 space-y-4' 
               : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
           }`}>
-            {posts.map((post) => (
-              cardType === 'grid' ? (
-                <NewsCardGrid key={post.id} post={post} />
-              ) : (
-                <NewsCard key={post.id} post={post} />
-              )
+            {Array.from({ length: POSTS_PER_PAGE }).map((_, index) => (
+              <div key={index} className="animate-pulse">
+                {cardType === 'grid' ? (
+                  <div className="bg-[#D4D5DD] h-32 rounded-2xl"></div>
+                ) : (
+                  <>
+                    <div className="bg-[#D4D5DD] aspect-[16/11] rounded-2xl mb-4"></div>
+                    <div className="h-4 bg-[#D4D5DD] rounded mb-2"></div>
+                    <div className="h-4 bg-[#D4D5DD] rounded w-2/3"></div>
+                  </>
+                )}
+              </div>
             ))}
           </div>
+        )}
 
-          {hasMore && !loading && showLoadMore && (
-            <div className="text-center mt-8">
-              <button
-                onClick={handleLoadMore}
-                className="text-[#E5754C] border-[1.4px] border-[#E5754C] px-4 py-2 rounded-full hover:shadow-[#E5754C] hover:shadow-sm transition-all duration-300"
-              >
-                Cargar más noticias
-              </button>
+        {posts.length > 0 && (
+          <>
+            <div className={`grid  ${
+              cardType === 'grid' 
+                ? 'grid-cols-1' 
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
+            }`}>
+              {posts.map((post) => (
+                cardType === 'grid' ? (
+                  <NewsCardGrid key={post.id} post={post} />
+                ) : (
+                  <NewsCard key={post.id} post={post} />
+                )
+              ))}
             </div>
-          )}
-        </>
-      )}
 
-      {!loading && posts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-[#C7C7C7] text-lg">
-            No se encontraron noticias en esta categoría
-          </p>
-        </div>
-      )}
+            {hasMore && !loading && showLoadMore && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  className="text-[#9A9898] border border-[#9A9898] px-4 py-2 rounded-md hover:border-[#1E305F] hover:text-white hover:bg-[#1E305F] transition-colors duration-300"
+                >
+                  Cargar más noticias
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {!loading && posts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-[#C7C7C7] text-lg">
+              No se encontraron noticias en esta categoría
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 } 

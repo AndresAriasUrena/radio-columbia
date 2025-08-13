@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Facebook, Instagram, X, Search, Youtube, Mail, ArrowLeftRight } from 'lucide-react';
+import { Facebook, Instagram, X, Search, Youtube, Mail, ArrowLeftRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { IoClose } from 'react-icons/io5';
 import { SearchContext } from '@/lib/SearchContext';
 import WordPressService from '@/lib/wordpressService';
@@ -34,6 +34,24 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
 
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(8);
+
+  // Estados para secciones desplegables
+  const [expandedSections, setExpandedSections] = useState({
+    categories: true,
+    currency: false,
+    earthquakes: false,
+    standings: false,
+    weather: false,
+    lottery: false,
+    social: false
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   // Estado del conversor de divisas
   const currencies: Array<{ code: string; name: string }> = [
@@ -226,46 +244,48 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
   }, []);
 
   return (
-    <div className="mx-2">
-      <div className="w-full lg:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#1E305F] my-4 rounded-2xl">
+    <div className="w-full lg:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#1E305F] my-4 rounded-2xl">
       <div className="lg:hidden flex items-center justify-between mb-6">
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
+        <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
         <button
           onClick={() => setIsMobileOpen(false)}
-            className="p-2 hover:bg-[#FFFFFF]/15 rounded-lg transition-colors"
+          className="p-2 hover:bg-[#FFFFFF]/15 rounded-lg transition-colors"
         >
           <IoClose className="w-6 h-6" />
         </button>
       </div>
 
-      <div className="mb-8">
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Categorías</h2>
-          <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
-        {loading ? (
+      {/* Categorías */}
+      <div className="mb-6">
+        <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Categorías</h2>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className="overflow-hidden opacity-100">
+          {loading ? (
             <div className="text-[#D4D5DD] text-sm">Cargando categorías...</div>
-        ) : (
-          <div className="flex flex-wrap gap-2">
+          ) : (
+            <div className="flex flex-wrap gap-2">
               {availableFilters.categories.slice(0, visibleCount).map((category) => (
-              <a 
-                key={category.slug}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleCheckboxChange('categories', category.slug);
-                }}
-                className={`
+                <a 
+                  key={category.slug}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleCheckboxChange('categories', category.slug);
+                  }}
+                  className={`
                     w-full px-3 py-2 rounded-md text-sm transition-colors border border-[#FFFFFF]/10
                     flex items-center gap-2
-                  ${selectedFilters.categories.includes(category.slug) 
+                    ${selectedFilters.categories.includes(category.slug) 
                       ? 'bg-[#D51F2F] text-white' 
                       : 'bg-transparent text-[#D4D5DD] hover:bg-[#D51F2F] hover:text-white'
-                  }
-                `}
-              >
-                <span className="truncate">{category.label}</span>
+                    }
+                  `}
+                >
+                  <span className="truncate">{category.label}</span>
                   <span className="text-sm ml-1 flex-shrink-0">({category.count})</span>
-              </a>
-            ))}
+                </a>
+              ))}
               {availableFilters.categories.length > visibleCount && (
                 <button
                   onClick={() => setVisibleCount((c) => Math.min(c + 8, availableFilters.categories.length))}
@@ -274,29 +294,103 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
                   Cargar más
                 </button>
               )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
 
-        <CurrencyConverter />
- 
-        <EarthquakesBlock />
- 
-        <StandingsTable />
- 
-        {/* Clima */}
-        <div className="mb-8">
+      {/* Conversor de Divisas */}
+      <div className="mb-6">
+        <button
+          onClick={() => toggleSection('currency')}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Conversor de Divisas</h2>
+          {expandedSections.currency ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.currency ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <CurrencyConverter />
+        </div>
+      </div>
+
+      {/* Actividad Sísmica */}
+      <div className="mb-6">
+        <button
+          onClick={() => toggleSection('earthquakes')}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Actividad Sísmica</h2>
+          {expandedSections.earthquakes ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.earthquakes ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <EarthquakesBlock />
+        </div>
+      </div>
+
+      {/* Tabla de Posiciones */}
+      <div className="mb-6">
+        <button
+          onClick={() => toggleSection('standings')}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Primera División</h2>
+          {expandedSections.standings ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.standings ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <StandingsTable />
+        </div>
+      </div>
+
+      {/* Clima */}
+      <div className="mb-6">
+        <button
+          onClick={() => toggleSection('weather')}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Clima</h2>
+          {expandedSections.weather ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.weather ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <WeatherSlider />
         </div>
+      </div>
 
-        {/* Lotería */}
-        <div className="mb-8">
+      {/* Lotería */}
+      <div className="mb-6">
+        <button
+          onClick={() => toggleSection('lottery')}
+          className="w-full flex items-center justify-between text-left"
+        >
+          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Resultados de Lotería</h2>
+          {expandedSections.lottery ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.lottery ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <LotteryResults />
         </div>
+      </div>
 
-        <div>
+      {/* Redes Sociales */}
+      <div className="-mb-6">
+        <button
+          onClick={() => toggleSection('social')}
+          className="w-full flex items-center justify-between text-left"
+        >
           <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Nuestras Redes</h2>
-          <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+          {expandedSections.social ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </button>
+        <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
+        
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.social ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="grid grid-cols-1 gap-2">
             {socialLinks.map(({ label, href, Icon, external }) => (
               <a
@@ -311,8 +405,8 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
               </a>
             ))}
           </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

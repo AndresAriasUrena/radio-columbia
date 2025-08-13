@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import FilterSidebar from '@/components/news/FilterSidebar';
 import NewsGrid from '@/components/news/NewsGrid';
 import { FilterData } from '@/types/wordpress';
+import { Search } from 'lucide-react';
 
 function NewsContent() {
   const [filters, setFilters] = useState<FilterData>({ categories: [] });
@@ -37,6 +38,15 @@ function NewsContent() {
 
   return (
     <div className="px-4 sm:px-8">
+      <div className="lg:hidden fixed bottom-20 right-4 z-50">
+        <button
+          onClick={() => setIsMobileFiltersOpen(true)}
+          className="bg-[#1E305F] hover:bg-[#D51F2F] text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110"
+        >
+          <Search className="w-6 h-6" />
+        </button>
+      </div>
+
       <div className="max-w-7xl mx-auto relative">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
           <div className="flex-1 order-2 lg:order-1">
@@ -62,17 +72,17 @@ function NewsContent() {
         </div>
 
         <div 
-          className={`fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300 ${
+          className={`fixed inset-0 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${
             isMobileFiltersOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           onClick={() => setIsMobileFiltersOpen(false)}
         />
         
-        <div className={`fixed right-0 top-0 h-full w-80 bg-[#0a0a0a] z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        <div className={`fixed right-0 top-0 h-full w-80 bg-[#1E305F] z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           isMobileFiltersOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
-          <div className="p-4 h-full overflow-y-auto">
-            <Suspense>
+          <div className="-my-5 h-full overflow-y-auto">
+          <Suspense>
               <FilterSidebar 
                 onFilterChange={handleFilterChange}
                 isMobileOpen={isMobileFiltersOpen}

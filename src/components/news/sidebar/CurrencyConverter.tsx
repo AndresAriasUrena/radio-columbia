@@ -59,9 +59,6 @@ export default function CurrencyConverter() {
 
   return (
     <div className="mb-8">
-      <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Conversor de Divisas</h2>
-      <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
-
       <div className="flex items-center gap-2 bg-[#FFFFFF]/10 rounded-lg px-2 py-2 mb-3">
         <span className="px-3 py-1 rounded-md bg-[#FFFFFF]/10 text-sm border border-[#FFFFFF]/10">{fromCur}</span>
         <input

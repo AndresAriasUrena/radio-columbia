@@ -27,8 +27,6 @@ export default function EarthquakesBlock() {
 
   return (
     <div className="mb-8">
-      <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Actividad Sísmica</h2>
-      <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
       {loading ? (
         <div className="text-[#D4D5DD] text-sm">Cargando sismos...</div>
       ) : items.length === 0 ? (

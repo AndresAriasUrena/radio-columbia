@@ -113,8 +113,6 @@ function Block({ kind, title }: { kind: Kind; title: string }) {
 export default function LotteryResults() {
   return (
     <div>
-      <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Lotería</h2>
-      <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
       <Block kind="loteria" title="Lotería Nacional" />
       <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-6" />
       <Block kind="chances" title="Chances" />

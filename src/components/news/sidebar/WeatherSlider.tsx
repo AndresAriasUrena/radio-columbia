@@ -86,8 +86,7 @@ export default function WeatherSlider() {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Clima</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center ml-auto mb-1 gap-2">
           <button onClick={() => scrollBy('left')} className="p-2 rounded-full bg-[#FFFFFF]/15 hover:bg-[#D51F2F] transition-colors">
             <IoArrowBack className="w-4 h-4 text-[#D4D5DD]" />
           </button>
@@ -96,7 +95,6 @@ export default function WeatherSlider() {
           </button>
         </div>
       </div>
-      <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 mb-3" />
 
       {error && (
         <div className="text-sm text-[#D4D5DD]">{error}</div>

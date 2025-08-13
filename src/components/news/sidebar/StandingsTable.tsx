@@ -27,10 +27,6 @@ export default function StandingsTable() {
 
   return (
     <div className="mb-8">
-      <div className="flex items-center justify-between">
-        <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Primera División</h2>
-      </div>
-      <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
       {loading ? (
         <div className="text-[#D4D5DD] text-sm">Cargando tabla...</div>
       ) : rows.length === 0 ? (

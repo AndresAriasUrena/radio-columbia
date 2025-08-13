@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     });
   }
 
-  const cleanTitle = post.title.rendered.replace(/<[^>]+>/g, '');
-  const cleanDescription = post.excerpt.rendered.replace(/<[^>]+>/g, '').trim();
+  const cleanTitle = WordPressService.cleanHtml(post.title.rendered);
+  const cleanDescription = WordPressService.cleanHtml(post.excerpt.rendered);
   const featuredImage = WordPressService.getFeaturedImage(post);
   const author = WordPressService.getAuthor(post);
   const category = post._embedded?.['wp:term']?.[0]?.[0]?.name;
@@ -89,7 +89,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
 
     const author = WordPressService.getAuthor(post);
     const formatDate = WordPressService.formatDate;
-    const cleanTitle = post.title.rendered.replace(/<[^>]+>/g, '');
+    const cleanTitle = WordPressService.cleanHtml(post.title.rendered);
 
     const newsSchema = generateNewsSchema(post);
     

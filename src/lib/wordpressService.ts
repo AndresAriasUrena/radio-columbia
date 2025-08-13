@@ -237,7 +237,49 @@ class WordPressService {
   }
 
   static cleanHtml(html: string): string {
-    return html.replace(/<[^>]+>/g, '');
+    if (!html) return '';
+
+    const withoutTags = html.replace(/<[^>]+>/g, ' ');
+
+    const decodeNamed = (str: string): string => {
+      const named: Record<string, string> = {
+        amp: '&',
+        lt: '<',
+        gt: '>',
+        quot: '"',
+        apos: "'",
+        nbsp: ' ',
+        hellip: '…',
+        ndash: '–',
+        mdash: '—',
+        rsquo: '’',
+        lsquo: '‘',
+        ldquo: '“',
+        rdquo: '”',
+      };
+      return str.replace(/&([a-zA-Z]+);/g, (m, p1) => (named[p1] !== undefined ? named[p1] : m));
+    };
+
+    const decodeNumeric = (str: string): string => {
+      const dec = str.replace(/&#(\d+);/g, (_m, code) => {
+        try { return String.fromCodePoint(parseInt(code, 10)); } catch { return _m; }
+      });
+      const hex = dec.replace(/&#x([0-9a-fA-F]+);/g, (_m, code) => {
+        try { return String.fromCodePoint(parseInt(code, 16)); } catch { return _m; }
+      });
+      return hex;
+    };
+
+    const decodeBrowser = (str: string): string => {
+      if (typeof window === 'undefined') return str;
+      const textarea = document.createElement('textarea');
+      textarea.innerHTML = str;
+      return textarea.value;
+    };
+
+    const decoded = decodeBrowser(decodeNumeric(decodeNamed(withoutTags)));
+
+    return decoded.replace(/\s+/g, ' ').trim();
   }
 }
 

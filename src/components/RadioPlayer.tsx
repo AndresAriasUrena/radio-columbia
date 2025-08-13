@@ -8,9 +8,7 @@ import {
   VolumeX, 
   SkipBack, 
   SkipForward,
-  Radio,
-  Minimize2,
-  Maximize2
+  Radio
 } from 'lucide-react';
 import { usePlayer } from '@/lib/PlayerContext';
 import Image from 'next/image';
@@ -23,7 +21,6 @@ const RadioPlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const radioUrl = "https://streams.radio.co/s7e8f19c33/listen";
   const previousSourceRef = useRef<string>('');
@@ -205,23 +202,8 @@ const RadioPlayer = () => {
     playerState.currentIndex !== undefined && 
     playerState.currentIndex > 0;
 
-  // Si está minimizado, mostrar solo la bolita
-  if (isMinimized) {
-    return (
-      <div className="fixed bottom-4 left-4 bg-[#1E305C] rounded-full p-3 text-[#C7C7C7] z-50 shadow-lg hover:bg-[#D51F2F] transition-all duration-300 cursor-pointer animate-in slide-in-from-bottom-2 zoom-in-95">
-        <button
-          onClick={() => setIsMinimized(false)}
-          className="flex items-center justify-center"
-          title="Expandir reproductor"
-        >
-          <Maximize2 className="w-5 h-5" />
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="fixed bottom-1 left-0 right-0 bg-[#1E305C] mx-1 rounded-xl rounded-t-none text-[#C7C7C7] z-50 animate-in slide-in-from-bottom-2 zoom-in-95">
+    <div className="fixed bottom-1 left-0 right-0 bg-[#1E305C] mx-1 rounded-xl rounded-t-none text-[#C7C7C7] z-50">
       <audio
         ref={audioRef}
         preload="none"
@@ -348,14 +330,6 @@ const RadioPlayer = () => {
         </div>
 
         <div className="hidden lg:flex items-center space-x-3 min-w-0 flex-1 justify-end">
-          <button
-            onClick={() => setIsMinimized(true)}
-            className="p-2 rounded-full hover:bg-gray-700 transition-colors"
-            title="Minimizar reproductor"
-          >
-            <Minimize2 className="w-4 h-4" />
-          </button>
-
           <button
             onClick={toggleMute}
             className="p-2 rounded-full hover:bg-gray-700 transition-colors"

@@ -9,7 +9,7 @@ import NewsGrid from '@/components/news/NewsGrid';
 import { FilterData } from '@/types/wordpress';
 import { Search } from 'lucide-react';
 
-function NewsContent() {
+function NewsContent({ title }: { title: string }) {
   const [filters, setFilters] = useState<FilterData>({ categories: [] });
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
@@ -37,37 +37,33 @@ function NewsContent() {
   };
 
   return (
-    <div className="px-4 sm:px-8">
-      <div className="lg:hidden fixed bottom-20 right-4 z-50">
-        <button
-          onClick={() => setIsMobileFiltersOpen(true)}
-          className="bg-[#1E305F] hover:bg-[#D51F2F] text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110"
-        >
-          <Search className="w-6 h-6" />
-        </button>
-      </div>
+    <>
+      <div className="min-h-screen overflow-hidden">        
+        <div className="lg:hidden fixed bottom-20 right-4 z-50">
+          <button
+            onClick={() => setIsMobileFiltersOpen(true)}
+            className="bg-[#1E305F] hover:bg-[#D51F2F] text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110"
+          >
+            <Search className="w-6 h-6" />
+          </button>
+        </div>
 
-      <div className="max-w-7xl mx-auto relative">
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
-          <div className="flex-1 order-2 lg:order-1">
-            <Suspense>
-              <NewsGrid 
-                filters={filters} 
-                onOpenFilters={() => setIsMobileFiltersOpen(true)}
-              />
-            </Suspense>
+        <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
+          <div className="flex-1">
+            <NewsGrid 
+              filters={filters} 
+              onOpenFilters={() => setIsMobileFiltersOpen(true)}
+              title={title}
+            />
           </div>
-
-          <div className="order-1 lg:order-2">
-            <div className="hidden lg:block">
-              <Suspense>
-                <FilterSidebar 
-                  onFilterChange={handleFilterChange}
-                  isMobileOpen={false}
-                  setIsMobileOpen={() => {}}
-                />
-              </Suspense>
-            </div>
+          
+          {/* Sidebar desktop */}
+          <div className="hidden lg:block">
+            <FilterSidebar 
+              onFilterChange={handleFilterChange}
+              isMobileOpen={false}
+              setIsMobileOpen={() => {}}
+            />
           </div>
         </div>
 
@@ -82,17 +78,15 @@ function NewsContent() {
           isMobileFiltersOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <div className="-my-5 h-full overflow-y-auto">
-          <Suspense>
-              <FilterSidebar 
-                onFilterChange={handleFilterChange}
-                isMobileOpen={isMobileFiltersOpen}
-                setIsMobileOpen={setIsMobileFiltersOpen}
-              />
-            </Suspense>
+            <FilterSidebar 
+              onFilterChange={handleFilterChange}
+              isMobileOpen={isMobileFiltersOpen}
+              setIsMobileOpen={setIsMobileFiltersOpen}
+            />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -101,7 +95,9 @@ export default function NewsPage() {
     <>
       <div className="min-h-screen">
         <Navbar />
-        <NewsContent />
+        <NewsContent
+          title="Noticias"
+        />
       </div>
       <Footer />
     </>

@@ -326,7 +326,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
         
-        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.earthquakes ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.earthquakes ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <EarthquakesBlock />
         </div>
       </div>

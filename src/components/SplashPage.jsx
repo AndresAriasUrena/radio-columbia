@@ -26,7 +26,7 @@ export default function SplashPage() {
   if (!isVisible) return null;
 
   return (
-    <div className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0a] transition-all duration-700 ease-in-out ${
+    <div className={`fixed inset-0 z-[9999] flex items-center justify-center bg-white transition-all duration-700 ease-in-out ${
       isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
     }`}>
       <div className="text-center">
@@ -34,24 +34,13 @@ export default function SplashPage() {
         <div className="mb-8 animate-pulse">
           <Image
             src="/assets/LogoColumbia.svg"
-            alt="Amplify Radio"
+            alt="Columbia"
             width={250}
             height={100}
             className="mx-auto drop-shadow-lg"
             priority
           />
         </div>
-        
-        {/* Texto de carga */}
-        <div className="text-[#ededed] text-xl font-light animate-pulse mb-6">
-          Cargando Amplify Radio...
-        </div>
-        
-        {/* Texto adicional */}
-        <div className="text-gray-400 text-sm mt-4 animate-pulse">
-          Tu estación de radio online
-        </div>
-    
       </div>
     </div>
   );

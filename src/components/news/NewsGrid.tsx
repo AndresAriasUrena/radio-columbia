@@ -12,9 +12,10 @@ import { WordPressPost, FilterData } from '@/types/wordpress';
 interface NewsGridProps {
   filters: FilterData | null;
   onOpenFilters: () => void;
+  title: string;
 }
 
-export default function NewsGrid({ filters, onOpenFilters }: NewsGridProps) {
+export default function NewsGrid({ filters, onOpenFilters, title }: NewsGridProps) {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,18 +106,17 @@ export default function NewsGrid({ filters, onOpenFilters }: NewsGridProps) {
 
   if (error) {
     return (
-      <div className="flex-1">
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+      <div className="flex-1 px-8">
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center max-w-7xl mx-auto">
           <div className="rounded-lg p-6 max-w-md">
-            <h3 className="text-lg font-semibold text-[#E5754C] mb-2">
+            <h3 className="text-lg font-semibold text-[#D51F2F] mb-2">
               Error al cargar noticias
             </h3>
             <p className="text-[#C7C7C7] mb-4">{error}</p>
             <button
               onClick={handleRetry}
-              className="text-[#E5754C] border-[1.4px] border-[#E5754C] px-4 py-2 rounded-full hover:shadow-[#E5754C] hover:shadow-sm transition-all duration-300"
+              className="text-white bg-[#1E305F] px-4 py-2 rounded-md hover:bg-[#D51F2F] transition-colors"
             >
-              <IoReload className="w-4 h-4" />
               Reintentar
             </button>
           </div>
@@ -126,71 +126,74 @@ export default function NewsGrid({ filters, onOpenFilters }: NewsGridProps) {
   }
 
   return (
-    <div className="flex-1">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-        <div className="w-full">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="font-lexend font-semibold text-xl">ÚLTIMAS NOTICIAS</h2>
-            <button
-              onClick={onOpenFilters}
-              className="lg:hidden flex items-center gap-2 bg-[#E5754C] text-[#0a0a0a] px-3 py-2 rounded-lg hover:bg-[#C7C7C7] transition-colors"
-            >
-              <IoFilter className="w-4 h-4" />
-              <span className="text-sm font-semibold">Filtros</span>
-            </button>
-          </div>
-          <div className="h-0.5 w-full bg-[#E5754C] my-4" />
-          
-          <p className="text-[#C7C7C7]/50 mt-1">
-            {loading && posts.length === 0 
-              ? 'Cargando...' 
-              : `${posts.length} de ${totalPosts} noticias encontradas`}
-            {searchTerm && ` para "${searchTerm}"`}
-          </p>
-        </div>
-      </div>
-
-      {loading && posts.length === 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {Array.from({ length: INITIAL_LOAD }).map((_, index) => (
-            <div key={index} className="animate-pulse">
-              <div className="bg-[#232323] aspect-[16/11] rounded-2xl mb-4"></div>
-              <div className="h-4 bg-[#232323] rounded mb-2"></div>
-              <div className="h-4 bg-[#232323] rounded w-2/3"></div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {posts.length > 0 && (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {posts.map((post) => (
-              <NewsCard key={post.id} post={post} />
-            ))}
-          </div>
-
-          {hasMore && !loading && (
-            <div className="text-center mt-8">
+    <div className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
+      <div className="flex-1 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
+          <div className="w-full">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col gap-2">
+                <h2 className="font-semibold text-lg md:text-2xl text-[#1B1B1B]">{title}</h2>
+                <p className="text-sm text-[#64748B] hidden md:block">
+                  {loading && posts.length === 0 
+                    ? 'Cargando...' 
+                    : `${posts.length} de ${totalPosts} noticias encontradas`}
+                  {searchTerm && ` para "${searchTerm}"`}
+                </p>
+              </div>
               <button
-                onClick={handleLoadMore}
-                className="text-[#E5754C] border-[1.4px] border-[#E5754C] px-4 py-2 rounded-full hover:shadow-[#E5754C] hover:shadow-sm transition-all duration-300"
+                onClick={onOpenFilters}
+                className="lg:hidden flex items-center gap-2 bg-[#1E305F] text-white px-3 py-2 rounded-md hover:bg-[#D51F2F] transition-colors"
               >
-                Cargar más noticias
+                <IoFilter className="w-4 h-4" />
+                <span className="text-sm font-semibold">Filtros</span>
               </button>
             </div>
-          )}
-        </>
-      )}
-
-      {!loading && posts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-[#C7C7C7] text-lg">
-            No se encontraron noticias
-            {searchTerm && ` para "${searchTerm}"`}
-          </p>
+            <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
+          </div>
         </div>
-      )}
+
+        {loading && posts.length === 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {Array.from({ length: INITIAL_LOAD }).map((_, index) => (
+              <div key={index} className="animate-pulse">
+                <div className="bg-[#D4D5DD] aspect-[16/11] rounded-2xl mb-4"></div>
+                <div className="h-4 bg-[#D4D5DD] rounded mb-2"></div>
+                <div className="h-4 bg-[#D4D5DD] rounded w-2/3"></div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {posts.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {posts.map((post) => (
+                <NewsCard key={post.id} post={post} />
+              ))}
+            </div>
+
+            {hasMore && !loading && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  className="text-[#9A9898] border border-[#9A9898] px-4 py-2 rounded-md hover:border-[#1E305F] hover:text-white hover:bg-[#1E305F] transition-colors duration-300"
+                >
+                  Cargar más noticias
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {!loading && posts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-[#C7C7C7] text-lg">
+              No se encontraron noticias
+              {searchTerm && ` para "${searchTerm}"`}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

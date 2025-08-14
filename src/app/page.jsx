@@ -25,7 +25,7 @@ export default function HomePage() {
           </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row -my-4 md:px-6">
+        <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
           <div className="flex-1">
             <Hero tagSlug="travel"/>
             <CategoryNewsGrid

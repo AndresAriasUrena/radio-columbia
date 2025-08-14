@@ -3,19 +3,20 @@
 
 import { useState, useEffect, useContext, useCallback } from 'react';
 import NewsCard from '../UI/NewsCard';
-import { IoFilter, IoClose, IoReload } from 'react-icons/io5';
+import { IoFilter } from 'react-icons/io5';
 import { SearchContext } from '@/lib/SearchContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import WordPressService from '@/lib/wordpressService';
-import { WordPressPost, FilterData } from '@/types/wordpress';
+import { WordPressPost, FilterData, WordPressCategory } from '@/types/wordpress';
 
 interface NewsGridProps {
   filters: FilterData | null;
   onOpenFilters: () => void;
-  title: string;
+  title?: string;
+  parentSlugs?: string[];
 }
 
-export default function NewsGrid({ filters, onOpenFilters, title }: NewsGridProps) {
+export default function NewsGrid({ filters, onOpenFilters, title = 'Noticias', parentSlugs = [] }: NewsGridProps) {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,8 @@ export default function NewsGrid({ filters, onOpenFilters, title }: NewsGridProp
   const [sortBy, setSortBy] = useState<'date' | 'title-asc' | 'title-desc'>('date');
   const [totalPosts, setTotalPosts] = useState(0);
   const [categoriesMap, setCategoriesMap] = useState<{[slug: string]: number}>({});
+  const [categorySlugToParentId, setCategorySlugToParentId] = useState<{[slug: string]: number}>({});
+  const [allCategories, setAllCategories] = useState<WordPressCategory[]>([]);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
   const { searchTerm } = useContext(SearchContext);
   const router = useRouter();
@@ -35,11 +38,16 @@ export default function NewsGrid({ filters, onOpenFilters, title }: NewsGridProp
   useEffect(() => {
     const fetchCategoriesMap = async () => {
       try {
-        const { categoriesMap } = await WordPressService.getCategories();
+        const { categories, categoriesMap } = await WordPressService.getCategories();
         setCategoriesMap(categoriesMap as {[slug: string]: number});
+        const slugToParent: {[slug: string]: number} = {};
+        categories.forEach((cat: any) => {
+          slugToParent[cat.slug] = cat.parent;
+        });
+        setCategorySlugToParentId(slugToParent);
+        setAllCategories(categories as WordPressCategory[]);
         setCategoriesLoaded(true);
       } catch (error) {
-        console.error('Error loading categories map:', error);
         setCategoriesLoaded(true);
       }
     };
@@ -56,11 +64,42 @@ export default function NewsGrid({ filters, onOpenFilters, title }: NewsGridProp
 
       const perPage = pageNum === 1 ? INITIAL_LOAD : POSTS_PER_PAGE;
 
-      const categoryIds = filters?.categories && filters.categories.length > 0
+      let categoryIds = filters?.categories && filters.categories.length > 0
         ? filters.categories
             .map(slug => categoriesMap[slug])
             .filter(id => id !== undefined)
         : [];
+
+      if (parentSlugs.length > 0) {
+        const normalizedTargets = parentSlugs.map(s => s.toLowerCase());
+        const parentIds = allCategories
+          .filter(cat => normalizedTargets.includes(cat.slug.toLowerCase()) || normalizedTargets.includes(cat.name.toLowerCase()))
+          .map(cat => cat.id);
+
+        if (parentIds.length > 0) {
+          const idToParent: {[id: number]: number} = {};
+          allCategories.forEach(cat => { idToParent[cat.id] = cat.parent; });
+          const descendants = new Set<number>();
+          const queue: number[] = [...parentIds];
+          while (queue.length > 0) {
+            const current = queue.shift() as number;
+            allCategories.forEach(cat => {
+              if (idToParent[cat.id] === current && !descendants.has(cat.id)) {
+                descendants.add(cat.id);
+                queue.push(cat.id);
+              }
+            });
+          }
+          const childrenIds = Array.from(descendants);
+
+          if (categoryIds.length === 0) {
+            categoryIds = childrenIds.length > 0 ? childrenIds : parentIds;
+          } else {
+            const allowed = new Set<number>([...childrenIds, ...parentIds]);
+            categoryIds = categoryIds.filter(cid => allowed.has(cid));
+          }
+        }
+      }
 
       const result = await WordPressService.getPosts({
         page: pageNum,
@@ -84,7 +123,7 @@ export default function NewsGrid({ filters, onOpenFilters, title }: NewsGridProp
     } finally {
       setLoading(false);
     }
-  }, [sortBy, filters, searchTerm, categoriesMap]);
+  }, [sortBy, filters, searchTerm, categoriesMap, parentSlugs, categorySlugToParentId, allCategories]);
 
   useEffect(() => {
     if (categoriesLoaded) {

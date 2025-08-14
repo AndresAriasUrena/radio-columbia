@@ -54,6 +54,7 @@ function NewsContent({ title }: { title: string }) {
               filters={filters} 
               onOpenFilters={() => setIsMobileFiltersOpen(true)}
               title={title}
+              parentSlugs={["deportes"]}
             />
           </div>
           
@@ -63,6 +64,7 @@ function NewsContent({ title }: { title: string }) {
               onFilterChange={handleFilterChange}
               isMobileOpen={false}
               setIsMobileOpen={() => {}}
+              parentSlugs={["deportes"]}
             />
           </div>
         </div>
@@ -82,6 +84,7 @@ function NewsContent({ title }: { title: string }) {
               onFilterChange={handleFilterChange}
               isMobileOpen={isMobileFiltersOpen}
               setIsMobileOpen={setIsMobileFiltersOpen}
+              parentSlugs={["deportes"]}
             />
           </div>
         </div>

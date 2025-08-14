@@ -17,9 +17,10 @@ interface FilterSidebarProps {
   onFilterChange?: (filters: FilterData) => void;
   isMobileOpen?: boolean;
   setIsMobileOpen?: (open: boolean) => void;
+  parentSlugs?: string[];
 }
 
-const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen = () => { } }: FilterSidebarProps) => {
+const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen = () => { }, parentSlugs = [] }: FilterSidebarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
@@ -96,8 +97,20 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
         
         const { categories } = await WordPressService.getCategories();
 
+        // Si se especifican categorías padre (por slug o nombre), filtrar solo las categorías hijas
+        let filtered = categories as WordPressCategory[];
+        if (parentSlugs && parentSlugs.length > 0) {
+          const normalizedTargets = parentSlugs.map(s => s.toLowerCase());
+          const parentIds = categories
+            .filter((cat: WordPressCategory) => normalizedTargets.includes(cat.slug.toLowerCase()) || normalizedTargets.includes(cat.name.toLowerCase()))
+            .map((cat: WordPressCategory) => cat.id);
+          if (parentIds.length > 0) {
+            filtered = categories.filter((cat: WordPressCategory) => parentIds.includes(cat.parent));
+          }
+        }
+
         setAvailableFilters({
-          categories: categories
+          categories: filtered
             .map((cat: WordPressCategory) => ({
               label: cat.name,
               count: cat.count,

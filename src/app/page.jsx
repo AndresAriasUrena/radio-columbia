@@ -52,6 +52,7 @@ export default function HomePage() {
             <FilterSidebar 
               isMobileOpen={false}
               setIsMobileOpen={() => {}}
+              parentSlugs={[]}
             />
           </div>
         </div>  
@@ -70,6 +71,7 @@ export default function HomePage() {
             <FilterSidebar 
               isMobileOpen={isMobileFiltersOpen}
               setIsMobileOpen={setIsMobileFiltersOpen}
+              parentSlugs={[]}
             />
           </div>
         </div>

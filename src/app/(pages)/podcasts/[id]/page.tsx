@@ -116,7 +116,7 @@ export default function PodcastDetailPage() {
           <div className="mx-2">
             <div className="max-w-7xl mx-auto relative flex flex-col lg:flex-row gap-4 ">
               <div className="w-full lg:w-[75%]">
-                <div className='px-4 sm:px-6 py-8 bg-[#D4D5DD] my-4 rounded-2xl'>
+                <div className='px-4 sm:px-6 py-8 bg-[#D4D5DD] rounded-2xl'>
                   <div className="p-8">
                     {/* Botón volver */}
                     <div className="animate-pulse mb-8">
@@ -150,7 +150,7 @@ export default function PodcastDetailPage() {
               </div>
 
               {/* Columna derecha - Episodios */}
-              <div className="w-full lg:w-[25%] mt-4">
+              <div className="w-full lg:w-[25%]">
                 <div className="animate-pulse">
                   {/* Título y navegación */}
                   <div className="flex justify-between items-center mb-3">
@@ -221,10 +221,10 @@ export default function PodcastDetailPage() {
         <div className="mx-2">
           <div className="max-w-7xl mx-auto relative flex flex-col lg:flex-row gap-4 ">
             <div className="w-full lg:w-[75%]">
-              <div className='px-4 sm:px-6 py-8 bg-[#F8FBFF] mt-4 rounded-2xl'>
+              <div className='px-4 sm:px-6 py-8 bg-[#F8FBFF] rounded-2xl'>
                 <Link
                   href="/podcasts"
-                  className="inline-flex items-center gap-2 text-[#000000] hover:text-[#1E305F] transition-colors"
+                  className="inline-flex items-center gap-2 text-[#000000] hover:text-[#1E305F] transition-colors mb-2"
                 >
                   <IoArrowBack className="w-4 h-4" />
                   Volver a podcasts
@@ -270,7 +270,7 @@ export default function PodcastDetailPage() {
               </div>
             </div>
 
-            <div className='w-full lg:w-[25%] lg:overflow-y-auto lg:max-h-[90vh] scrollbar-hide px-4 sm:px-8 py-4 sm:py-8 bg-[#1E305F] rounded-2xl mt-4'>
+            <div className='w-full lg:w-[25%] lg:overflow-y-auto lg:max-h-[90vh] scrollbar-hide px-4 sm:px-8 py-4 sm:py-8 bg-[#1E305F] rounded-2xl'>
               <div>
                 <div className='flex flex-row items-center justify-between'>
                   <h2 className=" font-semibold text-xl text-[#D4D5DD]">Capítulos ({episodes.length})</h2>

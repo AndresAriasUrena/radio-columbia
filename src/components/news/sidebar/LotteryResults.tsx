@@ -9,8 +9,8 @@ interface LotteryResp { fecha: string; premios: Prize[] }
 type Kind = 'loteria' | 'chances';
 
 const logos: Record<Kind, string> = {
-  loteria: '/assets/loteria/loteria-nacional.png',
-  chances: '/assets/loteria/chances.png'
+  loteria: '/assets/LtNacional.png',
+  chances: '/assets/chances.png'
 };
 
 function formatColones(value: any): string {
@@ -70,10 +70,10 @@ function Block({ kind, title }: { kind: Kind; title: string }) {
   }, [kind]);
 
   return (
-    <div className="mb-10">
-      <div className="flex items-center justify-center">
+    <div className="mb-10 flex flex-col items-center justify-center ">
+      <div className="flex items-center justify-center w-24 h-24 rounded-full bg-white p-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logos[kind]} alt={title} className="w-28 h-28 rounded-full bg-white p-5" />
+        <img src={logos[kind]} alt={title} className="bg-contain" />
       </div>
       <div className="flex items-center justify-center mt-4">
         <div className="inline-flex items-center gap-2 text-sm text-[#D4D5DD] bg-[#FFFFFF]/10 rounded-full px-4 py-2">

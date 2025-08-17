@@ -152,7 +152,7 @@ const Hero = ({ tagSlug = "hero" }) => {
                   />
                 </div>
                 <div className="py-3">
-                  <span className="text-[#1E305E] border-[1.4px] border-[#1E305E] px-4 py-2 rounded-full bg-transparent text-sm font-medium">
+                  <span className="text-[#1E305E] border-[1.4px] border-[#1E305E] px-4 py-[4px] rounded-full bg-transparent text-sm font-medium">
                     {getCategory(post)}
                   </span>
 

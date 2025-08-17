@@ -84,7 +84,7 @@ body {
 .prose h3.wp-block-heading,
 .prose h4.wp-block-heading {
   font-weight: bold;
-  color: #E5754C;
+  color: #2F3037;
   margin-bottom: 0.5em;
 }
 
@@ -100,7 +100,7 @@ body {
 }
 
 .prose strong {
-  color: #fff;
+  color: #2F3037;
 }
 
 .prose img {
@@ -137,59 +137,6 @@ body {
 
 .prose p {
   margin-bottom: 1em;
-}
-
-/* Breadcrumb Styles */
-.breadcrumb-nav {
-  margin-bottom: 1.5rem;
-}
-
-.breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.breadcrumb__item {
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumb__item:not(:last-child)::after {
-  content: '>';
-  margin: 0 0.5rem;
-  color: #9ca3af;
-  user-select: none;
-  font-weight: bold;
-}
-
-.breadcrumb__link {
-  color: #4f46e5;
-  text-decoration: none;
-  transition: color 0.2s ease-in-out;
-  border-radius: 0.25rem;
-  padding: 0.125rem 0.25rem;
-  margin: -0.125rem -0.25rem;
-}
-
-.breadcrumb__link:hover {
-  color: #3730a3;
-  text-decoration: underline;
-}
-
-.breadcrumb__link:focus {
-  outline: 2px solid #4f46e5;
-  outline-offset: 2px;
-}
-
-.breadcrumb__item--current span {
-  color: #374151;
-  font-weight: 500;
 }
 
 /* Responsive adjustments */

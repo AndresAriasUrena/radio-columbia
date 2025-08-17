@@ -232,7 +232,7 @@ export default function PodcastDetailPage() {
 
                 <div className="flex flex-col md:flex-row gap-6 md:p-8 justify-between lg:mb-14">
                   <div className="flex-1 order-2 lg:order-1">
-                    <h1 className="font-lexend font-medium text-3xl text-[#000000] mb-1">
+                    <h1 className=" font-medium text-3xl text-[#000000] mb-1">
                       {cleanHtml(podcast.title)}
                     </h1>
                     {podcast.author && (
@@ -273,7 +273,7 @@ export default function PodcastDetailPage() {
             <div className='w-full lg:w-[25%] lg:overflow-y-auto lg:max-h-[90vh] scrollbar-hide px-4 sm:px-8 py-4 sm:py-8 bg-[#1E305F] rounded-2xl mt-4'>
               <div>
                 <div className='flex flex-row items-center justify-between'>
-                  <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Capítulos ({episodes.length})</h2>
+                  <h2 className=" font-semibold text-xl text-[#D4D5DD]">Capítulos ({episodes.length})</h2>
                   <div className='flex flex-row items-center gap-2'>
                     <button
                       className={`text-[#D4D5DD] hover:bg-[#D51F2F] bg-[#FFFFFF]/15 rounded-full p-2 transition-colors ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}

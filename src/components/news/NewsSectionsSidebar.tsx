@@ -45,14 +45,14 @@ export default function NewsSectionsSidebar({ html }: NewsSectionsSidebarProps) 
 
   return (
     <aside className="mb-8">
-      <h3 className="font-lexend font-semibold text-lg mb-2">SECCIONES</h3>
-      <div className="h-0.5 w-full bg-[#E5754C] mb-4" />
+      <h3 className="font-semibold text-lg md:text-xl text-[#1B1B1B]">SECCIONES</h3>
+      <div className="h-0.5 w-full bg-[#D4D5DD] my-2" />
       <ul className="space-y-3">
         {headings.map(h => (
           <li key={h.id} className="">
             <a
               href={`#${h.id}`}
-              className="block text-[#717171] hover:text-[#E5754C] text-sm transition-colors"
+              className="block text-[#2F3037]/60 hover:text-[#01A299] p-2 hover:bg-[#01A299]/10 rounded-md text-md transition-colors duration-300"
             >
               {h.text}
             </a>

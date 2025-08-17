@@ -203,7 +203,7 @@ const RadioPlayer = () => {
     playerState.currentIndex > 0;
 
   return (
-    <div className="fixed bottom-1 left-0 right-0 bg-[#1E305C] mx-1 rounded-xl rounded-t-none text-[#C7C7C7] z-50">
+    <div className="fixed bottom-1 left-0 right-0 bg-[#2F3037] mx-1 rounded-xl rounded-t-none text-[#C7C7C7] z-50">
       <audio
         ref={audioRef}
         preload="none"

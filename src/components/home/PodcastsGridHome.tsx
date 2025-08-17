@@ -59,7 +59,7 @@ export default function PodcastsGridHome() {
     return (
       <section className="w-full max-w-7xl mx-auto px-8">
         <div className="flex items-center justify-between">
-          <h2 className="font-lexend font-semibold text-xl text-black">Error al cargar los podcasts</h2>
+          <h2 className=" font-semibold text-xl text-black">Error al cargar los podcasts</h2>
         </div>
         <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
         <div className="text-center py-8">
@@ -96,7 +96,7 @@ export default function PodcastsGridHome() {
     <section className="w-full max-w-7xl mx-auto px-8 space-y-12">
       <div>
         <div className="flex items-center justify-between">
-          <h2 className="font-lexend font-semibold text-xl text-black">Podcasts</h2>
+          <h2 className=" font-semibold text-xl text-black">Podcasts</h2>
           <Link href="/podcasts" className="text-black/60 hover:text-[#1E305F] text-sm flex items-center gap-1 transition-colors">
             Ver todos <span aria-hidden>→</span>
           </Link>
@@ -130,7 +130,7 @@ export default function PodcastsGridHome() {
 
       <div>
         <div className="flex items-center justify-between">
-          <h2 className="font-lexend font-semibold text-xl text-black">Radionovelas</h2>
+          <h2 className=" font-semibold text-xl text-black">Radionovelas</h2>
           <Link href="/podcasts#radionovelas" className="text-black/60 hover:text-[#1E305F] text-sm flex items-center gap-1 transition-colors">
             Ver todos <span aria-hidden>→</span>
           </Link>

@@ -101,7 +101,7 @@ export default function PodcastGrid() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
           <div className="w-full">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-lexend font-semibold text-xl text-black">Podcasts</h2>
+              <h2 className=" font-semibold text-xl text-black">Podcasts</h2>
             </div>
             <div className="h-0.5 w-full bg-[#D4D5DD] my-4" />
             
@@ -143,7 +143,7 @@ export default function PodcastGrid() {
         <div id="radionovelas" className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
           <div className="w-full">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-lexend font-semibold text-xl text-black">Radionovelas</h2>
+              <h2 className=" font-semibold text-xl text-black">Radionovelas</h2>
             </div>
             <div className="h-0.5 w-full bg-[#D4D5DD] my-4" />
             

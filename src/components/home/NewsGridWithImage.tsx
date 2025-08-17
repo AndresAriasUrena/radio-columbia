@@ -173,7 +173,7 @@ export default function NewsGridWithImage({
                 >
                   <article className={`py-4 border-b border-[#D4D5DD]`}>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-[#01A299] border-[1.4px] border-[#01A299] px-4 py-2 rounded-full bg-transparent text-sm font-medium">
+                      <span className="text-[#01A299] border-[1.4px] border-[#01A299] px-4 py-[4px] rounded-full bg-transparent text-sm font-medium">
                         {category}
                       </span>
                       <span className="text-sm font-medium text-[#000000]/30">

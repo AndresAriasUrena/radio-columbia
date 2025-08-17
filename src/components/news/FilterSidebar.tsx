@@ -259,7 +259,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
   return (
     <div className="w-full lg:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#1E305F] my-4 rounded-2xl">
       <div className="lg:hidden flex items-center justify-between mb-6">
-        <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
+        <h2 className=" font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
         <button
           onClick={() => setIsMobileOpen(false)}
           className="p-2 hover:bg-[#FFFFFF]/15 rounded-lg transition-colors"
@@ -270,7 +270,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
 
       {/* Categorías */}
       <div className="mb-6">
-        <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Categorías</h2>
+        <h2 className=" font-semibold text-xl text-[#D4D5DD]">Categorías</h2>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
         
         <div className="overflow-hidden opacity-100">
@@ -318,7 +318,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           onClick={() => toggleSection('currency')}
           className="w-full flex items-center justify-between text-left"
         >
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Conversor de Divisas</h2>
+          <h2 className=" font-semibold text-xl text-[#D4D5DD]">Conversor de Divisas</h2>
           {expandedSections.currency ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
@@ -334,7 +334,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           onClick={() => toggleSection('earthquakes')}
           className="w-full flex items-center justify-between text-left"
         >
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Actividad Sísmica</h2>
+          <h2 className=" font-semibold text-xl text-[#D4D5DD]">Actividad Sísmica</h2>
           {expandedSections.earthquakes ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
@@ -350,7 +350,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           onClick={() => toggleSection('standings')}
           className="w-full flex items-center justify-between text-left"
         >
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Primera División</h2>
+          <h2 className=" font-semibold text-xl text-[#D4D5DD]">Primera División</h2>
           {expandedSections.standings ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
@@ -366,7 +366,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           onClick={() => toggleSection('weather')}
           className="w-full flex items-center justify-between text-left"
         >
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Clima</h2>
+          <h2 className=" font-semibold text-xl text-[#D4D5DD]">Clima</h2>
           {expandedSections.weather ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
@@ -382,7 +382,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           onClick={() => toggleSection('lottery')}
           className="w-full flex items-center justify-between text-left"
         >
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Resultados de Lotería</h2>
+          <h2 className=" font-semibold text-xl text-[#D4D5DD]">Resultados de Lotería</h2>
           {expandedSections.lottery ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
@@ -398,7 +398,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           onClick={() => toggleSection('social')}
           className="w-full flex items-center justify-between text-left"
         >
-          <h2 className="font-lexend font-semibold text-xl text-[#D4D5DD]">Nuestras Redes</h2>
+          <h2 className=" font-semibold text-xl text-[#D4D5DD]">Nuestras Redes</h2>
           {expandedSections.social ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />

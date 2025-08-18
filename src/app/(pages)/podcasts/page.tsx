@@ -7,18 +7,18 @@ import PodcastGrid from '@/components/podcasts/PodcastGrid';
 
 function PodcastsContent() {
   useEffect(() => {
-    document.title = 'Podcasts | Amplify Radio - Nuestros Podcasts';
+    document.title = 'Podcasts | Radio Columbia - Nuestros Podcasts y Radionovelas';
     
-    const metaDescription = document.querySelector('meta[name="description"]');
+    let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 
-        'Descubre nuestros podcasts en Amplify Radio. Escucha programas de entretenimiento, música y más contenido exclusivo.'
+        'Descubre nuestros podcasts y radionovelas en Radio Columbia. Escucha programas de entretenimiento, música y más contenido exclusivo de Costa Rica.'
       );
     } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Descubre nuestros podcasts en Amplify Radio. Escucha programas de entretenimiento, música y más contenido exclusivo.';
-      document.head.appendChild(meta);
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      metaDescription.content = 'Descubre nuestros podcasts y radionovelas en Radio Columbia. Escucha programas de entretenimiento, música y más contenido exclusivo de Costa Rica.';
+      document.head.appendChild(metaDescription);
     }
   }, []);
 

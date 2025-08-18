@@ -1,77 +1,73 @@
-export const SEO_CONFIG = {
-  siteName: 'Amplify Radio',
-  siteUrl: 'https://amplifyradio.com/',
-  description: 'Amplify Radio - Tu estación de radio online con las últimas noticias, música y entretenimiento. Mantente informado con nuestras noticias actualizadas y disfruta de la mejor música las 24 horas.',
-  keywords: 'radio online, noticias, música, entretenimiento, streaming, amplify radio, radio en vivo',
-  author: 'Amplify Radio',
-  twitterHandle: '@AmplifyRadio',
-  language: 'es',
-  locale: 'es_ES',
-  themeColor: '#E5754C',
-  backgroundColor: '#0a0a0a',
-  socialMedia: {
-    facebook: 'https://www.facebook.com/amplifyradiofm/',
-    instagram: 'https://www.instagram.com/amplifyradiofm/'
+const siteConfig = {
+  siteName: 'Radio Columbia',
+  siteUrl: 'https://radiodev.aurigital.com/',
+  description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Mantente informado con nuestras noticias actualizadas y disfruta de la mejor programación las 24 horas.',
+  keywords: 'radio columbia, radio costa rica, noticias costa rica, deportes costa rica, música, entretenimiento, streaming, radio en vivo, noticias costarricenses',
+  author: 'Radio Columbia',
+  twitterHandle: '@webcolumbia',
+  logo: '/assets/LogoColumbia.svg',
+  favicon: '/favicon.ico',
+  themeColor: '#1E305F',
+  backgroundColor: '#F8FBFF',
+  social: {
+    facebook: 'https://www.facebook.com/NoticiasColumbia/',
+    instagram: 'https://www.instagram.com/noticiascolumbia/',
+    youtube: 'https://www.youtube.com/channel/UCo2Fr8GUPmevyi7uih-0oTg',
+    twitter: 'https://x.com/webcolumbia'
   }
 };
 
-export const generatePageMetadata = (options = {}) => {
-  const {
-    title = '',
-    description = SEO_CONFIG.description,
-    image = '/og-image.jpg',
-    path = '',
-    keywords = SEO_CONFIG.keywords,
-    type = 'website',
-    publishedTime = null,
-    modifiedTime = null,
-    author = SEO_CONFIG.author,
-    section = null
-  } = options;
-
-  const fullTitle = title 
-    ? `${title} | ${SEO_CONFIG.siteName}` 
-    : SEO_CONFIG.siteName;
-  
-  const fullUrl = `${SEO_CONFIG.siteUrl}${path}`;
-  const fullImageUrl = image.startsWith('http') ? image : `${SEO_CONFIG.siteUrl}${image}`;
+export const generatePageMetadata = ({
+  title,
+  description,
+  image,
+  path = '',
+  type = 'website',
+  publishedTime,
+  author,
+  section,
+  keywords
+}) => {
+  const pageTitle = title ? `${title} | ${siteConfig.siteName}` : siteConfig.siteName;
+  const pageDescription = description || siteConfig.description;
+  const pageImage = image || `${siteConfig.siteUrl}opengraph-image.jpg`;
+  const pageUrl = `${siteConfig.siteUrl}${path.startsWith('/') ? path.slice(1) : path}`;
+  const pageKeywords = keywords || siteConfig.keywords;
 
   const metadata = {
-    title: fullTitle,
-    description,
-    keywords,
-    authors: [{ name: author }],
-    creator: SEO_CONFIG.siteName,
-    publisher: SEO_CONFIG.siteName,
-    formatDetection: {
-      telephone: false,
-    },
-    metadataBase: new URL(SEO_CONFIG.siteUrl),
+    title: pageTitle,
+    description: pageDescription,
+    keywords: pageKeywords,
+    authors: [{ name: author || siteConfig.author }],
+    creator: siteConfig.author,
+    publisher: siteConfig.siteName,
+    metadataBase: new URL(siteConfig.siteUrl),
     alternates: {
-      canonical: fullUrl,
+      canonical: pageUrl,
     },
     openGraph: {
-      title: fullTitle,
-      description,
-      url: fullUrl,
-      siteName: SEO_CONFIG.siteName,
+      title: pageTitle,
+      description: pageDescription,
+      url: pageUrl,
+      siteName: siteConfig.siteName,
       images: [
         {
-          url: fullImageUrl,
+          url: pageImage,
           width: 1200,
           height: 630,
-          alt: title || SEO_CONFIG.siteName,
+          alt: `${siteConfig.siteName} - ${title || 'Inicio'}`,
         },
       ],
-      locale: SEO_CONFIG.locale,
-      type,
+      locale: 'es_CR',
+      type: type,
     },
     twitter: {
       card: 'summary_large_image',
-      title: fullTitle,
-      description,
-      creator: SEO_CONFIG.twitterHandle,
-      images: [fullImageUrl],
+      title: pageTitle,
+      description: pageDescription,
+      images: [pageImage],
+      creator: siteConfig.twitterHandle,
+      site: siteConfig.twitterHandle,
     },
     robots: {
       index: true,
@@ -91,9 +87,6 @@ export const generatePageMetadata = (options = {}) => {
     if (publishedTime) {
       metadata.openGraph.publishedTime = publishedTime;
     }
-    if (modifiedTime) {
-      metadata.openGraph.modifiedTime = modifiedTime;
-    }
     if (author) {
       metadata.openGraph.authors = [author];
     }
@@ -106,62 +99,81 @@ export const generatePageMetadata = (options = {}) => {
 };
 
 export const generateNewsSchema = (post) => {
-  const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-  const author = post._embedded?.author?.[0]?.name || 'Amplify Radio';
+  const author = post._embedded?.author?.[0]?.name || 'Radio Columbia';
   const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || 'Noticias';
+  const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || `${siteConfig.siteUrl}opengraph-image.jpg`;
   
   return {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "headline": post.title.rendered.replace(/<[^>]+>/g, ''),
-    "description": post.excerpt.rendered.replace(/<[^>]+>/g, '').trim(),
-    "image": featuredImage ? [featuredImage] : [],
-    "datePublished": post.date,
-    "dateModified": post.modified,
-    "author": {
-      "@type": "Person",
-      "name": author
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: post.title.rendered,
+    description: post.excerpt.rendered.replace(/<[^>]*>/g, ''),
+    image: [featuredImage],
+    datePublished: post.date,
+    dateModified: post.modified,
+    author: {
+      '@type': 'Person',
+      name: author,
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": SEO_CONFIG.siteName,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${SEO_CONFIG.siteUrl}/assets/LogoColumbia.svg`
-      }
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.siteName,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteConfig.siteUrl}${siteConfig.logo}`,
+      },
     },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": `${SEO_CONFIG.siteUrl}/news/${post.slug}`
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteConfig.siteUrl}news/${post.slug}`,
     },
-    "articleSection": category,
-    "inLanguage": SEO_CONFIG.language
+    articleSection: category,
+    inLanguage: 'es-CR',
   };
 };
 
 export const generateOrganizationSchema = () => {
   return {
-    "@context": "https://schema.org",
-    "@type": "RadioStation",
-    "name": SEO_CONFIG.siteName,
-    "description": SEO_CONFIG.description,
-    "url": SEO_CONFIG.siteUrl,
-    "logo": `${SEO_CONFIG.siteUrl}/assets/LogoColumbia.svg`,
-    "sameAs": [
-      SEO_CONFIG.socialMedia.facebook,
-      SEO_CONFIG.socialMedia.instagram
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: siteConfig.siteName,
+    url: siteConfig.siteUrl,
+    logo: `${siteConfig.siteUrl}${siteConfig.logo}`,
+    description: siteConfig.description,
+    sameAs: [
+      siteConfig.social.facebook,
+      siteConfig.social.instagram,
+      siteConfig.social.youtube,
+      siteConfig.social.twitter,
     ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "availableLanguage": ["Spanish"]
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      availableLanguage: 'Spanish',
     },
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "ES"
-    }
   };
 };
+
+export const generateWebsiteSchema = () => {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteConfig.siteName,
+    url: siteConfig.siteUrl,
+    description: siteConfig.description,
+    inLanguage: 'es-CR',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteConfig.siteUrl}news?search={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+};
+
+export default siteConfig;
 
 export const generateBreadcrumbSchema = (items) => {
   return {

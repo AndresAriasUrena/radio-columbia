@@ -14,17 +14,17 @@ function NewsContent({ title }: { title: string }) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
-    document.title = 'Noticias | Amplify Radio - Últimas Noticias y Actualidad';
+    document.title = 'Noticias | Radio Columbia - Últimas Noticias de Costa Rica';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 
-        'Descubre las últimas noticias y actualidad en Amplify Radio. Mantente informado con nuestras noticias de música, entretenimiento y más.'
+        'Descubre las últimas noticias y actualidad de Costa Rica en Radio Columbia. Mantente informado con nuestras noticias de música, entretenimiento, política y más.'
       );
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Descubre las últimas noticias y actualidad en Amplify Radio. Mantente informado con nuestras noticias de música, entretenimiento y más.';
+      meta.content = 'Descubre las últimas noticias y actualidad de Costa Rica en Radio Columbia. Mantente informado con nuestras noticias de música, entretenimiento, política y más.';
       document.head.appendChild(meta);
     }
 

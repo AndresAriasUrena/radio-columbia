@@ -1,8 +1,7 @@
 import WordPressService from '@/lib/wordpressService';
-import { SEO_CONFIG } from '@/lib/seo';
 
 export default async function sitemap() {
-  const baseUrl = SEO_CONFIG.siteUrl;
+  const baseUrl = 'https://radiodev.aurigital.com';
   
   const staticPages = [
     {
@@ -16,6 +15,18 @@ export default async function sitemap() {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/sports`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/podcasts`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/about-us`,

@@ -78,7 +78,7 @@ export default function PodcastDetailPage() {
         const episodesData = await RSSService.getPodcastEpisodes(podcastData.rssUrl);
         setEpisodes(episodesData);
 
-        document.title = `${podcastData.title} | Amplify Radio`;
+        document.title = `${podcastData.title} | Radio Columbia`;
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error al cargar el podcast');

@@ -12,33 +12,39 @@ import JsonLd from '@/components/SEO/JsonLd';
 const NewsSectionsSidebar = dynamic(() => import('@/components/news/NewsSectionsSidebar'), { ssr: false });
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-    const post = await getPostBySlug(params.slug);
-
-    if (!post) {
-        return generatePageMetadata({
-            title: 'Noticia no encontrada',
-            description: 'La noticia que buscas no existe o ha sido eliminada.',
-            path: `/news/${params.slug}`
-        });
-    }
-
-    const cleanTitle = WordPressService.cleanHtml(post.title.rendered);
-    const cleanDescription = WordPressService.cleanHtml(post.excerpt.rendered);
-    const featuredImage = WordPressService.getFeaturedImage(post);
-    const author = WordPressService.getAuthor(post);
-    const category = post._embedded?.['wp:term']?.[0]?.[0]?.name;
-
+  const post = await getPostBySlug(params.slug);
+  
+  if (!post) {
     return generatePageMetadata({
-        title: cleanTitle,
-        description: cleanDescription || `Lee la última noticia de ${category || 'Amplify Radio'}: ${cleanTitle}`,
-        image: featuredImage,
-        path: `/news/${post.slug}`,
-        type: 'article',
-        publishedTime: post.date,
-        author,
-        section: category,
-        keywords: `${cleanTitle}, ${category}, amplify radio, noticias, ${author}`
+      title: 'Noticia no encontrada',
+      description: 'La noticia que buscas no existe o ha sido eliminada.',
+      image: null,
+      path: `/news/${params.slug}`,
+      type: 'website',
+      publishedTime: null,
+      author: null,
+      section: null,
+      keywords: 'radio columbia, noticias costa rica, noticia no encontrada'
     });
+  }
+
+  const cleanTitle = WordPressService.cleanHtml(post.title.rendered);
+  const cleanDescription = WordPressService.cleanHtml(post.excerpt.rendered);
+  const featuredImage = WordPressService.getFeaturedImage(post);
+  const author = WordPressService.getAuthor(post);
+  const category = post._embedded?.['wp:term']?.[0]?.[0]?.name;
+
+  return generatePageMetadata({
+    title: cleanTitle,
+    description: cleanDescription || `Lee la última noticia de ${category || 'Radio Columbia'}: ${cleanTitle}`,
+    image: featuredImage,
+    path: `/news/${post.slug}`,
+    type: 'article',
+    publishedTime: post.date,
+    author,
+    section: category,
+    keywords: `${cleanTitle}, ${category}, radio columbia, noticias costa rica, ${author}`
+  });
 }
 
 function addHeadingIds(html: string) {
@@ -91,12 +97,6 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
     const cleanTitle = WordPressService.cleanHtml(post.title.rendered);
 
     const newsSchema = generateNewsSchema(post);
-
-    const breadcrumbItems = [
-        { name: 'Inicio', url: 'https://amplifyradio.com' },
-        { name: 'Noticias', url: 'https://amplifyradio.com/news' },
-        { name: cleanTitle, url: `https://amplifyradio.com/news/${post.slug}` }
-    ];
 
     return (
         <>

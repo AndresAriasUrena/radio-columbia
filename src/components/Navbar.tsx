@@ -101,7 +101,7 @@ export default function Navbar() {
   const getCRDay = (): number => {
     const now = new Date();
     const cr = new Date(now.getTime() - 6 * 3600 * 1000);
-    return cr.getUTCDay(); // 0=Dom..6=Sab
+    return cr.getDay(); // 0=Dom..6=Sab
   };
 
   const formatNowCR = (): string => {
@@ -155,13 +155,16 @@ export default function Navbar() {
     const fetchLotteryAlert = async () => {
       try {
         const crDay = getCRDay();
+        
         if (crDay === 2 || crDay === 5) {
           const response = await fetch('/api/jps/chances/last');
           if (response.ok) {
             const data = await response.json();
             if (data.premios && data.premios.length > 0) {
               const p = data.premios.find((it: any) => it.tipo === 1);
-              if (p) setLottery({ kind: 'chances', numero: String(p.numero), serie: String(p.serie), premio: p.premio });
+              if (p) {
+                setLottery({ kind: 'chances', numero: String(p.numero), serie: String(p.serie), premio: p.premio });
+              }
             }
           }
         } else if (crDay === 0) {
@@ -170,11 +173,20 @@ export default function Navbar() {
             const data = await response.json();
             if (data.premios && data.premios.length > 0) {
               const p = data.premios.find((it: any) => it.tipo === 1);
-              if (p) setLottery({ kind: 'loteria', numero: String(p.numero), serie: String(p.serie), premio: p.premio });
+              if (p) {
+                setLottery({ kind: 'loteria', numero: String(p.numero), serie: String(p.serie), premio: p.premio });
+              } else {
+                const firstPrize = data.premios[0];
+                if (firstPrize) {
+                  setLottery({ kind: 'loteria', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
+                }
+              }
             }
           }
         }
-      } catch { }
+      } catch (error) {
+        console.error('Error al obtener lotería:', error);
+      }
     };
 
     fetchLatestPost();
@@ -315,7 +327,7 @@ export default function Navbar() {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-[#D4D5DD]">
             <div className="flex items-center justify-between">
-              <img src="/assets/LogoColumbia.svg" alt="Amplify" width={80} height={60} />
+              <img src="/assets/LogoColumbia.svg" alt="Columbia" width={80} height={60} />
               <button onClick={closeMenu} className="text-[#2F3037] hover:text-[#D51F2F] transition-colors p-2" aria-label="Cerrar menú">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

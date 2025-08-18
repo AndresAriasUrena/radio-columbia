@@ -10,30 +10,30 @@ const Values = dynamic(() => import('@/components/about-us/Values'), { ssr: fals
 
 export default function AboutUs() {
   useEffect(() => {
-    document.title = 'Sobre Nosotros | Amplify Radio - Conoce Nuestra Historia';
+    document.title = 'Sobre Nosotros | Radio Columbia - Conoce Nuestra Historia';
     
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const description = 'Conoce la historia de Amplify Radio, tu estación de radio online. Descubre nuestra misión, valores y el equipo que hace posible la mejor música y noticias las 24 horas.';
+    const description = 'Conoce la historia de Radio Columbia, tu estación de radio costarricense. Descubre nuestra misión, valores y el equipo que hace posible la mejor música y noticias de Costa Rica las 24 horas.';
     
+    let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', description);
     } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = description;
-      document.head.appendChild(meta);
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      metaDescription.content = description;
+      document.head.appendChild(metaDescription);
     }
-
-    const metaKeywords = document.querySelector('meta[name="keywords"]');
-    const keywords = 'amplify radio historia, sobre nosotros, equipo radio, misión radio online, valores amplify radio';
     
+    const keywords = 'radio columbia historia, sobre nosotros, equipo radio, misión radio costa rica, valores radio columbia';
+    
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
     if (metaKeywords) {
       metaKeywords.setAttribute('content', keywords);
     } else {
-      const meta = document.createElement('meta');
-      meta.name = 'keywords';
-      meta.content = keywords;
-      document.head.appendChild(meta);
+      metaKeywords = document.createElement('meta');
+      metaKeywords.name = 'keywords';
+      metaKeywords.content = keywords;
+      document.head.appendChild(metaKeywords);
     }
   }, []);
 

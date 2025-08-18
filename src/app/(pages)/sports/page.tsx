@@ -14,21 +14,18 @@ function NewsContent({ title }: { title: string }) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
-    document.title = 'Noticias | Amplify Radio - Últimas Noticias y Actualidad';
+    document.title = 'Deportes | Radio Columbia - Noticias Deportivas de Costa Rica';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', 
-        'Descubre las últimas noticias y actualidad en Amplify Radio. Mantente informado con nuestras noticias de música, entretenimiento y más.'
+        'Descubre las últimas noticias deportivas de Costa Rica en Radio Columbia. Mantente informado con nuestras noticias de fútbol, deportes nacionales e internacionales.'
       );
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Descubre las últimas noticias y actualidad en Amplify Radio. Mantente informado con nuestras noticias de música, entretenimiento y más.';
+      meta.content = 'Descubre las últimas noticias deportivas de Costa Rica en Radio Columbia. Mantente informado con nuestras noticias de fútbol, deportes nacionales e internacionales.';
       document.head.appendChild(meta);
-    }
-
-    if (filters.categories.length > 0) {
     }
   }, [filters]);
 

@@ -15,10 +15,10 @@ function PodcastsContent() {
         'Descubre nuestros podcasts y radionovelas en Radio Columbia. Escucha programas de entretenimiento, música y más contenido exclusivo de Costa Rica.'
       );
     } else {
-      metaDescription = document.createElement('meta');
-      metaDescription.name = 'description';
-      metaDescription.content = 'Descubre nuestros podcasts y radionovelas en Radio Columbia. Escucha programas de entretenimiento, música y más contenido exclusivo de Costa Rica.';
-      document.head.appendChild(metaDescription);
+      const newMeta = document.createElement('meta');
+      newMeta.setAttribute('name', 'description');
+      newMeta.setAttribute('content', 'Descubre nuestros podcasts y radionovelas en Radio Columbia. Escucha programas de entretenimiento, música y más contenido exclusivo de Costa Rica.');
+      document.head.appendChild(newMeta);
     }
   }, []);
 

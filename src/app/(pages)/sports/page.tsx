@@ -1,4 +1,4 @@
-// src/app/(pages)/news/page.tsx
+// src/app/(pages)/sports/page.tsx
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -8,6 +8,8 @@ import FilterSidebar from '@/components/news/FilterSidebar';
 import NewsGrid from '@/components/news/NewsGrid';
 import { FilterData } from '@/types/wordpress';
 import { Search } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 function NewsContent({ title }: { title: string }) {
   const [filters, setFilters] = useState<FilterData>({ categories: [] });
@@ -95,9 +97,11 @@ export default function NewsPage() {
     <>
       <div className="min-h-screen">
         <Navbar />
-        <NewsContent
-          title="Deportes"
-        />
+        <Suspense fallback={<div />}> 
+          <NewsContent
+            title="Deportes"
+          />
+        </Suspense>
       </div>
       <Footer />
     </>

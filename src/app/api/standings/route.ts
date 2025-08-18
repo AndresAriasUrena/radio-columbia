@@ -43,7 +43,7 @@ export async function GET() {
     for (const t of tables) {
       if (/Equipo|Team|Pts/i.test(t)) { tableHtml = t; break; }
     }
-    if (!tableHtml && tables.length) tableHtml = tables[0];
+    if (!tableHtml && tables.length > 0) tableHtml = tables[0] || '';
     if (!tableHtml) {
       return NextResponse.json({ rows: [] });
     }

@@ -1,5 +1,3 @@
-import { SEO_CONFIG } from '@/lib/seo';
-
 export default function robots() {
   return {
     rules: [
@@ -36,7 +34,7 @@ export default function robots() {
         disallow: '/',
       },
     ],
-    sitemap: `${SEO_CONFIG.siteUrl}/sitemap.xml`,
-    host: SEO_CONFIG.siteUrl,
+    sitemap: 'https://radiodev.aurigital.com/sitemap.xml',
+    host: 'https://radiodev.aurigital.com',
   };
 } 

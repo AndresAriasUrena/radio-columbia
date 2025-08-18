@@ -32,9 +32,24 @@ function HomeContent() {
 
         <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
           <div className="flex-1">
-            <Hero />
-            <NewsGridWithImage />
-            <CategoryNewsGrid />
+            <Hero tagSlug="travel"/>
+            <CategoryNewsGrid
+              title="Categorías"
+              description="Conoce todos los tipos de noticias de Columbia"
+              showCategories={true}
+            />
+            <CategoryNewsGrid
+              title="Tendencias Actuales"
+              description="Mira que es lo que tiene a la gente hablando"
+              tagSlug="travel"
+              cardType="grid"
+            />
+            <NewsGridWithImage
+              title="Lo último – Nacionales"
+              description="destacado"
+              tagSlug="travel"
+              maxPosts={3}
+            />
           </div>
 
           {/* Sidebar desktop */}

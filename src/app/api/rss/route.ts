@@ -11,13 +11,11 @@ async function fetchWithProxy(url: string, proxyIndex: number = 0): Promise<stri
   }
 
   const proxyUrl = RSS_CONFIG.PROXY_SERVICES[proxyIndex] + encodeURIComponent(url);
-  console.log(`🔍 Intentando proxy ${proxyIndex + 1}: ${RSS_CONFIG.PROXY_SERVICES[proxyIndex]}`);
   
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), RSS_CONFIG.REQUEST_TIMEOUT);
     
-    console.log(`📡 Haciendo petición a: ${proxyUrl}`);
     
     const response = await fetch(proxyUrl, {
       signal: controller.signal,
@@ -28,7 +26,6 @@ async function fetchWithProxy(url: string, proxyIndex: number = 0): Promise<stri
     
     clearTimeout(timeoutId);
     
-    console.log(`📊 Status: ${response.status} ${response.statusText}`);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -44,20 +41,17 @@ async function fetchWithProxy(url: string, proxyIndex: number = 0): Promise<stri
     
     // Verificar si es XML directo o JSON
     if (responseText.trim().startsWith('<?xml') || responseText.trim().startsWith('<rss')) {
-      console.log(`✅ Proxy ${proxyIndex + 1} exitoso - XML directo (${responseText.length} chars)`);
       return responseText;
     } else {
       // Intentar parsear como JSON
       try {
         const data = JSON.parse(responseText);
-        console.log(`✅ Proxy ${proxyIndex + 1} exitoso - JSON`);
         const content = data.contents || data;
         if (!content || (typeof content === 'string' && content.trim() === '')) {
           throw new Error('Contenido vacío en respuesta JSON');
         }
         return content;
       } catch (jsonError) {
-        console.log(`⚠️ No es JSON válido, devolviendo como texto (${responseText.length} chars)`);
         return responseText;
       }
     }
@@ -72,10 +66,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
   
-  console.log(`🚀 GET /api/rss - URL: ${url}`);
   
   if (!url) {
-    console.log(`❌ Error: URL parameter is required`);
     return NextResponse.json(
       { error: 'URL parameter is required' },
       { status: 400 }
@@ -85,7 +77,6 @@ export async function GET(request: NextRequest) {
   // Verificar cache primero
   const cached = cache.get(url);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log(`📦 Devolviendo desde cache API: ${url}`);
     return NextResponse.json({ 
       content: cached.content,
       cached: true,
@@ -94,7 +85,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log(`🔄 Iniciando fetch para: ${url}`);
     const rssContent = await fetchWithProxy(url);
     
     if (!rssContent || rssContent.trim() === '') {
@@ -114,7 +104,6 @@ export async function GET(request: NextRequest) {
       }
     }
     
-    console.log(`✅ RSS content obtenido exitosamente (${rssContent.length} caracteres)`);
     return NextResponse.json({ 
       content: rssContent,
       cached: false,

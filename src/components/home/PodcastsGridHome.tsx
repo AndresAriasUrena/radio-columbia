@@ -104,15 +104,15 @@ export default function PodcastsGridHome() {
         <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
         
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, index) => (
               <PodcastSkeleton key={index} />
             ))}
           </div>
         )}
 
         {!loading && recentPodcasts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {recentPodcasts.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}
@@ -138,15 +138,15 @@ export default function PodcastsGridHome() {
         <div className="h-0.5 w-full bg-[#D4D5DD] my-3" />
         
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, index) => (
               <PodcastSkeleton key={`radio-${index}`} />
             ))}
           </div>
         )}
 
         {!loading && recentRadionovelas.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {recentRadionovelas.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}

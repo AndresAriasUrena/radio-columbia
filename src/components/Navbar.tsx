@@ -98,10 +98,22 @@ export default function Navbar() {
     return diff >= 0 && diff <= hours * 3600 * 1000;
   };
 
-  const getCRDay = (): number => {
+  const getCRDay = async (): Promise<number> => {
+    try {
+      // Usar una API externa para obtener la fecha exacta en Costa Rica
+      const response = await fetch('https://worldtimeapi.org/api/timezone/America/Costa_Rica');
+      if (response.ok) {
+        const data = await response.json();
+        const crDate = new Date(data.datetime);
+        return crDate.getDay(); // 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
+      }
+    } catch (error) {
+      console.warn('Error obteniendo fecha de Costa Rica, usando fecha local:', error);
+    }
+    
+    // Fallback: usar la fecha local del navegador
     const now = new Date();
-    const cr = new Date(now.getTime() - 6 * 3600 * 1000);
-    return cr.getDay(); // 0=Dom..6=Sab
+    return now.getDay();
   };
 
   const formatNowCR = (): string => {
@@ -119,6 +131,8 @@ export default function Navbar() {
   const [latestPost, setLatestPost] = useState<{ title: string; slug: string } | null>(null);
   const [quakeAlert, setQuakeAlert] = useState<{ text: string } | null>(null);
   const [lottery, setLottery] = useState<{ kind: 'chances' | 'loteria'; numero: string; serie: string; premio: any } | null>(null);
+
+
 
   useEffect(() => {
     const fetchLatestPost = async () => {
@@ -154,16 +168,19 @@ export default function Navbar() {
 
     const fetchLotteryAlert = async () => {
       try {
-        const crDay = getCRDay();
+        const crDay = await getCRDay();
         
         if (crDay === 2 || crDay === 5) {
           const response = await fetch('/api/jps/chances/last');
+          
           if (response.ok) {
             const data = await response.json();
+            
             if (data.premios && data.premios.length > 0) {
-              const p = data.premios.find((it: any) => it.tipo === 1);
-              if (p) {
-                setLottery({ kind: 'chances', numero: String(p.numero), serie: String(p.serie), premio: p.premio });
+              // Usar directamente el primer premio (rank: 1) ya que no hay propiedad 'tipo'
+              const firstPrize = data.premios[0];
+              if (firstPrize) {
+                setLottery({ kind: 'chances', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
               }
             }
           }

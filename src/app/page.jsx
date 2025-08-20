@@ -32,7 +32,7 @@ function HomeContent() {
 
         <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
           <div className="flex-1">
-            <Hero tagSlug="travel"/>
+            <Hero tagSlug="destacado"/>
             <CategoryNewsGrid
               title="Categorías"
               description="Conoce todos los tipos de noticias de Columbia"
@@ -41,13 +41,13 @@ function HomeContent() {
             <CategoryNewsGrid
               title="Tendencias Actuales"
               description="Mira que es lo que tiene a la gente hablando"
-              tagSlug="travel"
+              tagSlug="tendencias"
               cardType="grid"
             />
             <NewsGridWithImage
               title="Lo último – Nacionales"
-              description="destacado"
-              tagSlug="travel"
+              description="Infórmate de las últimas noticias en Costa Rica"
+              tagSlug="nacionales"
               maxPosts={3}
             />
           </div>

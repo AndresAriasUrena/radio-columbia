@@ -202,7 +202,7 @@ export default function Navbar() {
               // Mostrar alerta si el terremoto es de las últimas 24 horas
               if (diffHours <= 24) {
                 setQuakeAlert({
-                  text: `${latestQuake.title} | ${latestQuake.dateText}`
+                  text: `${latestQuake.title}`
                 });
               } else {
                 // Limpiar alerta si ya no es reciente

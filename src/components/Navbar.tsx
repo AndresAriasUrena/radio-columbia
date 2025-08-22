@@ -72,23 +72,40 @@ export default function Navbar() {
 
   const parseRsnDateToCR = (text: string): Date | null => {
     if (!text) return null;
+    
     const meses: Record<string, number> = {
       enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
       julio: 6, agosto: 7, septiembre: 8, setiembre: 8, octubre: 9, noviembre: 10, diciembre: 11
     };
-    const m = text.toLowerCase().replace(/\./g, '').match(/(\d{1,2})\s+de\s+([a-zñ]+)\s+del\s+(\d{4}),\s*(\d{1,2}):(\d{2})\s*(am|pm)/i);
-    if (!m) return null;
-    const day = parseInt(m[1], 10);
-    const month = meses[m[2]] ?? null;
-    const year = parseInt(m[3], 10);
-    let hour = parseInt(m[4], 10);
-    const minute = parseInt(m[5], 10);
-    const ampm = m[6];
-    if (month === null) return null;
-    if (ampm === 'pm' && hour !== 12) hour += 12;
-    if (ampm === 'am' && hour === 12) hour = 0;
-    const iso = `${year.toString().padStart(4, '0')}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00-06:00`;
-    return new Date(iso);
+    
+    // Patrón más flexible para capturar fechas en diferentes formatos
+    const patterns = [
+      /(\d{1,2})\s+de\s+([a-zñ]+)\s+del\s+(\d{4}),\s*(\d{1,2}):(\d{2})\s*(am|pm)/i,
+      /(\d{1,2})\s+de\s+([a-zñ]+)\s+de\s+(\d{4}),\s*(\d{1,2}):(\d{2})\s*(am|pm)/i,
+      /(\d{1,2})\s+([a-zñ]+)\s+(\d{4}),\s*(\d{1,2}):(\d{2})\s*(am|pm)/i
+    ];
+    
+    for (const pattern of patterns) {
+      const m = text.toLowerCase().replace(/\./g, '').match(pattern);
+      if (m) {
+        const day = parseInt(m[1], 10);
+        const month = meses[m[2]] ?? null;
+        const year = parseInt(m[3], 10);
+        let hour = parseInt(m[4], 10);
+        const minute = parseInt(m[5], 10);
+        const ampm = m[6];
+        
+        if (month === null) continue;
+        
+        if (ampm === 'pm' && hour !== 12) hour += 12;
+        if (ampm === 'am' && hour === 12) hour = 0;
+        
+        const iso = `${year.toString().padStart(4, '0')}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00-06:00`;
+        return new Date(iso);
+      }
+    }
+    
+    return null;
   };
 
   const isWithinLastHoursCR = (date: Date, hours: number): boolean => {
@@ -116,6 +133,8 @@ export default function Navbar() {
     return now.getDay();
   };
 
+  const [currentTime, setCurrentTime] = useState<string>('');
+
   const formatNowCR = (): string => {
     const now = new Date();
     const cr = new Date(now.getTime() - 6 * 3600 * 1000);
@@ -135,6 +154,18 @@ export default function Navbar() {
 
 
   useEffect(() => {
+    // Actualizar la hora solo en el cliente para evitar problemas de hidratación
+    const updateTime = () => {
+      setCurrentTime(formatNowCR());
+    };
+    
+    updateTime();
+    const timeInterval = setInterval(updateTime, 60000); // Actualizar cada minuto
+    
+    return () => clearInterval(timeInterval);
+  }, []);
+
+  useEffect(() => {
     const fetchLatestPost = async () => {
       try {
         const result = await WordPressService.getPosts({ page: 1, perPage: 1, orderBy: 'date' });
@@ -145,25 +176,44 @@ export default function Navbar() {
 
     const fetchQuakeAlert = async () => {
       try {
-        const response = await fetch('/api/earthquakes');
+        // Forzar actualización sin cache y con timestamp para evitar cache
+        const timestamp = new Date().getTime();
+        const response = await fetch(`/api/earthquakes?t=${timestamp}`, { 
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        
         if (response.ok) {
           const data = await response.json();
-          if (data.quakes && data.quakes.length > 0) {
-            const latestQuake = data.quakes[0];
-            const quakeDate = parseRsnDateToCR(latestQuake.date);
+          
+          if (data.items && data.items.length > 0) {
+            const latestQuake = data.items[0];
+            
+            // Usar la fecha del texto del terremoto
+            const quakeDate = parseRsnDateToCR(latestQuake.title);
             if (quakeDate) {
               const now = new Date();
               const diffHours = (now.getTime() - quakeDate.getTime()) / (1000 * 60 * 60);
               
-              if (diffHours <= 5) {
+              // Mostrar alerta si el terremoto es de las últimas 24 horas
+              if (diffHours <= 24) {
                 setQuakeAlert({
-                  text: `${latestQuake.title} | ${latestQuake.date}`
+                  text: `${latestQuake.title} | ${latestQuake.dateText}`
                 });
+              } else {
+                // Limpiar alerta si ya no es reciente
+                setQuakeAlert(null);
               }
             }
           }
         }
-      } catch { }
+      } catch (error) {
+        // Error silencioso
+      }
     };
 
     const fetchLotteryAlert = async () => {
@@ -209,6 +259,16 @@ export default function Navbar() {
     fetchLatestPost();
     fetchQuakeAlert();
     fetchLotteryAlert();
+    
+    // Actualizar alertas de terremotos cada 10 segundos para detectar terremotos recientes
+    const quakeInterval = setInterval(fetchQuakeAlert, 10 * 1000);
+    
+    // Forzar una actualización inmediata al cargar la página
+    fetchQuakeAlert();
+    
+    return () => {
+      clearInterval(quakeInterval);
+    };
   }, []);
 
   return (
@@ -216,7 +276,7 @@ export default function Navbar() {
       {/* Barra superior: fecha/hora y titular */}
       <div className="mx-2 mt-2">
         <div className="w-full mx-auto rounded-xl bg-[#1E305F] text-white px-3 sm:px-4 py-2 text-[10px] sm:text-xs flex flex-col sm:flex-row items-center sm:items-center justify-between gap-2">
-          <div className="whitespace-nowrap">{formatNowCR()}</div>
+          <div className="whitespace-nowrap">{currentTime || 'Cargando...'}</div>
           <div className="flex items-center gap-1.5 sm:gap-2 text-center justify-center w-full sm:w-auto">
             <IoMegaphoneOutline className="w-4 h-4" />
             <span className="uppercase opacity-80 whitespace-nowrap">Noticias de última hora</span>
@@ -403,4 +463,4 @@ export default function Navbar() {
       </div>
     </>
   );
-} 
+}

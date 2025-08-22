@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
-export const revalidate = 600; // 10 minutos
+// No usar cache para obtener datos siempre frescos
+export const dynamic = 'force-dynamic';
 
 function stripTags(input: string): string {
 	return input.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -18,7 +19,14 @@ function decodeEntities(input: string): string {
 export async function GET() {
 	try {
 		const url = 'https://rsn.ucr.ac.cr/actividad-sismica/ultimos-sismos';
-		const res = await fetch(url, { next: { revalidate } });
+		const res = await fetch(url, { 
+			cache: 'no-store',
+			headers: {
+				'Cache-Control': 'no-cache, no-store, must-revalidate',
+				'Pragma': 'no-cache',
+				'Expires': '0'
+			}
+		});
 		if (!res.ok) {
 			return NextResponse.json({ error: `Error HTTP ${res.status}` }, { status: 500 });
 		}
@@ -27,7 +35,7 @@ export async function GET() {
 		const regex = /<a[^>]+href=\"([^\"]*\/actividad-sismica\/ultimos-sismos\/[^\"]*)\"[^>]*>([\s\S]*?)<\/a>/gi;
 		const items: Array<{ title: string; dateText: string; magnitudeText: string; magnitude: number | null; url: string; }> = [];
 		let match: RegExpExecArray | null;
-		while ((match = regex.exec(html)) && items.length < 6) {
+		while ((match = regex.exec(html)) && items.length < 10) {
 			const href = match[1];
 			const content = decodeEntities(stripTags(match[2]));
 			const title = content;

@@ -4,6 +4,7 @@ import { SearchProvider } from '@/lib/SearchContext'
 import { PlayerProvider } from '@/lib/PlayerContext'
 import RadioPlayer from '@/components/RadioPlayer'
 import Script from 'next/script'
+import SplashPage from '@/components/SplashPage'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -125,7 +126,8 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <SearchProvider>
           <PlayerProvider>
-            {children}
+          <SplashPage />
+             {children}
             <RadioPlayer />
           </PlayerProvider>
         </SearchProvider>

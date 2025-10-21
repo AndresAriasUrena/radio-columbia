@@ -27,7 +27,7 @@ const RadioPlayer = () => {
   const [duration, setDuration] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const radioUrl = "https://streams.radio.co/s7e8f19c33/listen";
+  const radioUrl = "https://s2.radio.co/s83b86382e/listen";
   const previousSourceRef = useRef<string>('');
   const progressBarRef = useRef<HTMLDivElement>(null);
   const ytPlayerRef = useRef<any>(null);

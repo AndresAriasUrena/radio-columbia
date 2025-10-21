@@ -37,6 +37,7 @@ function HomeContent() {
               title="Categorías"
               description="Conoce todos los tipos de noticias de Columbia"
               showCategories={true}
+              maxPosts={6}
             />
             <CategoryNewsGrid
               title="Tendencias Actuales"

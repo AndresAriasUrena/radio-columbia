@@ -130,7 +130,7 @@ class WordPressService {
   static async getTags(): Promise<TagsResponse> {
     try {
       const response = await fetch(`${WORDPRESS_API_BASE}/tags?per_page=100`);
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           return {
@@ -142,7 +142,7 @@ class WordPressService {
       }
 
       const tags: WordPressTag[] = await response.json();
-      
+
       if (!Array.isArray(tags)) {
         console.warn('API response is not an array:', tags);
         return {
@@ -150,7 +150,7 @@ class WordPressService {
           tagsMap: {}
         };
       }
-      
+
       const tagsMap: { [slug: string]: number } = {};
       tags.forEach(tag => {
         if (tag && tag.slug && tag.id) {
@@ -168,6 +168,27 @@ class WordPressService {
         tags: [],
         tagsMap: {}
       };
+    }
+  }
+
+  static async getTagBySlug(slug: string): Promise<number | null> {
+    try {
+      const response = await fetch(`${WORDPRESS_API_BASE}/tags?slug=${slug}`);
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const tags: WordPressTag[] = await response.json();
+
+      if (Array.isArray(tags) && tags.length > 0 && tags[0].id) {
+        return tags[0].id;
+      }
+
+      return null;
+    } catch (error) {
+      console.error(`Error fetching tag by slug "${slug}":`, error);
+      return null;
     }
   }
 

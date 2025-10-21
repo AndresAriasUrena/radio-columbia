@@ -17,8 +17,7 @@ const Hero = ({ tagSlug = "hero" }) => {
           setTagId(null);
           return;
         }
-        const result = await WordPressService.getTags();
-        const id = result.tagsMap[tagSlug];
+        const id = await WordPressService.getTagBySlug(tagSlug);
         if (id) {
           setTagId(id);
         } else {
@@ -26,7 +25,7 @@ const Hero = ({ tagSlug = "hero" }) => {
           setTagId(null);
         }
       } catch (error) {
-        console.error("Error loading tags map:", error);
+        console.error("Error loading tag:", error);
         setTagId(null);
       }
     };

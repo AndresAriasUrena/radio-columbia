@@ -35,8 +35,7 @@ export default function NewsGridWithImage({
           return;
         }
 
-        const result = await WordPressService.getTags();
-        const id = result.tagsMap[tagSlug];
+        const id = await WordPressService.getTagBySlug(tagSlug);
 
         if (id) {
           setTagId(id);
@@ -45,7 +44,7 @@ export default function NewsGridWithImage({
           setTagId(null);
         }
       } catch (error) {
-        console.error('Error loading tags map:', error);
+        console.error('Error loading tag:', error);
         setTagId(null);
       }
     };

@@ -39,12 +39,12 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
   // Estados para secciones desplegables
   const [expandedSections, setExpandedSections] = useState({
     categories: true,
-    currency: false,
-    earthquakes: false,
-    standings: false,
-    weather: false,
-    lottery: false,
-    social: false
+    currency: true,
+    earthquakes: true,
+    standings: true,
+    weather: true,
+    lottery: true,
+    social: true
   });
 
   const toggleSection = (section: keyof typeof expandedSections) => {

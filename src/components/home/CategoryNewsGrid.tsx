@@ -22,6 +22,7 @@ export default function CategoryNewsGrid({
   title,
   description,
   tagSlug,
+  maxPosts,
   showLoadMore = true,
   showCategories = false,
   cardType = 'default',
@@ -37,23 +38,89 @@ export default function CategoryNewsGrid({
   const [tagId, setTagId] = useState<number | null | undefined>(undefined);
   const [categories, setCategories] = useState<WordPressCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [loadedCategoriesCount, setLoadedCategoriesCount] = useState(0);
+  const [allCategories, setAllCategories] = useState<WordPressCategory[]>([]);
+  const [displayedPostIds, setDisplayedPostIds] = useState<Set<number>>(new Set());
 
-  const POSTS_PER_PAGE = 3;
+  const POSTS_PER_PAGE = maxPosts || 3;
+  const CATEGORIES_PER_LOAD = maxPosts || 9;
+
+  const loadCategoriesBatch = useCallback(async (
+    categoriesToLoad: WordPressCategory[],
+    startIndex: number,
+    count: number,
+    currentDisplayedIds: Set<number>
+  ) => {
+    try {
+      const batch = categoriesToLoad.slice(startIndex, startIndex + count);
+      const newPosts: WordPressPost[] = [];
+      const newDisplayedIds = new Set(currentDisplayedIds);
+
+      // Procesar cada categoría de manera secuencial para evitar duplicados
+      for (const category of batch) {
+        try {
+          // Intentar obtener los primeros 5 posts de la categoría para tener opciones
+          const result = await WordPressService.getPosts({
+            page: 1,
+            perPage: 5,
+            categories: [category.id],
+            orderBy: 'date'
+          });
+
+          // Buscar el primer post que no hayamos mostrado aún
+          const uniquePost = result.posts.find(post => !newDisplayedIds.has(post.id));
+
+          if (uniquePost) {
+            newPosts.push(uniquePost);
+            newDisplayedIds.add(uniquePost.id);
+          }
+        } catch (error) {
+          console.error(`Error loading post for category ${category.name}:`, error);
+        }
+      }
+
+      if (startIndex === 0) {
+        setPosts(newPosts);
+        setDisplayedPostIds(newDisplayedIds);
+      } else {
+        setPosts(prev => [...prev, ...newPosts]);
+        setDisplayedPostIds(newDisplayedIds);
+      }
+
+      const newLoadedCount = startIndex + batch.length;
+      setLoadedCategoriesCount(newLoadedCount);
+      setHasMore(newLoadedCount < categoriesToLoad.length);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading category batch:', error);
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoading(true);
         const { categories } = await WordPressService.getCategories();
-        setCategories(categories);
+        const categoriesWithPosts = categories.filter(cat => cat.count > 0);
+
+        setAllCategories(categoriesWithPosts);
+        setCategories(categoriesWithPosts);
+
+        // Reiniciar los IDs mostrados y cargar las primeras categorías
+        const emptySet = new Set<number>();
+        setDisplayedPostIds(emptySet);
+        await loadCategoriesBatch(categoriesWithPosts, 0, CATEGORIES_PER_LOAD, emptySet);
       } catch (error) {
         console.error('Error loading categories:', error);
+        setLoading(false);
       }
     };
 
     if (showCategories) {
       fetchCategories();
     }
-  }, [showCategories]);
+  }, [showCategories, CATEGORIES_PER_LOAD, loadCategoriesBatch]);
 
   useEffect(() => {
     const getTagId = async () => {
@@ -64,9 +131,8 @@ export default function CategoryNewsGrid({
           return;
         }
 
-        const result = await WordPressService.getTags();
-        const id = result.tagsMap[tagSlug];
-        
+        const id = await WordPressService.getTagBySlug(tagSlug);
+
         if (id) {
           setTagId(id);
           setError(null);
@@ -75,8 +141,8 @@ export default function CategoryNewsGrid({
           setTagId(null);
         }
       } catch (error) {
-        console.error('Error loading tags map:', error);
-        setError('Error al cargar los tags');
+        console.error('Error loading tag:', error);
+        setError('Error al cargar el tag');
         setLoading(false);
       }
     };
@@ -162,6 +228,9 @@ export default function CategoryNewsGrid({
   }, [categoryId, tagId, showCategories, tagSlug, selectedCategory]);
 
   useEffect(() => {
+    // No ejecutar fetchPosts si estamos en modo "mostrar categorías"
+    if (showCategories) return;
+
     if ((tagId !== undefined || !tagSlug) && (categoryId !== undefined || !showCategories) && !error) {
       setPage(1);
       fetchPosts(1, false);
@@ -183,9 +252,16 @@ export default function CategoryNewsGrid({
   };
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchPosts(nextPage, true);
+    if (showCategories) {
+      // Cargar más categorías
+      setLoading(true);
+      loadCategoriesBatch(allCategories, loadedCategoriesCount, CATEGORIES_PER_LOAD, displayedPostIds);
+    } else {
+      // Cargar más posts (lógica original)
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchPosts(nextPage, true);
+    }
   };
 
   if (error) {

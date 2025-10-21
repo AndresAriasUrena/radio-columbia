@@ -76,7 +76,8 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
 
-  output: 'standalone',
+  // Aumentar timeout para generación estática
+  staticPageGenerationTimeout: 120,
 };
 
 export default nextConfig;

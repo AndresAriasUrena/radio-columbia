@@ -2,7 +2,7 @@ import WordPressService from '@/lib/wordpressService';
 
 export default async function sitemap() {
   const baseUrl = 'https://radiodev.aurigital.com';
-  
+
   const staticPages = [
     {
       url: baseUrl,
@@ -44,33 +44,61 @@ export default async function sitemap() {
 
   let allPosts = [];
   try {
-    const firstBatch = await WordPressService.getPosts({ 
-      page: 1, 
-      perPage: 100,
-      orderBy: 'date',
-      order: 'desc'
-    });
-    
+    // Fetch solo las primeras 2 páginas con timeout
+    const fetchWithTimeout = (promise, timeout = 10000) => {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout')), timeout)
+        )
+      ]);
+    };
+
+    const firstBatch = await fetchWithTimeout(
+      WordPressService.getPosts({
+        page: 1,
+        perPage: 100,
+        orderBy: 'date',
+        order: 'desc'
+      })
+    );
+
     allPosts = [...firstBatch.posts];
-    
-    if (firstBatch.totalPages > 1) {
+
+    // Limitar a máximo 3 páginas para evitar timeouts
+    const maxPages = Math.min(firstBatch.totalPages, 3);
+
+    if (maxPages > 1) {
       const remainingPages = Array.from(
-        { length: firstBatch.totalPages - 1 }, 
+        { length: maxPages - 1 },
         (_, i) => i + 2
       );
-      
-      for (const page of remainingPages) {
-        try {
-          const batch = await WordPressService.getPosts({ 
-            page, 
-            perPage: 100,
-            orderBy: 'date',
-            order: 'desc'
-          });
-          allPosts = [...allPosts, ...batch.posts];
-        } catch (error) {
-          console.error(`Error fetching page ${page}:`, error);
-        }
+
+      // Fetch en paralelo con límite de concurrencia
+      const batchSize = 2;
+      for (let i = 0; i < remainingPages.length; i += batchSize) {
+        const batch = remainingPages.slice(i, i + batchSize);
+        const promises = batch.map(page =>
+          fetchWithTimeout(
+            WordPressService.getPosts({
+              page,
+              perPage: 100,
+              orderBy: 'date',
+              order: 'desc'
+            }),
+            10000
+          ).catch(error => {
+            console.error(`Error fetching page ${page}:`, error);
+            return { posts: [] };
+          })
+        );
+
+        const results = await Promise.all(promises);
+        results.forEach(result => {
+          if (result.posts) {
+            allPosts = [...allPosts, ...result.posts];
+          }
+        });
       }
     }
   } catch (error) {

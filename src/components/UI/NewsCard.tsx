@@ -31,7 +31,7 @@ export default function NewsCard({ post }: NewsCardProps) {
 
         <div className="py-5">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-[#01A299] border-[1.4px] border-[#01A299] px-4 py-[4px] rounded-full bg-transparent text-sm font-medium">
+            <span className="text-white bg-[#01A299] px-3 py-[2px] rounded-full text-xs font-medium">
                  {category}
             </span>
 

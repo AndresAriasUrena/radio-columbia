@@ -33,7 +33,6 @@ export default function Navbar() {
     { key: 'noticias', href: '/news' },
     { key: 'deportes', href: '/sports' },
     { key: 'podcasts', href: '/podcasts' },
-    { key: 'radionovelas', href: '/podcasts#radionovelas' },
     { key: 'contacto', href: '/contact' },
     { key: 'nosotros', href: '/about-us' },
     { key: 'en-vivo', href: '#', isButton: true },
@@ -308,7 +307,7 @@ export default function Navbar() {
       <nav className="flex items-center px-4 sm:px-6 py-4 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
         <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img src="/assets/LogoColumbia.svg" alt="Columbia" width={120} height={80} className='mr-5 h-20 w-20 md:h-[60px] md:w-[120px]' />
+            <img src="/assets/LogoColumbia.svg" alt="Columbia" className='mr-5 h-auto w-28 md:w-[150px]' />
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
@@ -404,7 +403,7 @@ export default function Navbar() {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-[#D4D5DD]">
             <div className="flex items-center justify-between">
-              <img src="/assets/LogoColumbia.svg" alt="Columbia" width={80} height={60} />
+              <img src="/assets/LogoColumbia.svg" alt="Columbia" className="h-auto w-24" />
               <button onClick={closeMenu} className="text-[#2F3037] hover:text-[#D51F2F] transition-colors p-2" aria-label="Cerrar menú">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

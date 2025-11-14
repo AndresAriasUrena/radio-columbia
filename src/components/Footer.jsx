@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="container mx-auto max-w-7xl w-full">
                 <div className="flex flex-col lg:flex-row gap-4 justify-between items-start mb-12">
                     <div className="mb-8 md:mb-0 max-w-xs mx-auto lg:mx-0 text-center lg:text-left flex flex-col items-center lg:items-start">
-                        <img src="/assets/LogoColumbia.svg" alt="Columbia" className="w-64 mb-3" />
+                        <img src="/assets/LogoColumbia.svg" alt="Columbia" className="w-64 h-auto mb-3" />
                         <p className="text-md leading-tight text-[#1E305F] mb-3">
                         La evolución de la radio en Costa Rica. Música, cultura y comunidad que te inspiran.
                         </p>

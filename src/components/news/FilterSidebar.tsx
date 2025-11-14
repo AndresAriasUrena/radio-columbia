@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Facebook, Instagram, X, Search, Youtube, Mail, ArrowLeftRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { Facebook, Instagram, X, Search, Youtube, Mail, ArrowLeftRight, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { IoClose } from 'react-icons/io5';
 import { SearchContext } from '@/lib/SearchContext';
 import WordPressService from '@/lib/wordpressService';
@@ -18,9 +18,18 @@ interface FilterSidebarProps {
   isMobileOpen?: boolean;
   setIsMobileOpen?: (open: boolean) => void;
   parentSlugs?: string[];
+  isDesktopSidebarOpen?: boolean;
+  setIsDesktopSidebarOpen?: (open: boolean) => void;
 }
 
-const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen = () => { }, parentSlugs = [] }: FilterSidebarProps) => {
+const FilterSidebar = ({
+  onFilterChange,
+  isMobileOpen = false,
+  setIsMobileOpen = () => { },
+  parentSlugs = [],
+  isDesktopSidebarOpen = true,
+  setIsDesktopSidebarOpen = () => { }
+}: FilterSidebarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { searchTerm, setSearchTerm } = useContext(SearchContext);
@@ -32,6 +41,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
   const [availableFilters, setAvailableFilters] = useState({
     categories: [] as FilterItem[]
   });
+  const [allCategoriesData, setAllCategoriesData] = useState<WordPressCategory[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(8);
@@ -74,10 +84,34 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
     if (filters.categories.length > 0) {
       params.set('categories', filters.categories.join(','));
     }
-    const newURL = params.toString() ? `/news?${params.toString()}` : '/news';
+
+    // Determine if we should route to /sports or /news
+    let basePath = '/news';
+    if (filters.categories.length > 0) {
+      // Check if any selected category is a sports category
+      const selectedCategorySlug = filters.categories[0]; // Take the first selected category
+      const categoryData = allCategoriesData.find(cat => cat.slug === selectedCategorySlug);
+
+      if (categoryData) {
+        // Find the parent category
+        const parentCategory = allCategoriesData.find(cat => cat.id === categoryData.parent);
+        const deportesCategory = allCategoriesData.find(cat => cat.slug.toLowerCase() === 'deportes');
+
+        // Check if this category or its parent is "deportes"
+        if (categoryData.slug.toLowerCase() === 'deportes' ||
+            parentCategory?.slug.toLowerCase() === 'deportes' ||
+            categoryData.id === deportesCategory?.id ||
+            categoryData.parent === deportesCategory?.id) {
+          basePath = '/sports';
+        }
+      }
+    }
+
+    const newURL = params.toString() ? `${basePath}?${params.toString()}` : basePath;
 
     if (typeof window !== 'undefined') {
-      if (window.location.pathname === '/news') {
+      const currentPath = window.location.pathname;
+      if (currentPath === basePath) {
         router.replace(newURL, { scroll: false });
       } else {
         router.push(newURL);
@@ -96,6 +130,9 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
         setLoading(true);
         
         const { categories } = await WordPressService.getCategories();
+
+        // Store all categories data for parent lookup
+        setAllCategoriesData(categories as WordPressCategory[]);
 
         // Si se especifican categorías padre (por slug o nombre), filtrar solo las categorías hijas
         let filtered = categories as WordPressCategory[];
@@ -116,7 +153,7 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
               count: cat.count,
               slug: cat.slug
             }))
-            .sort((a: FilterItem, b: FilterItem) => b.count - a.count) 
+            .sort((a: FilterItem, b: FilterItem) => b.count - a.count)
         });
 
         const urlFilters = loadFiltersFromURL();
@@ -257,8 +294,25 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
   }, []);
 
   return (
-    <div className="w-full lg:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 lg:py-16 bg-[#1E305F] my-4 rounded-2xl">
-      <div className="lg:hidden flex items-center justify-between mb-6">
+    <>
+      {/* Desktop toggle button - fixed position, always visible */}
+      <button
+        onClick={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
+        className={`hidden xl:flex fixed top-[33vh] p-3 rounded-l-xl shadow-lg transition-all duration-500 z-50 items-center justify-center ${
+          isDesktopSidebarOpen
+            ? 'bg-[#1E305F] hover:bg-[#D51F2F] right-[25rem]'
+            : 'bg-[#D51F2F] hover:bg-[#1E305F] right-4'
+        } text-white`}
+        aria-label={isDesktopSidebarOpen ? 'Ocultar filtros' : 'Mostrar filtros'}
+      >
+        {isDesktopSidebarOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+      </button>
+
+      <div className={`relative w-full xl:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 xl:py-16 bg-[#1E305F] my-4 rounded-2xl transition-all duration-500 ease-in-out ${
+        !isDesktopSidebarOpen ? 'xl:translate-x-full xl:opacity-0 xl:w-0 xl:px-0' : 'xl:translate-x-0 xl:opacity-100'
+      }`}>
+
+      <div className="xl:hidden flex items-center justify-between mb-6">
         <h2 className=" font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
         <button
           onClick={() => setIsMobileOpen(false)}
@@ -420,7 +474,8 @@ const FilterSidebar = ({ onFilterChange, isMobileOpen = false, setIsMobileOpen =
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

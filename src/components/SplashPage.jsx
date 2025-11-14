@@ -32,13 +32,10 @@ export default function SplashPage() {
       <div className="text-center">
         {/* Logo */}
         <div className="mb-8 animate-pulse">
-          <Image
+          <img
             src="/assets/LogoColumbia.svg"
             alt="Columbia"
-            width={250}
-            height={100}
-            className="mx-auto drop-shadow-lg"
-            priority
+            className="mx-auto drop-shadow-lg w-[250px] h-auto"
           />
         </div>
       </div>

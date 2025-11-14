@@ -63,10 +63,10 @@ const Radios = () => {
                             className="bg-white rounded-xl px-14 py-3 hover:shadow-xl transition-all duration-300 hover:scale-105 w-full md:w-auto"
                         >
                             <div className="flex flex-col items-center text-center">
-                                <img 
-                                    src={emisora.logo} 
-                                    alt={`Logo ${emisora.nombre}`} 
-                                    className="w-40 h-32 md:w-32 md:h-32 object-contain"
+                                <img
+                                    src={emisora.logo}
+                                    alt={`Logo ${emisora.nombre}`}
+                                    className="w-40 md:w-32 h-auto"
                                 />
                             </div>
                         </div>

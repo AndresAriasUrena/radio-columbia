@@ -16,6 +16,8 @@ interface CategoryNewsGridProps {
   showCategories?: boolean;
   cardType?: 'default' | 'grid';
   onCategoryChange?: (categorySlug: string) => void;
+  parentCategories?: string[];
+  viewAllLink?: string;
 }
 
 export default function CategoryNewsGrid({
@@ -26,7 +28,9 @@ export default function CategoryNewsGrid({
   showLoadMore = true,
   showCategories = false,
   cardType = 'default',
-  onCategoryChange
+  onCategoryChange,
+  parentCategories = [],
+  viewAllLink = '/news'
 }: CategoryNewsGridProps) {
   const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,7 +106,37 @@ export default function CategoryNewsGrid({
       try {
         setLoading(true);
         const { categories } = await WordPressService.getCategories();
-        const categoriesWithPosts = categories.filter(cat => cat.count > 0);
+        let categoriesWithPosts = categories.filter(cat => cat.count > 0);
+
+        // If parentCategories is specified, filter to include parent and its children
+        if (parentCategories && parentCategories.length > 0) {
+          const normalizedTargets = parentCategories.map(s => s.toLowerCase());
+
+          // Find the parent category IDs
+          const parentCats = categories.filter((cat: WordPressCategory) =>
+            normalizedTargets.includes(cat.slug.toLowerCase()) ||
+            normalizedTargets.includes(cat.name.toLowerCase())
+          );
+
+          const parentIds = parentCats.map((cat: WordPressCategory) => cat.id);
+
+          if (parentIds.length > 0) {
+            // Include the parent categories themselves AND their children
+            categoriesWithPosts = categoriesWithPosts.filter((cat: WordPressCategory) =>
+              parentIds.includes(cat.id) || parentIds.includes(cat.parent)
+            );
+
+            // Deduplicate by ID to ensure each category appears only once
+            const seenIds = new Set<number>();
+            categoriesWithPosts = categoriesWithPosts.filter((cat: WordPressCategory) => {
+              if (seenIds.has(cat.id)) {
+                return false;
+              }
+              seenIds.add(cat.id);
+              return true;
+            });
+          }
+        }
 
         setAllCategories(categoriesWithPosts);
         setCategories(categoriesWithPosts);
@@ -120,7 +154,7 @@ export default function CategoryNewsGrid({
     if (showCategories) {
       fetchCategories();
     }
-  }, [showCategories, CATEGORIES_PER_LOAD, loadCategoriesBatch]);
+  }, [showCategories, CATEGORIES_PER_LOAD, loadCategoriesBatch, parentCategories]);
 
   useEffect(() => {
     const getTagId = async () => {
@@ -295,7 +329,7 @@ export default function CategoryNewsGrid({
                 <h2 className="font-semibold text-lg md:text-2xl text-[#1B1B1B]">{title}</h2>
                 {description && <p className="text-sm text-[#64748B] hidden md:block">{description}</p>}
               </div>
-              <Link href="/news" className="text-[#9A9898] border border-[#9A9898] rounded-md px-2 py-1 md:px-4 md:py-2 hover:text-[#1E305F] hover:border-[#1E305F] text-xs md:text-sm flex items-center transition-all duration-300">
+              <Link href={viewAllLink} className="text-[#9A9898] border border-[#9A9898] rounded-md px-2 py-1 md:px-4 md:py-2 hover:text-[#1E305F] hover:border-[#1E305F] text-xs md:text-sm flex items-center transition-all duration-300">
                 Ver todas <span aria-hidden>→</span>
               </Link>
             </div>

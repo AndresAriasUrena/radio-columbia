@@ -298,7 +298,7 @@ const FilterSidebar = ({
       {/* Desktop toggle button - fixed position, always visible */}
       <button
         onClick={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
-        className={`hidden xl:flex fixed top-[33vh] p-3 rounded-l-xl shadow-lg transition-all duration-500 z-50 items-center justify-center ${
+        className={`hidden xl:flex fixed top-[45vh] p-3 rounded-l-xl shadow-lg transition-all duration-500 z-50 items-center justify-center ${
           isDesktopSidebarOpen
             ? 'bg-[#1E305F] hover:bg-[#D51F2F] right-[25rem]'
             : 'bg-[#D51F2F] hover:bg-[#1E305F] right-4'
@@ -308,8 +308,10 @@ const FilterSidebar = ({
         {isDesktopSidebarOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
       </button>
 
-      <div className={`relative w-full xl:w-96 text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 xl:py-16 bg-[#1E305F] my-4 rounded-2xl transition-all duration-500 ease-in-out ${
-        !isDesktopSidebarOpen ? 'xl:translate-x-full xl:opacity-0 xl:w-0 xl:px-0' : 'xl:translate-x-0 xl:opacity-100'
+      <div className={`relative w-full text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 xl:py-16 bg-[#1E305F] my-4 rounded-2xl transition-all duration-500 ease-in-out overflow-hidden ${
+        !isDesktopSidebarOpen
+          ? 'xl:max-w-0 xl:opacity-0 xl:px-0 xl:mr-0'
+          : 'xl:max-w-96 xl:w-96 xl:opacity-100 xl:mr-4'
       }`}>
 
       <div className="xl:hidden flex items-center justify-between mb-6">

@@ -35,6 +35,8 @@ export default function RelatedNewsGrid({ posts }: RelatedNewsGridProps) {
                     fill
                     className="object-cover rounded-2xl"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    loading="lazy"
+                    quality={85}
                   />
                 </div>
                 <div className="space-y-3">

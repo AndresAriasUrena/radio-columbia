@@ -102,9 +102,9 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
         <>
             <JsonLd data={newsSchema} />
             <Navbar />
-            <div className="min-h-screen overflow-hidden">
+            <div className="min-h-screen">
                 <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
-                    <div className="flex-1">
+                    <div className="flex-1 overflow-hidden">
                         <div className="mx-auto relative">
                             <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
                                 <div className="flex-1 order-2 lg:order-1 items-center justify-center text-center">
@@ -126,7 +126,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
                                             <img
                                                 src={featuredImage}
                                                 alt={cleanTitle}
-                                                className="w-full max-h-[400px] object-cover rounded-2xl mx-auto"
+                                                className="w-full max-h-[440px] object-cover object-[60%_40%] rounded-2xl mx-auto"
                                             />
                                         </div>
                                         <div className="flex flex-row gap-8">

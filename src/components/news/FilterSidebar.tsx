@@ -295,24 +295,29 @@ const FilterSidebar = ({
 
   return (
     <>
-      {/* Desktop toggle button - fixed position, always visible */}
-      <button
-        onClick={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
-        className={`hidden xl:flex fixed top-[45vh] p-3 rounded-l-xl shadow-lg transition-all duration-500 z-50 items-center justify-center ${
-          isDesktopSidebarOpen
-            ? 'bg-[#1E305F] hover:bg-[#D51F2F] right-[25rem]'
-            : 'bg-[#D51F2F] hover:bg-[#1E305F] right-4'
-        } text-white`}
-        aria-label={isDesktopSidebarOpen ? 'Ocultar filtros' : 'Mostrar filtros'}
-      >
-        {isDesktopSidebarOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-      </button>
+  <div className={`relative text-[#D4D5DD] bg-[#1E305F] my-4 py-4 xl:py-0 rounded-2xl transition-all duration-500 ease-in-out ${
+    !isDesktopSidebarOpen
+      ? 'xl:max-w-0 xl:px-0 xl:mr-0'
+      : 'xl:max-w-96 xl:w-96 xl:mr-4'
+  }`}>
 
-      <div className={`relative w-full text-[#D4D5DD] px-4 sm:px-6 py-8 sm:py-12 xl:py-16 bg-[#1E305F] my-4 rounded-2xl transition-all duration-500 ease-in-out overflow-hidden ${
-        !isDesktopSidebarOpen
-          ? 'xl:max-w-0 xl:opacity-0 xl:px-0 xl:mr-0'
-          : 'xl:max-w-96 xl:w-96 xl:opacity-100 xl:mr-4'
-      }`}>
+    {/* Desktop toggle button - STICKY - siempre visible */}
+    <button
+      onClick={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
+      className={`hidden xl:flex xl:sticky xl:top-24 -ml-4 sm:-ml-8 mb-4 mt-8 p-3 rounded-l-xl shadow-lg transition-all duration-500 z-50 items-center justify-center ${
+        isDesktopSidebarOpen
+          ? 'bg-[#1E305F] xl:opacity-100'
+          : 'bg-[#1E305F] hover:bg-[#D51F2F] xl:opacity-100'
+      } text-white`}
+      aria-label={isDesktopSidebarOpen ? 'Ocultar filtros' : 'Mostrar filtros'}
+    >
+      {isDesktopSidebarOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+    </button>
+
+    {/* Contenido del sidebar con opacity transition */}
+    <div className={`px-4 sm:px-6 pb-8 sm:pb-12 xl:pb-16 transition-opacity duration-500 ${
+      !isDesktopSidebarOpen ? 'xl:opacity-0' : 'xl:opacity-100'
+    }`}>
 
       <div className="xl:hidden flex items-center justify-between mb-6">
         <h2 className=" font-semibold text-xl text-[#D4D5DD]">FILTROS</h2>
@@ -476,7 +481,8 @@ const FilterSidebar = ({
           </div>
         </div>
       </div>
-      </div>
+    </div>
+    </div>
     </>
   );
 };

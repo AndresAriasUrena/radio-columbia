@@ -21,7 +21,7 @@ function HomeContent() {
 
   return (
     <>
-      <div className="min-h-screen overflow-hidden">
+      <div className="min-h-screen">
         <div className="xl:hidden fixed bottom-20 right-4 z-50">
           <button
             onClick={() => setIsMobileFiltersOpen(true)}

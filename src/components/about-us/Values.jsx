@@ -6,7 +6,7 @@ const Values = () => {
       <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-6 lg:gap-12">
       <div className="w-full flex items-center justify-center">
           <img
-            src="/assets/about-us/Mission.avif"
+            src="/assets/about-us/about-us2.png"
             alt="Banda tocando en vivo"
             className="rounded-xl w-full h-[280px] sm:h-[460px] object-cover shadow-lg"
           />

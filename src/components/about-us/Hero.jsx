@@ -10,7 +10,7 @@ const Hero = () => {
       <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-12">
         <div className="w-full lg:w-1/2 flex items-center justify-center">
           <img
-            src="/assets/about-us/Mission.avif"
+            src="/assets/about-us/about-us-hero1.png"
             alt="Banda tocando en vivo"
             className="rounded-xl w-full h-[280px] sm:h-[340px] lg:h-[440px] object-cover shadow-lg"
           />

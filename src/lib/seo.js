@@ -1,6 +1,6 @@
 const siteConfig = {
   siteName: 'Radio Columbia',
-  siteUrl: 'https://radiodev.aurigital.com/',
+  siteUrl: 'https://columbia.co.cr/',
   description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Mantente informado con nuestras noticias actualizadas y disfruta de la mejor programación las 24 horas.',
   keywords: 'radio columbia, radio costa rica, noticias costa rica, deportes costa rica, música, entretenimiento, streaming, radio en vivo, noticias costarricenses',
   author: 'Radio Columbia',

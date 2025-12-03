@@ -20,14 +20,14 @@ export const metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://radiodev.aurigital.com'),
+  metadataBase: new URL('https://columbia.co.cr'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: 'Radio Columbia - Tu Estación de Radio Costarricense',
     description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Escucha radio en vivo las 24 horas.',
-    url: 'https://radiodev.aurigital.com',
+    url: 'https://columbia.co.cr',
     siteName: 'Radio Columbia',
     images: [
       {
@@ -99,8 +99,8 @@ export default function RootLayout({ children }) {
             "@type": "RadioStation",
             "name": "Radio Columbia",
             "description": "Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento",
-            "url": "https://radiodev.aurigital.com",
-            "logo": "https://radiodev.aurigital.com/assets/LogoColumbia.svg",
+            "url": "https://columbia.co.cr",
+            "logo": "https://columbia.co.cr/assets/LogoColumbia.svg",
             "sameAs": [
               "https://www.facebook.com/NoticiasColumbia/",
               "https://www.instagram.com/noticiascolumbia/",

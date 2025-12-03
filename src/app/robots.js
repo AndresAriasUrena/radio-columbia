@@ -34,7 +34,7 @@ export default function robots() {
         disallow: '/',
       },
     ],
-    sitemap: 'https://radiodev.aurigital.com/sitemap.xml',
-    host: 'https://radiodev.aurigital.com',
+    sitemap: 'https://columbia.co.cr/sitemap.xml',
+    host: 'https://columbia.co.cr',
   };
 } 

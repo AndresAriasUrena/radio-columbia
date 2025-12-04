@@ -26,7 +26,7 @@ export default function RelatedNewsGrid({ posts }: RelatedNewsGridProps) {
           const featuredImage = WordPressService.getFeaturedImage(post);
           const category = WordPressService.getCategory(post);
           return (
-            <Link href={`/news/${post.slug}`} key={post.id}>
+            <Link href={`/${post.slug}`} key={post.id}>
               <article className="group overflow-hidden hover:scale-[1.02] transition-all duration-300">
                 <div className="relative aspect-[16/11] bg-[#F1F5F9] rounded-2xl mb-4">
                   <Image

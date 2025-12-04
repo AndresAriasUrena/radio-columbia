@@ -281,7 +281,7 @@ export default function Navbar() {
             <span className="uppercase opacity-80 whitespace-nowrap">Noticias de última hora</span>
             <span className="truncate max-w-full sm:max-w-[60vw]">
               {latestPost ? (
-                <Link href={`/news/${latestPost.slug}`} className="hover:underline">{latestPost.title}</Link>
+                <Link href={`/${latestPost.slug}`} className="hover:underline">{latestPost.title}</Link>
               ) : '—'}
             </span>
           </div>

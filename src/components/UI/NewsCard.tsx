@@ -17,7 +17,7 @@ export default function NewsCard({ post }: NewsCardProps) {
   const cleanTitle = WordPressService.cleanHtml;
 
   return (
-    <Link href={`/news/${post.slug}`}>
+    <Link href={`/${post.slug}`}>
       <article className="group overflow-hidden hover:scale-[1.02] transition-all duration-700 animate-fadeInUp">
         <div className="relative aspect-[16/11] bg-[#D4D5DD] rounded-2xl">
           <Image

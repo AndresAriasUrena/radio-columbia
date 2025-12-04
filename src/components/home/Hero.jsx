@@ -191,7 +191,7 @@ const Hero = ({ tagSlug = "hero" }) => {
                   </p>
                 )}
                 <Link
-                  href={`/news/${currentPost.slug}`}
+                  href={`/${currentPost.slug}`}
                   className="mt-5 inline-flex items-center gap-2 bg-[#01A299] text-white px-4 py-2 rounded-md hover:opacity-90 transition-colors"
                 >
                   Leer noticia <IoArrowForward className="w-4 h-4" />
@@ -206,7 +206,7 @@ const Hero = ({ tagSlug = "hero" }) => {
         {/* Secundarias */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {secondary.map((post) => (
-            <Link key={post.id} href={`/news/${post.slug}`} className="group hover:scale-[1.02] transition-all duration-700 block">
+            <Link key={post.id} href={`/${post.slug}`} className="group hover:scale-[1.02] transition-all duration-700 block">
               <article>
                 <div className="relative aspect-[16/11] bg-[#D4D5DD] rounded-2xl overflow-hidden mb-1">
                   <Image

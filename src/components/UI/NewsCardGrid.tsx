@@ -17,7 +17,7 @@ export default function NewsCardGrid({ post }: NewsCardGridProps) {
   const cleanTitle = WordPressService.cleanHtml;
 
   return (
-    <Link href={`/news/${post.slug}`}>
+    <Link href={`/${post.slug}`}>
       <article className="py-3 group overflow-hidden border-b border-[#D4D5DD]">
         <div className="flex flex-col md:flex-row py-5 gap-6 md:gap-10">
           {/* Imagen */}

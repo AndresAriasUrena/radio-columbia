@@ -106,7 +106,7 @@ export default async function sitemap() {
   }
 
   const newsPages = allPosts.map((post) => ({
-    url: `${baseUrl}/news/${post.slug}`,
+    url: `${baseUrl}/${post.slug}`,
     lastModified: new Date(post.modified),
     changeFrequency: 'weekly',
     priority: 0.8,

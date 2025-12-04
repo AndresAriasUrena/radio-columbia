@@ -166,7 +166,7 @@ export default function NewsGridWithImage({
               return (
                 <Link
                   key={post.id}
-                  href={`/news/${post.slug}`}
+                  href={`/${post.slug}`}
                   onMouseEnter={() => setSelectedPostIndex(index)}
                   className="group block"
                 >

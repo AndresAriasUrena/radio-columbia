@@ -59,12 +59,12 @@ const Hero = ({ tagSlug = "hero" }) => {
     if (tagId !== undefined) fetchPosts();
   }, [tagId]);
 
-  // Auto-slide carousel every 3 seconds
+  // Auto-slide carousel every 5 seconds
   useEffect(() => {
     if (posts.length > 0) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % Math.min(3, posts.length));
-      }, 3000);
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [posts]);

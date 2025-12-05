@@ -32,10 +32,14 @@ export default function SplashPage() {
       <div className="text-center">
         {/* Logo */}
         <div className="mb-8 animate-pulse">
-          <img
+          <Image
             src="/assets/LogoColumbia.svg"
             alt="Columbia"
-            className="mx-auto drop-shadow-lg w-[250px] h-auto"
+            width={250}
+            height={90}
+            priority
+            className="mx-auto drop-shadow-lg"
+            style={{ width: '250px', height: 'auto' }}
           />
         </div>
       </div>

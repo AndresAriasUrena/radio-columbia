@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useSearch } from '@/lib/SearchContext';
 import { usePlayer } from '@/lib/PlayerContext';
 import Link from 'next/link';
+import Image from 'next/image';
 import { IoRadio, IoAlertCircleOutline, IoTrophyOutline, IoMegaphoneOutline, IoLogoFacebook, IoLogoInstagram, IoLogoTwitter, IoLogoYoutube } from 'react-icons/io5';
 import WordPressService from '@/lib/wordpressService';
 
@@ -307,7 +308,14 @@ export default function Navbar() {
       <nav className="flex items-center px-4 sm:px-6 py-4 bg-[#F8FBFF] mx-2 my-4 rounded-2xl">
         <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-4">
-            <img src="/assets/LogoColumbia.svg" alt="Columbia" className='mr-5 h-auto w-28 md:w-[150px]' />
+            <Image
+              src="/assets/LogoColumbia.svg"
+              alt="Columbia"
+              width={150}
+              height={54}
+              priority
+              className='mr-5 h-auto w-28 md:w-[150px]'
+            />
           </Link>
 
           <div className="hidden lg:flex items-center space-x-6">
@@ -403,7 +411,14 @@ export default function Navbar() {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-[#D4D5DD]">
             <div className="flex items-center justify-between">
-              <img src="/assets/LogoColumbia.svg" alt="Columbia" className="h-auto w-24" />
+              <Image
+                src="/assets/LogoColumbia.svg"
+                alt="Columbia"
+                width={96}
+                height={35}
+                priority
+                className="h-auto w-24"
+              />
               <button onClick={closeMenu} className="text-[#2F3037] hover:text-[#D51F2F] transition-colors p-2" aria-label="Cerrar menú">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -218,36 +218,28 @@ export default function Navbar() {
 
     const fetchLotteryAlert = async () => {
       try {
-        const crDay = await getCRDay();
-        
-        if (crDay === 2 || crDay === 5) {
-          const response = await fetch('/api/jps/chances/last');
-          
-          if (response.ok) {
-            const data = await response.json();
-            
-            if (data.premios && data.premios.length > 0) {
-              // Usar directamente el primer premio (rank: 1) ya que no hay propiedad 'tipo'
-              const firstPrize = data.premios[0];
-              if (firstPrize) {
-                setLottery({ kind: 'chances', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
-              }
+        // Intentar obtener resultados de ambas loterías
+        // Primero intentar Lotería Nacional (domingos)
+        const loteriaResponse = await fetch('/api/jps/loteria/last');
+        if (loteriaResponse.ok) {
+          const loteriaData = await loteriaResponse.json();
+          if (loteriaData.premios && loteriaData.premios.length > 0) {
+            const firstPrize = loteriaData.premios[0];
+            if (firstPrize && firstPrize.numero) {
+              setLottery({ kind: 'loteria', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
+              return; // Ya encontramos resultado, salir
             }
           }
-        } else if (crDay === 0) {
-          const response = await fetch('/api/jps/loteria/last');
-          if (response.ok) {
-            const data = await response.json();
-            if (data.premios && data.premios.length > 0) {
-              const p = data.premios.find((it: any) => it.tipo === 1);
-              if (p) {
-                setLottery({ kind: 'loteria', numero: String(p.numero), serie: String(p.serie), premio: p.premio });
-              } else {
-                const firstPrize = data.premios[0];
-                if (firstPrize) {
-                  setLottery({ kind: 'loteria', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
-                }
-              }
+        }
+
+        // Si no hay Lotería Nacional, intentar Chances (martes/viernes)
+        const chancesResponse = await fetch('/api/jps/chances/last');
+        if (chancesResponse.ok) {
+          const chancesData = await chancesResponse.json();
+          if (chancesData.premios && chancesData.premios.length > 0) {
+            const firstPrize = chancesData.premios[0];
+            if (firstPrize && firstPrize.numero) {
+              setLottery({ kind: 'chances', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
             }
           }
         }

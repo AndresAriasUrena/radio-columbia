@@ -218,28 +218,34 @@ export default function Navbar() {
 
     const fetchLotteryAlert = async () => {
       try {
-        // Intentar obtener resultados de ambas loterías
-        // Primero intentar Lotería Nacional (domingos)
-        const loteriaResponse = await fetch('/api/jps/loteria/last');
-        if (loteriaResponse.ok) {
-          const loteriaData = await loteriaResponse.json();
-          if (loteriaData.premios && loteriaData.premios.length > 0) {
-            const firstPrize = loteriaData.premios[0];
+        const response = await fetch('/api/lottery/results');
+        if (response.ok) {
+          const data = await response.json();
+
+          // Priorizar Lotería Nacional si tiene datos recientes
+          if (data.loteria && data.loteria.premios && data.loteria.premios.length > 0) {
+            const firstPrize = data.loteria.premios[0];
             if (firstPrize && firstPrize.numero) {
-              setLottery({ kind: 'loteria', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
-              return; // Ya encontramos resultado, salir
+              setLottery({
+                kind: 'loteria',
+                numero: String(firstPrize.numero),
+                serie: String(firstPrize.serie),
+                premio: firstPrize.premio
+              });
+              return;
             }
           }
-        }
 
-        // Si no hay Lotería Nacional, intentar Chances (martes/viernes)
-        const chancesResponse = await fetch('/api/jps/chances/last');
-        if (chancesResponse.ok) {
-          const chancesData = await chancesResponse.json();
-          if (chancesData.premios && chancesData.premios.length > 0) {
-            const firstPrize = chancesData.premios[0];
+          // Si no hay Lotería Nacional, usar Chances
+          if (data.chances && data.chances.premios && data.chances.premios.length > 0) {
+            const firstPrize = data.chances.premios[0];
             if (firstPrize && firstPrize.numero) {
-              setLottery({ kind: 'chances', numero: String(firstPrize.numero), serie: String(firstPrize.serie), premio: firstPrize.premio });
+              setLottery({
+                kind: 'chances',
+                numero: String(firstPrize.numero),
+                serie: String(firstPrize.serie),
+                premio: firstPrize.premio
+              });
             }
           }
         }

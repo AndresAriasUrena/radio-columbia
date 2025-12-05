@@ -1,0 +1,53 @@
+{
+  "loteria": {
+    "fecha": "Domingo, 30 de Noviembre",
+    "sorteo": "4878",
+    "vigencia": "29/1/2026",
+    "premios": [
+      {
+        "rank": 1,
+        "numero": "78",
+        "serie": "720",
+        "premio": "150000000"
+      },
+      {
+        "rank": 2,
+        "numero": "82",
+        "serie": "297",
+        "premio": "22000000"
+      },
+      {
+        "rank": 3,
+        "numero": "91",
+        "serie": "077",
+        "premio": "10000000"
+      }
+    ]
+  },
+  "chances": {
+    "fecha": "Martes, 2 de Diciembre",
+    "sorteo": "6996",
+    "vigencia": "2/2/2026",
+    "premios": [
+      {
+        "rank": 1,
+        "numero": "39",
+        "serie": "218",
+        "premio": "80000000"
+      },
+      {
+        "rank": 2,
+        "numero": "06",
+        "serie": "948",
+        "premio": "25000000"
+      },
+      {
+        "rank": 3,
+        "numero": "01",
+        "serie": "640",
+        "premio": "7000000"
+      }
+    ]
+  },
+  "lastUpdate": "2024-12-04T12:00:00-06:00"
+}

@@ -11,6 +11,9 @@ import JsonLd from '@/components/SEO/JsonLd';
 
 const NewsSectionsSidebar = dynamic(() => import('@/components/news/NewsSectionsSidebar'), { ssr: false });
 
+// Revalidar cada 60 segundos (ISR)
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
   

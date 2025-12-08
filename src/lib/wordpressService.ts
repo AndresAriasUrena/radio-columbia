@@ -47,8 +47,10 @@ class WordPressService {
     }
 
     try {
-      const response = await fetch(url);
-      
+      const response = await fetch(url, {
+        next: { revalidate: 60 } // Revalidar cada 60 segundos
+      });
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
@@ -71,8 +73,10 @@ class WordPressService {
 
   static async getPostBySlug(slug: string): Promise<WordPressPost | null> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`);
-      
+      const response = await fetch(`${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`, {
+        next: { revalidate: 60 } // Revalidar cada 60 segundos
+      });
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
@@ -88,9 +92,12 @@ class WordPressService {
   static async getRelatedPosts(categoryId: number, excludeId: number, limit = 3): Promise<WordPressPost[]> {
     try {
       const response = await fetch(
-        `${WORDPRESS_API_BASE}/posts?categories=${categoryId}&exclude=${excludeId}&per_page=${limit}&orderby=date&order=desc&_embed`
+        `${WORDPRESS_API_BASE}/posts?categories=${categoryId}&exclude=${excludeId}&per_page=${limit}&orderby=date&order=desc&_embed`,
+        {
+          next: { revalidate: 60 } // Revalidar cada 60 segundos
+        }
       );
-      
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
@@ -104,8 +111,10 @@ class WordPressService {
 
   static async getCategories(): Promise<CategoriesResponse> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/categories?per_page=100`);
-      
+      const response = await fetch(`${WORDPRESS_API_BASE}/categories?per_page=100`, {
+        next: { revalidate: 60 } // Revalidar cada 60 segundos
+      });
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
@@ -129,7 +138,9 @@ class WordPressService {
 
   static async getTags(): Promise<TagsResponse> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/tags?per_page=100`);
+      const response = await fetch(`${WORDPRESS_API_BASE}/tags?per_page=100`, {
+        next: { revalidate: 60 } // Revalidar cada 60 segundos
+      });
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -173,7 +184,9 @@ class WordPressService {
 
   static async getTagBySlug(slug: string): Promise<number | null> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/tags?slug=${slug}`);
+      const response = await fetch(`${WORDPRESS_API_BASE}/tags?slug=${slug}`, {
+        next: { revalidate: 60 } // Revalidar cada 60 segundos
+      });
 
       if (!response.ok) {
         return null;
@@ -195,9 +208,12 @@ class WordPressService {
   static async getHeroPosts(limit = 6): Promise<WordPressPost[]> {
     try {
       const response = await fetch(
-        `${WORDPRESS_API_BASE}/posts?_embed&per_page=${limit}&orderby=date&order=desc`
+        `${WORDPRESS_API_BASE}/posts?_embed&per_page=${limit}&orderby=date&order=desc`,
+        {
+          next: { revalidate: 60 } // Revalidar cada 60 segundos
+        }
       );
-      
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }

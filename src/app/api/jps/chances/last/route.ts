@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
 export const revalidate = 1800;
-export const dynamic = 'force-dynamic';
 
 async function fetchApi() {
   const url = 'https://integration.jps.go.cr/api/App/chances/last';

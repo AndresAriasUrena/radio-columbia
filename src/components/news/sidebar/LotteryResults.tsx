@@ -10,7 +10,7 @@ type Kind = 'loteria' | 'chances';
 
 const logos: Record<Kind, string> = {
   loteria: '/assets/LtNacional.png',
-  chances: '/assets/chances.png'
+  chances: '/assets/Chances.png'
 };
 
 function formatColones(value: any): string {

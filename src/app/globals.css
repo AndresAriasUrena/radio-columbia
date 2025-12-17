@@ -172,6 +172,23 @@ body {
   max-width: 100%;
 }
 
+/* Estilos para el bloque de versos de WordPress */
+.prose .wp-block-verse {
+  background: #F8F9FA;
+  border-left: 4px solid #D51F2F;
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
+  margin: 1.5rem 0;
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #2F3037;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  border-radius: 0.5rem;
+  font-style: italic;
+}
+
 .prose table {
   display: block;
   max-width: 100%;
@@ -224,6 +241,15 @@ body {
   .prose p {
     word-wrap: break-word;
     overflow-wrap: break-word;
+  }
+
+  /* Bloque de versos responsivo */
+  .prose .wp-block-verse {
+    padding: 1rem 1rem 1rem 1.25rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    border-left-width: 3px;
   }
 }
 

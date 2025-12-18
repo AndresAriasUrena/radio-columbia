@@ -151,7 +151,11 @@ export default function Navbar() {
   const [latestPosts, setLatestPosts] = useState<{ title: string; slug: string }[]>([]);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [quakeAlert, setQuakeAlert] = useState<{ text: string } | null>(null);
-  const [lottery, setLottery] = useState<{ kind: 'chances' | 'loteria'; numero: string; serie: string; premio: any } | null>(null);
+  const [lottery, setLottery] = useState<{
+    kind: 'chances' | 'loteria';
+    name: string;
+    premios: Array<{ numero: string; serie: string; premio: any; rank: number }>
+  } | null>(null);
 
 
 
@@ -223,33 +227,52 @@ export default function Navbar() {
 
     const fetchLotteryAlert = async () => {
       try {
-        const response = await fetch('/api/lottery/results');
-        if (response.ok) {
-          const data = await response.json();
+        const crDay = await getCRDay();
 
-          // Priorizar Lotería Nacional si tiene datos recientes
-          if (data.loteria && data.loteria.premios && data.loteria.premios.length > 0) {
-            const firstPrize = data.loteria.premios[0];
-            if (firstPrize && firstPrize.numero) {
+        // Lotería Nacional: Miércoles (3) y Domingo (0)
+        // Chances: Martes (2) y Viernes (5)
+        const isLoteriaDay = crDay === 0 || crDay === 3;
+        const isChancesDay = crDay === 2 || crDay === 5;
+
+        if (!isLoteriaDay && !isChancesDay) {
+          setLottery(null);
+          return;
+        }
+
+        if (isLoteriaDay) {
+          const loteriaResponse = await fetch('/api/jps/loteria/last');
+          if (loteriaResponse.ok) {
+            const loteriaData = await loteriaResponse.json();
+            if (loteriaData.premios && loteriaData.premios.length > 0) {
               setLottery({
                 kind: 'loteria',
-                numero: String(firstPrize.numero),
-                serie: String(firstPrize.serie),
-                premio: firstPrize.premio
+                name: 'Lotería Nacional',
+                premios: loteriaData.premios.slice(0, 3).map((p: any) => ({
+                  numero: String(p.numero),
+                  serie: String(p.serie),
+                  premio: p.premio,
+                  rank: p.rank
+                }))
               });
               return;
             }
           }
+        }
 
-          // Si no hay Lotería Nacional, usar Chances
-          if (data.chances && data.chances.premios && data.chances.premios.length > 0) {
-            const firstPrize = data.chances.premios[0];
-            if (firstPrize && firstPrize.numero) {
+        if (isChancesDay) {
+          const chancesResponse = await fetch('/api/jps/chances/last');
+          if (chancesResponse.ok) {
+            const chancesData = await chancesResponse.json();
+            if (chancesData.premios && chancesData.premios.length > 0) {
               setLottery({
                 kind: 'chances',
-                numero: String(firstPrize.numero),
-                serie: String(firstPrize.serie),
-                premio: firstPrize.premio
+                name: 'Chances',
+                premios: chancesData.premios.slice(0, 3).map((p: any) => ({
+                  numero: String(p.numero),
+                  serie: String(p.serie),
+                  premio: p.premio,
+                  rank: p.rank
+                }))
               });
             }
           }
@@ -418,12 +441,20 @@ export default function Navbar() {
             </div>
           )}
 
-          {lottery && (
+          {lottery && lottery.premios && lottery.premios.length > 0 && (
             <div className="rounded-xl bg-[#01A299] text-white py-2 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-sm">
               <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-center">
                 <IoTrophyOutline className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="uppercase tracking-wide">Ganador</span>
-                <span className="opacity-90 break-words">1er Lugar - {lottery.numero} | serie {lottery.serie} | {formatColonesFull(lottery.premio)}</span>
+                <span className="uppercase tracking-wide">{lottery.name}</span>
+                <span className="opacity-90 break-words">
+                  <RotatingText
+                    text={lottery.premios.map(p =>
+                      `${p.rank}º Lugar - ${p.numero} | Serie ${p.serie} | ₡${formatColonesFull(p.premio)}`
+                    )}
+                    duration={4000}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  />
+                </span>
               </div>
             </div>
           )}

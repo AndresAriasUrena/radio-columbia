@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { IoRadio, IoAlertCircleOutline, IoTrophyOutline, IoMegaphoneOutline, IoLogoFacebook, IoLogoInstagram, IoLogoTwitter, IoLogoYoutube } from 'react-icons/io5';
 import WordPressService from '@/lib/wordpressService';
+import { RotatingText } from '@/components/text/RotatingText';
 
 interface MenuItem {
   key: string;
@@ -147,7 +148,8 @@ export default function Navbar() {
   };
 
   // Data state
-  const [latestPost, setLatestPost] = useState<{ title: string; slug: string } | null>(null);
+  const [latestPosts, setLatestPosts] = useState<{ title: string; slug: string }[]>([]);
+  const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [quakeAlert, setQuakeAlert] = useState<{ text: string } | null>(null);
   const [lottery, setLottery] = useState<{ kind: 'chances' | 'loteria'; numero: string; serie: string; premio: any } | null>(null);
 
@@ -168,9 +170,12 @@ export default function Navbar() {
   useEffect(() => {
     const fetchLatestPost = async () => {
       try {
-        const result = await WordPressService.getPosts({ page: 1, perPage: 1, orderBy: 'date' });
-        const post = result.posts?.[0];
-        if (post) setLatestPost({ title: WordPressService.cleanHtml(post.title.rendered), slug: post.slug });
+        const result = await WordPressService.getPosts({ page: 1, perPage: 3, orderBy: 'date' });
+        const posts = result.posts?.map(post => ({
+          title: WordPressService.cleanHtml(post.title.rendered),
+          slug: post.slug
+        })) || [];
+        setLatestPosts(posts);
       } catch { }
     };
 
@@ -269,6 +274,23 @@ export default function Navbar() {
     };
   }, []);
 
+  // Rotate news index every 4 seconds
+  useEffect(() => {
+    if (latestPosts.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentNewsIndex((prev) => (prev + 1) % latestPosts.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [latestPosts.length]);
+
+  const handleNewsClick = () => {
+    if (latestPosts[currentNewsIndex]) {
+      router.push(`/${latestPosts[currentNewsIndex].slug}`);
+    }
+  };
+
   return (
     <>
       {/* Barra superior: fecha/hora y titular */}
@@ -278,9 +300,16 @@ export default function Navbar() {
           <div className="flex items-center gap-1.5 sm:gap-2 text-center justify-center w-full sm:w-auto">
             <IoMegaphoneOutline className="w-4 h-4" />
             <span className="uppercase opacity-80 whitespace-nowrap">Noticias de última hora</span>
-            <span className="truncate max-w-full sm:max-w-[60vw]">
-              {latestPost ? (
-                <Link href={`/${latestPost.slug}`} className="hover:underline">{latestPost.title}</Link>
+            <span
+              className="truncate max-w-full sm:max-w-[60vw] cursor-pointer hover:underline"
+              onClick={handleNewsClick}
+            >
+              {latestPosts.length > 0 ? (
+                <RotatingText
+                  text={latestPosts.map(post => post.title)}
+                  duration={4000}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                />
               ) : '—'}
             </span>
           </div>

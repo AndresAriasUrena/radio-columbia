@@ -122,7 +122,7 @@ const Hero = ({ tagSlug = "hero" }) => {
       <div className="w-full max-w-7xl mx-auto">
         {/* Grey background box for carousel section */}
         <div className="bg-[#E8EAED] p-4 md:p-6 rounded-2xl mb-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 lg:items-center h-[600px] lg:max-h-[380px] gap-6 md:gap-10">
             {/* Carousel container with sliding effect */}
             <div className="relative h-48 sm:h-64 lg:h-full bg-[#D4D5DD] rounded-2xl overflow-hidden group">
               <div
@@ -181,11 +181,11 @@ const Hero = ({ tagSlug = "hero" }) => {
                 <p className="text-sm font-medium uppercase text-[#1B1B1B]/60 tracking-wide mb-2">
                   {getCategory(currentPost)} | {formatDate(currentPost.date)}
                 </p>
-                <h2 className="text-2xl lg:text-3xl xl:text-4xl font-semibold text-[#1B1B1B] leading-snug my-5">
+                <h2 className="text-2xl lg:text-3xl xl:text-4xl font-semibold text-[#1B1B1B] leading-snug my-5 line-clamp-3">
                   {cleanHtml(currentPost.title.rendered)}
                 </h2>
                 {currentPost.excerpt?.rendered && (
-                  <p className="text-md md:text-lg text-[#000000]/60 leading-none">
+                  <p className="text-md md:text-lg text-[#000000]/60 leading-none line-clamp-4">
                     {cleanHtml(currentPost.excerpt.rendered).slice(0, 320)}
                     {cleanHtml(currentPost.excerpt.rendered).length > 320 ? "…" : ""}
                   </p>

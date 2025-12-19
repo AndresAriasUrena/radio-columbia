@@ -85,7 +85,7 @@ function NewsContent({ title }: { title: string }) {
           isMobileFiltersOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <div className="-my-5 h-full overflow-y-auto">
-            <FilterSidebar 
+            <FilterSidebar
               onFilterChange={handleFilterChange}
               isMobileOpen={isMobileFiltersOpen}
               setIsMobileOpen={setIsMobileFiltersOpen}

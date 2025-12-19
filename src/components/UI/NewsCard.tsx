@@ -6,13 +6,14 @@ import { WordPressPost } from '@/types/wordpress';
 
 interface NewsCardProps {
   post: WordPressPost;
+  categoryOverride?: string;
 }
 
 import WordPressService from '@/lib/wordpressService';
 
-export default function NewsCard({ post }: NewsCardProps) {
+export default function NewsCard({ post, categoryOverride }: NewsCardProps) {
   const featuredImage = WordPressService.getFeaturedImage(post);
-  const category = WordPressService.getCategory(post);
+  const category = categoryOverride || WordPressService.getCategory(post);
   const formatDate = WordPressService.formatDate;
   const cleanTitle = WordPressService.cleanHtml;
 

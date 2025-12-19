@@ -45,6 +45,8 @@ export default function CategoryNewsGrid({
   const [loadedCategoriesCount, setLoadedCategoriesCount] = useState(0);
   const [allCategories, setAllCategories] = useState<WordPressCategory[]>([]);
   const [displayedPostIds, setDisplayedPostIds] = useState<Set<number>>(new Set());
+  // Track which category was used to load each post (to prevent showing wrong category labels)
+  const [postCategoryMap, setPostCategoryMap] = useState<Map<number, string>>(new Map());
 
   const POSTS_PER_PAGE = maxPosts || 3;
   const CATEGORIES_PER_LOAD = maxPosts || 9;
@@ -53,12 +55,14 @@ export default function CategoryNewsGrid({
     categoriesToLoad: WordPressCategory[],
     startIndex: number,
     count: number,
-    currentDisplayedIds: Set<number>
+    currentDisplayedIds: Set<number>,
+    currentCategoryMap: Map<number, string>
   ) => {
     try {
       const batch = categoriesToLoad.slice(startIndex, startIndex + count);
       const newPosts: WordPressPost[] = [];
       const newDisplayedIds = new Set(currentDisplayedIds);
+      const newCategoryMap = new Map(currentCategoryMap);
 
       // Procesar cada categoría de manera secuencial para evitar duplicados
       for (const category of batch) {
@@ -77,6 +81,8 @@ export default function CategoryNewsGrid({
           if (uniquePost) {
             newPosts.push(uniquePost);
             newDisplayedIds.add(uniquePost.id);
+            // Store which category was used to load this post
+            newCategoryMap.set(uniquePost.id, category.name);
           }
         } catch (error) {
           console.error(`Error loading post for category ${category.name}:`, error);
@@ -86,9 +92,11 @@ export default function CategoryNewsGrid({
       if (startIndex === 0) {
         setPosts(newPosts);
         setDisplayedPostIds(newDisplayedIds);
+        setPostCategoryMap(newCategoryMap);
       } else {
         setPosts(prev => [...prev, ...newPosts]);
         setDisplayedPostIds(newDisplayedIds);
+        setPostCategoryMap(newCategoryMap);
       }
 
       const newLoadedCount = startIndex + batch.length;
@@ -108,7 +116,7 @@ export default function CategoryNewsGrid({
         const { categories } = await WordPressService.getCategories();
         let categoriesWithPosts = categories.filter(cat => cat.count > 0);
 
-        // If parentCategories is specified, filter to include parent and its children
+        // If parentCategories is specified, filter to include ONLY children (subcategories), NOT the parent
         if (parentCategories && parentCategories.length > 0) {
           const normalizedTargets = parentCategories.map(s => s.toLowerCase());
 
@@ -121,9 +129,9 @@ export default function CategoryNewsGrid({
           const parentIds = parentCats.map((cat: WordPressCategory) => cat.id);
 
           if (parentIds.length > 0) {
-            // Include the parent categories themselves AND their children
+            // Include ONLY the children (subcategories), NOT the parent categories themselves
             categoriesWithPosts = categoriesWithPosts.filter((cat: WordPressCategory) =>
-              parentIds.includes(cat.id) || parentIds.includes(cat.parent)
+              parentIds.includes(cat.parent) && cat.count > 0
             );
 
             // Deduplicate by ID to ensure each category appears only once
@@ -143,8 +151,10 @@ export default function CategoryNewsGrid({
 
         // Reiniciar los IDs mostrados y cargar las primeras categorías
         const emptySet = new Set<number>();
+        const emptyMap = new Map<number, string>();
         setDisplayedPostIds(emptySet);
-        await loadCategoriesBatch(categoriesWithPosts, 0, CATEGORIES_PER_LOAD, emptySet);
+        setPostCategoryMap(emptyMap);
+        await loadCategoriesBatch(categoriesWithPosts, 0, CATEGORIES_PER_LOAD, emptySet, emptyMap);
       } catch (error) {
         console.error('Error loading categories:', error);
         setLoading(false);
@@ -289,7 +299,7 @@ export default function CategoryNewsGrid({
     if (showCategories) {
       // Cargar más categorías
       setLoading(true);
-      loadCategoriesBatch(allCategories, loadedCategoriesCount, CATEGORIES_PER_LOAD, displayedPostIds);
+      loadCategoriesBatch(allCategories, loadedCategoriesCount, CATEGORIES_PER_LOAD, displayedPostIds, postCategoryMap);
     } else {
       // Cargar más posts (lógica original)
       const nextPage = page + 1;
@@ -363,15 +373,23 @@ export default function CategoryNewsGrid({
         {posts.length > 0 && (
           <>
             <div className={`grid  ${
-              cardType === 'grid' 
-                ? 'grid-cols-1' 
+              cardType === 'grid'
+                ? 'grid-cols-1'
                 : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
             }`}>
               {posts.map((post) => (
                 cardType === 'grid' ? (
-                  <NewsCardGrid key={post.id} post={post} />
+                  <NewsCardGrid
+                    key={post.id}
+                    post={post}
+                    categoryOverride={showCategories ? postCategoryMap.get(post.id) : undefined}
+                  />
                 ) : (
-                  <NewsCard key={post.id} post={post} />
+                  <NewsCard
+                    key={post.id}
+                    post={post}
+                    categoryOverride={showCategories ? postCategoryMap.get(post.id) : undefined}
+                  />
                 )
               ))}
             </div>

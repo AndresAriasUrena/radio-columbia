@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { IoRadio, IoAlertCircleOutline, IoTrophyOutline, IoMegaphoneOutline, IoLogoFacebook, IoLogoInstagram, IoLogoTwitter, IoLogoYoutube } from 'react-icons/io5';
 import WordPressService from '@/lib/wordpressService';
+import { RotatingText } from '@/components/text/RotatingText';
 
 interface MenuItem {
   key: string;
@@ -115,24 +116,6 @@ export default function Navbar() {
     return diff >= 0 && diff <= hours * 3600 * 1000;
   };
 
-  const getCRDay = async (): Promise<number> => {
-    try {
-      // Usar una API externa para obtener la fecha exacta en Costa Rica
-      const response = await fetch('https://worldtimeapi.org/api/timezone/America/Costa_Rica');
-      if (response.ok) {
-        const data = await response.json();
-        const crDate = new Date(data.datetime);
-        return crDate.getDay(); // 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
-      }
-    } catch (error) {
-      console.warn('Error obteniendo fecha de Costa Rica, usando fecha local:', error);
-    }
-    
-    // Fallback: usar la fecha local del navegador
-    const now = new Date();
-    return now.getDay();
-  };
-
   const [currentTime, setCurrentTime] = useState<string>('');
 
   const formatNowCR = (): string => {
@@ -146,10 +129,56 @@ export default function Navbar() {
     return `${dia.charAt(0).toUpperCase() + dia.slice(1)} | ${h12}:${minutos}${ampm}`;
   };
 
+  const parseLotteryDate = (fechaStr: string): Date | null => {
+    if (!fechaStr) return null;
+
+    const meses: Record<string, number> = {
+      enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
+      julio: 6, agosto: 7, septiembre: 8, setiembre: 8, octubre: 9, noviembre: 10, diciembre: 11
+    };
+
+    // Try to match patterns like "Domingo 15 de diciembre" or "Miércoles 18 de diciembre"
+    const pattern = /(domingo|lunes|martes|miércoles|miercoles|jueves|viernes|sábado|sabado)\s+(\d{1,2})\s+de\s+([a-zñ]+)/i;
+    const m = fechaStr.toLowerCase().match(pattern);
+
+    if (m) {
+      const day = parseInt(m[2], 10);
+      const monthName = m[3];
+      const month = meses[monthName];
+
+      if (month === undefined) return null;
+
+      // Determine the year (current or previous)
+      const now = new Date();
+      const currentYear = now.getFullYear();
+
+      // Try current year first
+      let date = new Date(currentYear, month, day, 20, 0, 0); // Assume 8pm draw time
+
+      // If the date is in the future, use previous year
+      if (date > now) {
+        date = new Date(currentYear - 1, month, day, 20, 0, 0);
+      }
+
+      return date;
+    }
+
+    return null;
+  };
+
+  const isWithinHours = (date: Date, hours: number): boolean => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    return diff >= 0 && diff <= hours * 3600 * 1000;
+  };
+
   // Data state
-  const [latestPost, setLatestPost] = useState<{ title: string; slug: string } | null>(null);
+  const [latestPosts, setLatestPosts] = useState<{ title: string; slug: string }[]>([]);
+  const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [quakeAlert, setQuakeAlert] = useState<{ text: string } | null>(null);
-  const [lottery, setLottery] = useState<{ kind: 'chances' | 'loteria'; numero: string; serie: string; premio: any } | null>(null);
+  const [lotteryDisplay, setLotteryDisplay] = useState<{
+    premios: Array<{ numero: string; serie: string; premio: any; rank: number; kind: 'chances' | 'loteria'; name: string }>
+  } | null>(null);
 
 
 
@@ -168,9 +197,12 @@ export default function Navbar() {
   useEffect(() => {
     const fetchLatestPost = async () => {
       try {
-        const result = await WordPressService.getPosts({ page: 1, perPage: 1, orderBy: 'date' });
-        const post = result.posts?.[0];
-        if (post) setLatestPost({ title: WordPressService.cleanHtml(post.title.rendered), slug: post.slug });
+        const result = await WordPressService.getPosts({ page: 1, perPage: 3, orderBy: 'date' });
+        const posts = result.posts?.map(post => ({
+          title: WordPressService.cleanHtml(post.title.rendered),
+          slug: post.slug
+        })) || [];
+        setLatestPosts(posts);
       } catch { }
     };
 
@@ -218,56 +250,105 @@ export default function Navbar() {
 
     const fetchLotteryAlert = async () => {
       try {
-        const response = await fetch('/api/lottery/results');
-        if (response.ok) {
-          const data = await response.json();
+        const combinedPremios: Array<{ numero: string; serie: string; premio: any; rank: number; kind: 'chances' | 'loteria'; name: string }> = [];
 
-          // Priorizar Lotería Nacional si tiene datos recientes
-          if (data.loteria && data.loteria.premios && data.loteria.premios.length > 0) {
-            const firstPrize = data.loteria.premios[0];
-            if (firstPrize && firstPrize.numero) {
-              setLottery({
-                kind: 'loteria',
-                numero: String(firstPrize.numero),
-                serie: String(firstPrize.serie),
-                premio: firstPrize.premio
-              });
-              return;
+        // Fetch Lotería Nacional
+        try {
+          const loteriaResponse = await fetch('/api/jps/loteria/last');
+          if (loteriaResponse.ok) {
+            const loteriaData = await loteriaResponse.json();
+
+            if (loteriaData.premios && loteriaData.premios.length > 0) {
+              const loteriaDate = parseLotteryDate(loteriaData.fecha);
+
+              // Show if within 48 hours
+              if (loteriaDate && isWithinHours(loteriaDate, 48)) {
+                const loteriaPremios = loteriaData.premios.slice(0, 3).map((p: any) => ({
+                  numero: String(p.numero),
+                  serie: String(p.serie),
+                  premio: p.premio,
+                  rank: p.rank,
+                  kind: 'loteria' as const,
+                  name: 'Lotería Nacional'
+                }));
+                combinedPremios.push(...loteriaPremios);
+              }
             }
           }
+        } catch (error) {
+          console.error('Error fetching lotería:', error);
+        }
 
-          // Si no hay Lotería Nacional, usar Chances
-          if (data.chances && data.chances.premios && data.chances.premios.length > 0) {
-            const firstPrize = data.chances.premios[0];
-            if (firstPrize && firstPrize.numero) {
-              setLottery({
-                kind: 'chances',
-                numero: String(firstPrize.numero),
-                serie: String(firstPrize.serie),
-                premio: firstPrize.premio
-              });
+        // Fetch Chances
+        try {
+          const chancesResponse = await fetch('/api/jps/chances/last');
+          if (chancesResponse.ok) {
+            const chancesData = await chancesResponse.json();
+
+            if (chancesData.premios && chancesData.premios.length > 0) {
+              const chancesDate = parseLotteryDate(chancesData.fecha);
+
+              // Show if within 24 hours
+              if (chancesDate && isWithinHours(chancesDate, 24)) {
+                const chancesPremios = chancesData.premios.slice(0, 3).map((p: any) => ({
+                  numero: String(p.numero),
+                  serie: String(p.serie),
+                  premio: p.premio,
+                  rank: p.rank,
+                  kind: 'chances' as const,
+                  name: 'Chances'
+                }));
+                combinedPremios.push(...chancesPremios);
+              }
             }
           }
+        } catch (error) {
+          console.error('Error fetching chances:', error);
+        }
+
+        // Update state with combined results (Lotería first, then Chances)
+        if (combinedPremios.length > 0) {
+          setLotteryDisplay({ premios: combinedPremios });
+        } else {
+          setLotteryDisplay(null);
         }
       } catch (error) {
         console.error('Error al obtener lotería:', error);
+        setLotteryDisplay(null);
       }
     };
 
     fetchLatestPost();
     fetchQuakeAlert();
     fetchLotteryAlert();
-    
+
     // Actualizar alertas de terremotos cada 10 segundos para detectar terremotos recientes
     const quakeInterval = setInterval(fetchQuakeAlert, 10 * 1000);
-    
+
     // Forzar una actualización inmediata al cargar la página
     fetchQuakeAlert();
-    
+
     return () => {
       clearInterval(quakeInterval);
     };
   }, []);
+
+  // Rotate news index every 4 seconds
+  useEffect(() => {
+    if (latestPosts.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentNewsIndex((prev) => (prev + 1) % latestPosts.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [latestPosts.length]);
+
+  const handleNewsClick = () => {
+    if (latestPosts[currentNewsIndex]) {
+      router.push(`/${latestPosts[currentNewsIndex].slug}`);
+    }
+  };
 
   return (
     <>
@@ -278,9 +359,16 @@ export default function Navbar() {
           <div className="flex items-center gap-1.5 sm:gap-2 text-center justify-center w-full sm:w-auto">
             <IoMegaphoneOutline className="w-4 h-4" />
             <span className="uppercase opacity-80 whitespace-nowrap">Noticias de última hora</span>
-            <span className="truncate max-w-full sm:max-w-[60vw]">
-              {latestPost ? (
-                <Link href={`/${latestPost.slug}`} className="hover:underline">{latestPost.title}</Link>
+            <span
+              className="truncate max-w-full sm:max-w-[60vw] cursor-pointer hover:underline"
+              onClick={handleNewsClick}
+            >
+              {latestPosts.length > 0 ? (
+                <RotatingText
+                  text={latestPosts.map(post => post.title)}
+                  duration={4000}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                />
               ) : '—'}
             </span>
           </div>
@@ -389,12 +477,20 @@ export default function Navbar() {
             </div>
           )}
 
-          {lottery && (
+          {lotteryDisplay && lotteryDisplay.premios && lotteryDisplay.premios.length > 0 && (
             <div className="rounded-xl bg-[#01A299] text-white py-2 sm:py-3 px-3 sm:px-4 text-[10px] sm:text-sm">
               <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-center">
                 <IoTrophyOutline className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="uppercase tracking-wide">Ganador</span>
-                <span className="opacity-90 break-words">1er Lugar - {lottery.numero} | serie {lottery.serie} | {formatColonesFull(lottery.premio)}</span>
+                <span className="uppercase tracking-wide">Resultados de Lotería</span>
+                <span className="opacity-90 break-words">
+                  <RotatingText
+                    text={lotteryDisplay.premios.map((p) =>
+                      `${p.name} - ${p.rank}º Lugar - ${p.numero} | Serie ${p.serie} | ₡${formatColonesFull(p.premio)}`
+                    )}
+                    duration={4000}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  />
+                </span>
               </div>
             </div>
           )}

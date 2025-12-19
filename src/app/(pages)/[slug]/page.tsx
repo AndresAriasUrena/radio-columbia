@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import FilterSidebar from '@/components/news/FilterSidebar';
+import NewsDetailClientWrapper from '@/components/news/NewsDetailClientWrapper';
 import RelatedNewsGrid from '@/components/news/RelatedNewsGrid';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -105,58 +105,49 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
         <>
             <JsonLd data={newsSchema} />
             <Navbar />
-            <div className="min-h-screen">
-                <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
-                    <div className="flex-1 overflow-hidden">
-                        <div className="mx-auto relative">
-                            <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
-                                <div className="flex-1 order-2 lg:order-1 items-center justify-center text-center">
-                                    <div className='px-4 sm:px-6 lg:px-10 py-8 sm:py-12 bg-[#F8FBFF] mx-2 my-4 rounded-2xl'>
-                                        <div className='flex flex-col gap-4 text-center justify-center items-center max-w-xl mx-auto'>
-                                            {mainCategory && (
-                                                <span className="inline-block px-4 py-2 rounded-full bg-[#01A299] text-white text-xs font-normal">
-                                                    {mainCategory.name}
-                                                </span>
-                                            )}
-                                            <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-[#2F3037]">
-                                                {cleanTitle}
-                                            </h1>
-                                            <div className="mb-6 text-[#2F3037]/80 text-sm font-semibold">
-                                                {author} <span className="text-[#2F3037]/60">- {formatDate(post.date)}</span>
-                                            </div>
-                                        </div>
-                                        <div className="mb-8">
-                                            <img
-                                                src={featuredImage}
-                                                alt={cleanTitle}
-                                                className="w-full max-h-[440px] object-cover object-[60%_40%] rounded-2xl mx-auto"
-                                            />
-                                        </div>
-                                        <div className="flex flex-row gap-8">
-                                            <div className="hidden lg:block text-left w-full lg:w-[20%]">
-                                                <NewsSectionsSidebar html={htmlWithIds} />
-                                            </div>
-                                            <article
-                                                className="w-full lg:w-[80%] prose prose-invert text-[#2F3037]/80 prose-a:text-[#2F3037]/70 prose-strong:text-[#2F3037] mx-auto text-left text-sm md:text-base [&_ul]:list-none [&_ul]:pl-0 [&_li]:before:content-['•'] [&_li]:before:text-[#01A299] [&_li]:before:mr-2 [&_li]:before:text-lg [&_li]:before:font-bold"
-                                                dangerouslySetInnerHTML={{ __html: htmlWithIds }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="px-4 sm:px-6 py-8 sm:py-12 bg-[#F8FBFF] mx-2 mt-4 rounded-2xl text-left">
-                                        {relatedPosts.length > 0 && <RelatedNewsGrid posts={relatedPosts} />}
+            <NewsDetailClientWrapper>
+                <div className="mx-auto relative">
+                    <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
+                        <div className="flex-1 order-2 lg:order-1 items-center justify-center text-center">
+                            <div className='px-4 sm:px-6 lg:px-10 py-8 sm:py-12 bg-[#F8FBFF] mx-2 my-4 rounded-2xl'>
+                                <div className='flex flex-col gap-4 text-center justify-center items-center max-w-xl mx-auto'>
+                                    {mainCategory && (
+                                        <span className="inline-block px-4 py-2 rounded-full bg-[#01A299] text-white text-xs font-normal">
+                                            {mainCategory.name}
+                                        </span>
+                                    )}
+                                    <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-[#2F3037]">
+                                        {cleanTitle}
+                                    </h1>
+                                    <div className="mb-6 text-[#2F3037]/80 text-sm font-semibold">
+                                        {author} <span className="text-[#2F3037]/60">- {formatDate(post.date)}</span>
                                     </div>
                                 </div>
+                                <div className="mb-8">
+                                    <img
+                                        src={featuredImage}
+                                        alt={cleanTitle}
+                                        className="w-full max-h-[440px] object-cover object-[60%_40%] rounded-2xl mx-auto"
+                                    />
+                                </div>
+                                <div className="flex flex-row gap-8">
+                                    <div className="hidden lg:block text-left w-full lg:w-[20%]">
+                                        <NewsSectionsSidebar html={htmlWithIds} />
+                                    </div>
+                                    <article
+                                        className="w-full lg:w-[80%] prose prose-invert text-[#2F3037]/80 prose-a:text-[#2F3037]/70 prose-strong:text-[#2F3037] mx-auto text-left text-sm md:text-base [&_ul]:list-none [&_ul]:pl-0 [&_li]:before:content-['•'] [&_li]:before:text-[#01A299] [&_li]:before:mr-2 [&_li]:before:text-lg [&_li]:before:font-bold"
+                                        dangerouslySetInnerHTML={{ __html: htmlWithIds }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="px-4 sm:px-6 py-8 sm:py-12 bg-[#F8FBFF] mx-2 mt-4 rounded-2xl text-left">
+                                {relatedPosts.length > 0 && <RelatedNewsGrid posts={relatedPosts} />}
                             </div>
                         </div>
                     </div>
-
-                    <div className="hidden lg:block">
-                        <FilterSidebar
-                        />
-                    </div>
                 </div>
-            </div>
+            </NewsDetailClientWrapper>
             <Footer />
         </>
     );

@@ -390,7 +390,7 @@ const FilterSidebar = ({
       </div>
 
       {/* Actividad Sísmica */}
-      <div className="mb-6">
+      <div id="earthquake-section" className="mb-6">
         <button
           onClick={() => toggleSection('earthquakes')}
           className="w-full flex items-center justify-between text-left"
@@ -399,7 +399,7 @@ const FilterSidebar = ({
           {expandedSections.earthquakes ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
-        
+
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.earthquakes ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <EarthquakesBlock />
         </div>
@@ -438,7 +438,7 @@ const FilterSidebar = ({
       </div>
 
       {/* Lotería */}
-      <div className="mb-6">
+      <div id="lottery-results-section" className="mb-6">
         <button
           onClick={() => toggleSection('lottery')}
           className="w-full flex items-center justify-between text-left"
@@ -447,7 +447,7 @@ const FilterSidebar = ({
           {expandedSections.lottery ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
-        
+
         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.lottery ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <LotteryResults />
         </div>

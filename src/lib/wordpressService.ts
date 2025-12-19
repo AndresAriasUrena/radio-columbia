@@ -234,7 +234,33 @@ class WordPressService {
 
   static getCategory(post: WordPressPost): string {
     if (post._embedded && post._embedded['wp:term'] && post._embedded['wp:term'][0]) {
-      return post._embedded['wp:term'][0][0]?.name || 'NOTICIAS';
+      const categories = post._embedded['wp:term'][0];
+
+      // Parent categories to avoid showing (prefer more specific categories)
+      const parentCategoriesToAvoid = ['Deportes', 'Noticias', 'deportes', 'noticias'];
+
+      // If there's only one category, return it
+      if (categories.length === 1) {
+        return categories[0]?.name || 'NOTICIAS';
+      }
+
+      // If there are multiple categories:
+      // 1. First, try to find a subcategory (one with a parent)
+      const subcategory = categories.find((cat: any) => cat.parent && cat.parent !== 0);
+      if (subcategory) {
+        return subcategory.name;
+      }
+
+      // 2. If no subcategory found, try to find any category that's NOT a generic parent
+      const specificCategory = categories.find((cat: any) =>
+        !parentCategoriesToAvoid.includes(cat.name)
+      );
+      if (specificCategory) {
+        return specificCategory.name;
+      }
+
+      // 3. Fallback to the first category
+      return categories[0]?.name || 'NOTICIAS';
     }
     return 'NOTICIAS';
   }

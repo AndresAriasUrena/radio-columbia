@@ -6,13 +6,14 @@ import { WordPressPost } from '@/types/wordpress';
 
 interface NewsCardGridProps {
   post: WordPressPost;
+  categoryOverride?: string;
 }
 
 import WordPressService from '@/lib/wordpressService';
 
-export default function NewsCardGrid({ post }: NewsCardGridProps) {
+export default function NewsCardGrid({ post, categoryOverride }: NewsCardGridProps) {
   const featuredImage = WordPressService.getFeaturedImage(post);
-  const category = WordPressService.getCategory(post);
+  const category = categoryOverride || WordPressService.getCategory(post);
   const formatDate = WordPressService.formatDate;
   const cleanTitle = WordPressService.cleanHtml;
 

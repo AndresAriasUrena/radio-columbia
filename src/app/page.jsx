@@ -38,7 +38,7 @@ function HomeContent() {
               title="Categorías de Deportes"
               description="Mantente al día con las últimas noticias deportivas"
               showCategories={true}
-              maxPosts={6}
+              maxPosts={9}
               parentCategories={["deportes"]}
               viewAllLink="/sports"
             />
@@ -46,7 +46,7 @@ function HomeContent() {
               title="Categorías de Noticias"
               description="Conoce todos los tipos de noticias de Columbia"
               showCategories={true}
-              maxPosts={6}
+              maxPosts={9}
               parentCategories={["noticias"]}
               viewAllLink="/news"
             />

@@ -109,7 +109,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
             <Navbar />
             <NewsDetailClientWrapper>
                 <div className="mx-auto relative">
-                    <div className="flex flex-col lg:flex-row gap-4 lg:gap-16">
+                    <div className="flex flex-col lg:flex-row gap-4 lg:gap-16 font-outfit">
                         <div className="flex-1 order-2 lg:order-1 items-center justify-center text-center">
                             <div className='px-4 sm:px-6 lg:px-10 py-8 sm:py-12 bg-[#F8FBFF] mx-2 my-4 rounded-2xl'>
                                 <div className='flex flex-col gap-4 text-center justify-center items-center max-w-xl mx-auto'>

@@ -122,7 +122,7 @@ export default function WordPressLinkPreview() {
 
         if (title) {
           title.style.cssText = `
-            font-size: 1.125rem !important;
+            font-size: 1.325rem !important;
             font-weight: 700 !important;
             color: #FFFFFF !important;
             margin: 0 0 0.5rem 0 !important;

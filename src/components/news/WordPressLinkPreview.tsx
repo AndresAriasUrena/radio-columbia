@@ -27,7 +27,7 @@ export default function WordPressLinkPreview() {
         background: #252525 !important;
         border-radius: 1rem !important;
         margin: 1.5rem 0 !important;
-        padding: 0.75rem !important;
+        padding: 1rem !important;
         cursor: pointer !important;
         transition: transform 0.2s ease !important;
         align-items: ${isMobile ? 'stretch' : 'center'} !important;
@@ -52,8 +52,8 @@ export default function WordPressLinkPreview() {
         imgContainer.style.cssText = `
           grid-column: 1 !important;
           grid-row: 1 !important;
-          width: 200px !important;
-          height: 160px !important;
+          width: 100% !important;
+          height: ${isMobile ? 'auto' : '160px'} !important;
           margin: 0 !important;
           padding: 0 !important;
           display: flex !important;
@@ -67,8 +67,9 @@ export default function WordPressLinkPreview() {
 
         if (img) {
           img.style.cssText = `
-            width: 200px !important;
-            height: 160px !important;
+            width: 100% !important;
+            height: ${isMobile ? 'auto' : '160px'} !important;
+            max-width: ${isMobile ? '100%' : '200px'} !important;
             object-fit: cover !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -84,8 +85,9 @@ export default function WordPressLinkPreview() {
           img.style.cssText = `
             grid-column: 1 !important;
             grid-row: 1 !important;
-            width: 200px !important;
-            height: 160px !important;
+            width: 100% !important;
+            height: ${isMobile ? 'auto' : '160px'} !important;
+            max-width: ${isMobile ? '100%' : '200px'} !important;
             object-fit: cover !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -105,12 +107,13 @@ export default function WordPressLinkPreview() {
         console.log(`Preview ${index} - Text container children:`, textContainer.children);
 
         textContainer.style.cssText = `
-          grid-column: 2 !important;
-          grid-row: 1 !important;
+          grid-column: ${isMobile ? '1' : '2'} !important;
+          grid-row: ${isMobile ? '2' : '1'} !important;
           display: flex !important;
           flex-direction: column !important;
           justify-content: center !important;
           padding: 0 !important;
+          padding-top: ${isMobile ? '1rem' : '0'} !important;
         `;
 
         // Aplicar estilos al título
@@ -119,7 +122,7 @@ export default function WordPressLinkPreview() {
 
         if (title) {
           title.style.cssText = `
-            font-size: 1rem !important;
+            font-size: 1.125rem !important;
             font-weight: 700 !important;
             color: #FFFFFF !important;
             margin: 0 0 0.5rem 0 !important;
@@ -168,14 +171,15 @@ export default function WordPressLinkPreview() {
 
         if (title) {
           title.style.cssText = `
-            grid-column: 2 !important;
-            grid-row: 1 !important;
+            grid-column: ${isMobile ? '1' : '2'} !important;
+            grid-row: ${isMobile ? '2' : '1'} !important;
             align-self: center !important;
-            font-size: 1rem !important;
+            font-size: 1.125rem !important;
             font-weight: 700 !important;
             color: #FFFFFF !important;
             margin: 0 0 0.5rem 0 !important;
             padding: 0 !important;
+            padding-top: ${isMobile ? '1rem' : '0'} !important;
             line-height: 1.3 !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
@@ -186,8 +190,8 @@ export default function WordPressLinkPreview() {
 
         if (summary) {
           summary.style.cssText = `
-            grid-column: 2 !important;
-            grid-row: 1 !important;
+            grid-column: ${isMobile ? '1' : '2'} !important;
+            grid-row: ${isMobile ? '3' : '1'} !important;
             align-self: center !important;
             font-size: 0.875rem !important;
             color: #FFFFFF !important;

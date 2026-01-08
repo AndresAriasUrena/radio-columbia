@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import NewsDetailClientWrapper from '@/components/news/NewsDetailClientWrapper';
 import RelatedNewsGrid from '@/components/news/RelatedNewsGrid';
+import WordPressLinkPreview from '@/components/news/WordPressLinkPreview';
 import { notFound } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import WordPressService from '@/lib/wordpressService';
@@ -104,6 +105,7 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
     return (
         <>
             <JsonLd data={newsSchema} />
+            <WordPressLinkPreview />
             <Navbar />
             <NewsDetailClientWrapper>
                 <div className="mx-auto relative">

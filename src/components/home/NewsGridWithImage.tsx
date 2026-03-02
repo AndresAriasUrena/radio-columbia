@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { WordPressPost } from '@/types/wordpress';
+
 import WordPressService from '@/lib/wordpressService';
 
 interface NewsGridWithImageProps {

@@ -64,10 +64,8 @@ function removeFeaturedImageFromContent(html: string, featuredImageUrl: string):
         return html;
     }
 
-    const imageBase = featuredImageUrl.split('/').pop()?.split('.')[0];
-    if (!imageBase) return html;
-
-    const imgRegex = new RegExp(`<img[^>]*src="[^"]*${imageBase}[^"]*"[^>]*>`, 'i');
+    const escapedUrl = featuredImageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const imgRegex = new RegExp(`<img[^>]*src="${escapedUrl}"[^>]*>`, 'i');
     return html.replace(imgRegex, '');
 }
 

@@ -12,6 +12,7 @@ const PODCAST_RSS_FEEDS = [
 	{ url: 'https://feeds.captivate.fm/la-voluntad-de-la-pampa/', status: 'radionovela' as const },
 	{ url: 'https://feeds.captivate.fm/polvora-en-abril/', status: 'radionovela' as const },
 	{ url: 'https://feeds.captivate.fm/libertad-al-amanecer/', status: 'radionovela' as const },
+	{ url: 'https://feeds.captivate.fm/inesita-el-presidente/', status: 'radionovela' as const },
 ];
 
 // Configuración personalizada para podcasts de YouTube

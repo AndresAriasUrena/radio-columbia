@@ -15,27 +15,50 @@ const PODCAST_RSS_FEEDS = [
 	{ url: 'https://feeds.captivate.fm/inesita-el-presidente/', status: 'radionovela' as const },
 ];
 
-// Configuración personalizada para podcasts de YouTube
-const YOUTUBE_PODCAST_CONFIG: { [url: string]: { description?: string; imageUrl?: string; title?: string } } = {
-	// Podcast 1
+// Configuración personalizada para todos los programas (podcasts y radionovelas)
+const PODCAST_CONFIG: { [url: string]: { description?: string; imageUrl?: string; title?: string } } = {
+	// Podcasts de YouTube
 	'https://www.youtube.com/watch?v=WUPkfxstdlI&list=PLR6ilCH2z2UjB_B9UxjHbyt4uZQzN1UhL': {
 		title: 'Columbia Deportiva',
 		description: 'Cobertura de los partidos de Columbia Deportiva',
-		imageUrl: '/assets/LogoColumbiaDeportes.svg'
+		imageUrl: '/assets/portadas/columbia-deportiva.png'
 	},
-	
-	// Podcast 2
+
 	'https://www.youtube.com/watch?v=u2wiG9Tv5I4&list=PLR6ilCH2z2UijukrGdUfzpF449rv7pBkJ': {
 		title: 'Por Tres Razones',
 		description: 'Descripción personalizada del segundo podcast de YouTube',
-		imageUrl: '/assets/PorTresRazones.avif'
+		imageUrl: '/assets/portadas/por-tres-razones.png'
 	},
-	
-	// Podcast 3
+
 	'https://www.youtube.com/watch?v=qjZAFkSQr8c&list=PLR6ilCH2z2UiBetZbuboVsDZAfbauo-5B': {
 		title: 'Voces',
 		description: 'Descripción personalizada del tercer podcast de YouTube',
-		imageUrl: '/assets/LogoColumbiaDeportes.svg'
+		imageUrl: '/assets/portadas/voces.png'
+	},
+
+	// Radionovelas Captivate
+	'https://feeds.captivate.fm/la-voluntad-de-la-pampa/': {
+		title: 'La Voluntad de La Pampa',
+		description: 'Radionovela clásica',
+		imageUrl: '/assets/portadas/la-voluntad-de-la-pampa.png'
+	},
+
+	'https://feeds.captivate.fm/polvora-en-abril/': {
+		title: 'Pólvora en Abril',
+		description: 'Radionovela',
+		imageUrl: '/assets/portadas/polvora-en-abril.png'
+	},
+
+	'https://feeds.captivate.fm/libertad-al-amanecer/': {
+		title: 'Libertad al Amanecer',
+		description: 'Radionovela',
+		imageUrl: '/assets/portadas/libertad-al-amanecer.png'
+	},
+
+	'https://feeds.captivate.fm/inesita-el-presidente/': {
+		title: 'Inesita y el Presidente',
+		description: 'Radionovela',
+		imageUrl: '/assets/portadas/columbia-deportiva.png'
 	},
 };
 
@@ -291,7 +314,7 @@ class RSSService {
 			const batchPromises = batch.map(async (rssUrl) => {
 				try {
 					const feedData = await this.fetchRSSFeed(rssUrl.url);
-					const customConfig = YOUTUBE_PODCAST_CONFIG[rssUrl.url] || {};
+					const customConfig = PODCAST_CONFIG[rssUrl.url] || {};
 					
 					const show: PodcastShow = {
 						id: this.generateIdFromUrl(rssUrl.url),

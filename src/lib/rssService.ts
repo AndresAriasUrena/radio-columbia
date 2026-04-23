@@ -13,7 +13,7 @@ const PODCAST_RSS_FEEDS = [
 	{ url: 'https://feeds.captivate.fm/polvora-en-abril/', status: 'radionovela' as const },
 	{ url: 'https://feeds.captivate.fm/libertad-al-amanecer/', status: 'radionovela' as const },
 	{ url: 'https://feeds.captivate.fm/inesita-el-presidente/', status: 'radionovela' as const },
-	{ url: 'https://player.captivate.fm/collection/5f566e44-9bc5-4958-b000-982267da61fa', status: 'radionovela' as const },
+	{ url: 'https://feeds.captivate.fm/1856/', status: 'radionovela' as const },
 ];
 
 // Configuración personalizada para todos los programas (podcasts y radionovelas)
@@ -62,7 +62,7 @@ const PODCAST_CONFIG: { [url: string]: { description?: string; imageUrl?: string
 		imageUrl: '/assets/portadas/inesita-y-el-presidente.png'
 	},
 
-	'https://player.captivate.fm/collection/5f566e44-9bc5-4958-b000-982267da61fa': {
+	'https://feeds.captivate.fm/1856/': {
 		title: 'Campaña de 1856',
 		description: 'Radionovela',
 		imageUrl: '/assets/portadas/campana-de-1856.png'

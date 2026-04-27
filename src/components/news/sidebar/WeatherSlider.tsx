@@ -3,11 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
 
-interface WeatherCity {
-  name: string;
-  query: string;
-}
-
 interface WeatherData {
   city: string;
   temp_c: number;
@@ -17,18 +12,6 @@ interface WeatherData {
   wind_kph: number;
   last_updated: string;
 }
-
-const CITIES: WeatherCity[] = [
-  { name: 'San José', query: 'San Jose,CR' },
-  { name: 'Alajuela', query: 'Alajuela,CR' },
-  { name: 'Heredia', query: 'Heredia,CR' },
-  { name: 'Cartago', query: 'Cartago,CR' },
-  { name: 'Guanacaste', query: 'Guanacaste,CR' },
-  { name: 'Puntarenas', query: 'Puntarenas,CR' },
-  { name: 'Limón', query: 'Limon,CR' },
-];
-
-const API_KEY = 'e6fb6fee32404c599a2181234250708';
 
 export default function WeatherSlider() {
   const [loading, setLoading] = useState(true);
@@ -42,27 +25,10 @@ export default function WeatherSlider() {
       try {
         setLoading(true);
         setError(null);
-        const results = await Promise.all(
-          CITIES.map(async (c) => {
-            const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(
-              c.query
-            )}&aqi=no&lang=es`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (!res.ok || !data?.current) throw new Error('Error');
-            return {
-              city: c.name,
-              temp_c: data.current.temp_c,
-              condition: data.current.condition?.text || '',
-              icon: `https:${data.current.condition?.icon || ''}`,
-              feelslike_c: data.current.feelslike_c,
-              wind_kph: data.current.wind_kph,
-              last_updated: data.current.last_updated,
-            } as WeatherData;
-          })
-        );
-        if (!ignore) setItems(results);
-      } catch (e) {
+        const res = await fetch('/api/weather');
+        const data = await res.json();
+        if (!ignore && data?.cities) setItems(data.cities);
+      } catch {
         if (!ignore) setError('No se pudo cargar el clima');
       } finally {
         if (!ignore) setLoading(false);

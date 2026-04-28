@@ -416,7 +416,7 @@ const FilterSidebar = ({
         </button>
         <div className="h-[0.4px] w-full bg-[#FFFFFF]/20 my-4" />
         
-        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.standings ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedSections.standings ? 'opacity-100' : 'max-h-0 opacity-0'}`}>
           <StandingsTable />
         </div>
       </div>

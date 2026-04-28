@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.365scores.com)",
+      "WebFetch(domain:www.365scores.com)"
+    ]
+  }
+}

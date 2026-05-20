@@ -172,6 +172,45 @@ body {
   max-width: 100%;
 }
 
+/* Estilos para el bloque de citas de WordPress (wp:quote is-style-large) */
+.prose .wp-block-quote.is-style-large {
+  border: none;
+  padding: 0 1.5rem 2rem;
+  margin: 0.5rem auto 1.5rem;
+  text-align: center;
+  max-width: 640px;
+}
+
+.prose .wp-block-quote.is-style-large p {
+  font-size: 1.1rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: #2F3037;
+  margin-bottom: 1rem;
+}
+
+.prose .wp-block-quote.is-style-large cite {
+  display: block;
+  font-size: 0.9rem;
+  font-style: normal;
+  color: #2F3037;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+}
+
+/* Imagen circular que precede al quote — centrada y compacta */
+.prose figure.wp-block-image.is-style-rounded {
+  margin-bottom: 0.75rem;
+}
+
+.prose figure.wp-block-image.is-style-rounded img {
+  border-radius: 50% !important;
+  object-fit: cover;
+  margin: 0 auto;
+  width: 150px !important;
+  height: 150px !important;
+}
+
 /* Estilos para el bloque de versos de WordPress */
 .prose .wp-block-verse {
   background: #F8F9FA;

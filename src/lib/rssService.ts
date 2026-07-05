@@ -8,6 +8,9 @@ const PODCAST_RSS_FEEDS = [
 	{ url: 'https://www.youtube.com/watch?v=u2wiG9Tv5I4&list=PLR6ilCH2z2UijukrGdUfzpF449rv7pBkJ', status: 'podcast' as const },
 	{ url: 'https://www.youtube.com/watch?v=qjZAFkSQr8c&list=PLR6ilCH2z2UiBetZbuboVsDZAfbauo-5B', status: 'podcast' as const },
 
+	// PODCASTS (Programas) - Captivate
+	{ url: 'https://feeds.captivate.fm/a-proposito/', status: 'podcast' as const },
+
 	// RADIONOVELAS (Captivate)
 	{ url: 'https://feeds.captivate.fm/la-voluntad-de-la-pampa/', status: 'radionovela' as const },
 	{ url: 'https://feeds.captivate.fm/polvora-en-abril/', status: 'radionovela' as const },
@@ -17,55 +20,66 @@ const PODCAST_RSS_FEEDS = [
 ];
 
 // Configuración personalizada para todos los programas (podcasts y radionovelas)
-const PODCAST_CONFIG: { [url: string]: { description?: string; imageUrl?: string; title?: string } } = {
+const PODCAST_CONFIG: { [url: string]: { description?: string; imageUrl?: string; title?: string; author?: string } } = {
 	// Podcasts de YouTube
 	'https://www.youtube.com/watch?v=WUPkfxstdlI&list=PLR6ilCH2z2UjB_B9UxjHbyt4uZQzN1UhL': {
 		title: 'Columbia Deportiva',
-		description: 'Cobertura de los partidos de Columbia Deportiva',
-		imageUrl: '/assets/portadas/columbia-deportiva.png'
+		author: 'Columbia Digital',
+		description: 'Con décadas de trayectoria, este bloque se encarga de llevar las emociones del fútbol nacional, las coberturas de la Selección Mayor y transmisiones en vivo de múltiples disciplinas. Su equipo de narradores y comentaristas ofrece un análisis riguroso de la actualidad deportiva a través de la frecuencia 98.7 FM y plataformas multimedia. Además de las transmisiones en directo, el espacio destaca por sus programas de debate matutinos y vespertinos que repasan resultados y estadísticas clave.',
+		imageUrl: '/assets/portadas/columbia-deportiva.avif'
 	},
 
 	'https://www.youtube.com/watch?v=u2wiG9Tv5I4&list=PLR6ilCH2z2UijukrGdUfzpF449rv7pBkJ': {
 		title: 'Por Tres Razones',
-		description: 'Descripción personalizada del segundo podcast de YouTube',
-		imageUrl: '/assets/portadas/por-tres-razones.png'
+		author: 'Evelyn Fachler',
+		description: 'El programa Por Tres Razones es un pilar de opinión conducido por la experimentada periodista Evelyn Fachler en Noticias Columbia. Se transmite en vivo de lunes a viernes a las 3:00 p.m. por la frecuencia 98.7 FM y plataformas digitales. El espacio se caracteriza por analizar el acontecer político y social desde una perspectiva cercana, priorizando el impacto humano sobre las cifras. Mediante entrevistas frontales con los protagonistas de la noticia, ofrece las herramientas necesarias para construir un criterio propio.',
+		imageUrl: '/assets/portadas/por-tres-razones.avif'
 	},
 
 	'https://www.youtube.com/watch?v=qjZAFkSQr8c&list=PLR6ilCH2z2UiBetZbuboVsDZAfbauo-5B': {
 		title: 'Voces',
-		description: 'Descripción personalizada del tercer podcast de YouTube',
-		imageUrl: '/assets/portadas/voces.png'
+		author: 'Allan Arroyo',
+		description: 'El programa #Voces es el espacio de Noticias Columbia liderado por el periodista Allan Arroyo para profundizar en la actualidad de Costa Rica. A través de entrevistas y reportajes ágiles, este formato desglosa los problemas sociales, políticos y económicos que impactan el día a día del país. Además, incorpora el microprograma institucional Voces MP, desarrollado junto al Ministerio Público para educar a la ciudadanía sobre el proceso penal.',
+		imageUrl: '/assets/portadas/voces.avif'
+	},
+
+	// Podcasts Captivate
+	'https://feeds.captivate.fm/a-proposito/': {
+		title: 'A Propósito',
+		author: 'Doriam Díaz y Víctor Fernández G',
+		description: 'A Propósito es el programa periodístico de Radio Columbia conducido por Doriam Díaz y Víctor Fernández G. Entrevistas, historias y conversaciones sobre actualidad, tendencias, sociedad, política, cultura, historia, salud, educación, economía, ciencia y experiencias humanas que marcan la vida en Costa Rica.\nUn espacio para mirar más allá de los titulares y comprender mejor los temas que forman parte de nuestra vida cotidiana.\nA Propósito. Conversaciones que debemos tener.',
+		imageUrl: '/assets/portadas/aproposito.avif'
 	},
 
 	// Radionovelas Captivate
 	'https://feeds.captivate.fm/la-voluntad-de-la-pampa/': {
 		title: 'La Voluntad de La Pampa',
 		description: 'Radionovela clásica',
-		imageUrl: '/assets/portadas/la-voluntad-de-la-pampa.png'
+		imageUrl: '/assets/portadas/la-voluntad-de-la-pampa.avif'
 	},
 
 	'https://feeds.captivate.fm/polvora-en-abril/': {
 		title: 'Pólvora en Abril',
 		description: 'Radionovela',
-		imageUrl: '/assets/portadas/polvora-en-abril.png'
+		imageUrl: '/assets/portadas/polvora-en-abril.avif'
 	},
 
 	'https://feeds.captivate.fm/libertad-al-amanecer/': {
 		title: 'Libertad al Amanecer',
 		description: 'Radionovela',
-		imageUrl: '/assets/portadas/libertad-al-amanecer.png'
+		imageUrl: '/assets/portadas/libertad-al-amanecer.avif'
 	},
 
 	'https://feeds.captivate.fm/inesita-el-presidente/': {
 		title: 'Inesita y el Presidente',
 		description: 'Radionovela',
-		imageUrl: '/assets/portadas/inesita-y-el-presidente.png'
+		imageUrl: '/assets/portadas/inesita-y-el-presidente.avif'
 	},
 
 	'https://feeds.captivate.fm/1856/': {
 		title: 'Campaña de 1856',
 		description: 'Radionovela',
-		imageUrl: '/assets/portadas/campana-de-1856.png'
+		imageUrl: '/assets/portadas/campana-de-1856.avif'
 	},
 };
 
@@ -331,7 +345,7 @@ class RSSService {
 						link: feedData.link,
 						rssUrl: rssUrl.url,
 						language: feedData.language,
-						author: feedData.author,
+						author: customConfig.author || feedData.author,
 						category: feedData.category,
 						lastBuildDate: feedData.lastBuildDate,
 						authors: [],

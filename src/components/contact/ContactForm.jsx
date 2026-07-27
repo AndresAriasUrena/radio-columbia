@@ -28,10 +28,10 @@ const ContactForm = () => {
 
     try {
       await emailjs.sendForm(
-        'service_ba3ue64',
-        'template_xncpj4k',
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
         formRef.current,
-        'MFxAFrK4GqfW_l4gZ'
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
       );
 
       setStatus({

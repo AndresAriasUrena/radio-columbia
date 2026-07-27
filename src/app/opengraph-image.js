@@ -12,7 +12,8 @@ export const contentType = 'image/png'
 
 export default async function Image() {
   // Use the Cover.png image
-  const coverUrl = 'https://columbia.co.cr/assets/Cover.png';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
+  const coverUrl = `${baseUrl}/assets/Cover.png`;
 
   return new ImageResponse(
     (

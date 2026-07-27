@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export const revalidate = 1800;
 export const dynamic = 'force-dynamic';
 
-const API_KEY = 'e6fb6fee32404c599a2181234250708';
+const API_KEY = process.env.WEATHER_API_KEY;
 
 const CITIES = [
   { name: 'San José', query: 'San Jose,CR' },
@@ -16,6 +16,10 @@ const CITIES = [
 ];
 
 export async function GET() {
+  if (!API_KEY) {
+    return NextResponse.json({ cities: [] });
+  }
+
   try {
     const results = await Promise.all(
       CITIES.map(async (c) => {

@@ -8,6 +8,9 @@ import SplashPage from '@/components/SplashPage'
 
 const inter = Inter({ subsets: ['latin'] })
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-2T6Z9LG0JD';
+
 export const metadata = {
   title: 'Radio Columbia - Tu Estación de Radio Costarricense',
   description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Escucha radio en vivo las 24 horas y mantente informado con las noticias de Costa Rica.',
@@ -20,14 +23,14 @@ export const metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://columbia.co.cr'),
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: 'Radio Columbia - Tu Estación de Radio Costarricense',
     description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Escucha radio en vivo las 24 horas.',
-    url: 'https://columbia.co.cr',
+    url: SITE_URL,
     siteName: 'Radio Columbia',
     images: [
       {
@@ -78,7 +81,7 @@ export default function RootLayout({ children }) {
     <html lang="es-CR">
       <head>
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-2T6Z9LG0JD"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
         <Script id="gtag-init" strategy="afterInteractive">
@@ -86,7 +89,7 @@ export default function RootLayout({ children }) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-2T6Z9LG0JD');
+            gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
         <Script
@@ -99,8 +102,8 @@ export default function RootLayout({ children }) {
             "@type": "RadioStation",
             "name": "Radio Columbia",
             "description": "Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento",
-            "url": "https://columbia.co.cr",
-            "logo": "https://columbia.co.cr/assets/LogoColumbia.svg",
+            "url": SITE_URL,
+            "logo": `${SITE_URL}/assets/LogoColumbia.svg`,
             "sameAs": [
               "https://www.facebook.com/NoticiasColumbia/",
               "https://www.instagram.com/noticiascolumbia/",

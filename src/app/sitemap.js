@@ -1,7 +1,7 @@
 import WordPressService from '@/lib/wordpressService';
 
 export default async function sitemap() {
-  const baseUrl = 'https://columbia.co.cr';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
 
   const staticPages = [
     {

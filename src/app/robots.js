@@ -1,4 +1,6 @@
 export default function robots() {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
+
   return {
     rules: [
       {
@@ -34,7 +36,7 @@ export default function robots() {
         disallow: '/',
       },
     ],
-    sitemap: 'https://columbia.co.cr/sitemap.xml',
-    host: 'https://columbia.co.cr',
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 } 

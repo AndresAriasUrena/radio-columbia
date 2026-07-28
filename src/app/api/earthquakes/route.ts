@@ -19,16 +19,27 @@ function decodeEntities(input: string): string {
 export async function GET() {
 	try {
 		const url = 'https://rsn.ucr.ac.cr/actividad-sismica/ultimos-sismos';
-		const res = await fetch(url, { 
-			cache: 'no-store',
-			headers: {
-				'Cache-Control': 'no-cache, no-store, must-revalidate',
-				'Pragma': 'no-cache',
-				'Expires': '0'
-			}
-		});
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+		let res: Response;
+		try {
+			res = await fetch(url, {
+				cache: 'no-store',
+				signal: controller.signal,
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+					'Accept': 'text/html,application/xhtml+xml',
+					'Cache-Control': 'no-cache, no-store, must-revalidate',
+					'Pragma': 'no-cache',
+				}
+			});
+		} finally {
+			clearTimeout(timeoutId);
+		}
+
 		if (!res.ok) {
-			return NextResponse.json({ error: `Error HTTP ${res.status}` }, { status: 500 });
+			return NextResponse.json({ items: [] }, { status: 200 });
 		}
 		const html = await res.text();
 
@@ -51,6 +62,6 @@ export async function GET() {
 		const top3 = items.slice(0, 3);
 		return NextResponse.json({ items: top3 });
 	} catch (err: any) {
-		return NextResponse.json({ error: err?.message || 'Error al obtener sismos' }, { status: 500 });
+		return NextResponse.json({ items: [] }, { status: 200 });
 	}
-} 
+}

@@ -78,14 +78,15 @@ class WordPressService {
       });
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        console.error(`Error fetching post by slug "${slug}": ${response.status} ${response.statusText}`);
+        return null;
       }
 
       const data = await response.json();
       return data[0] || null;
     } catch (error) {
       console.error('Error fetching post by slug:', error);
-      throw error;
+      return null;
     }
   }
 
@@ -99,13 +100,14 @@ class WordPressService {
       );
 
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        console.error(`Error fetching related posts: ${response.status} ${response.statusText}`);
+        return [];
       }
 
       return await response.json();
     } catch (error) {
       console.error('Error fetching related posts:', error);
-      throw error;
+      return [];
     }
   }
 

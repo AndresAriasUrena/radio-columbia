@@ -35,6 +35,14 @@ export default function robots() {
         userAgent: 'Claude-Web',
         disallow: '/',
       },
+      {
+        userAgent: 'PetalBot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'Bytespider',
+        disallow: '/',
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
     host: baseUrl,

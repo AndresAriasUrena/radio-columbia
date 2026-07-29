@@ -2,6 +2,24 @@ import { WordPressPost, WordPressCategory, WordPressTag, PostsResponse, Categori
 
 const WORDPRESS_API_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://radiodev.aurigital.com/wp-json/wp/v2';
 
+// El backend de WordPress rechaza conexiones (ECONNREFUSED) cuando recibe
+// muchas peticiones concurrentes. Reintentamos antes de rendirnos, ya que
+// suele recuperarse en milisegundos.
+async function fetchWithRetry(url: string, options: RequestInit = {}, retries = 2, delayMs = 300): Promise<Response> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fetch(url, options);
+    } catch (error) {
+      lastError = error;
+      if (attempt < retries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs * (attempt + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
+
 class WordPressService {
   static async getPosts(options: GetPostsOptions = {}): Promise<PostsResponse> {
     const {
@@ -47,7 +65,7 @@ class WordPressService {
     }
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchWithRetry(url, {
         next: { revalidate: 60 } // Revalidar cada 60 segundos
       });
 
@@ -73,7 +91,7 @@ class WordPressService {
 
   static async getPostBySlug(slug: string): Promise<WordPressPost | null> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`, {
+      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`, {
         next: { revalidate: 60 } // Revalidar cada 60 segundos
       });
 
@@ -92,7 +110,7 @@ class WordPressService {
 
   static async getRelatedPosts(categoryId: number, excludeId: number, limit = 3): Promise<WordPressPost[]> {
     try {
-      const response = await fetch(
+      const response = await fetchWithRetry(
         `${WORDPRESS_API_BASE}/posts?categories=${categoryId}&exclude=${excludeId}&per_page=${limit}&orderby=date&order=desc&_embed`,
         {
           next: { revalidate: 60 } // Revalidar cada 60 segundos
@@ -113,7 +131,7 @@ class WordPressService {
 
   static async getCategories(): Promise<CategoriesResponse> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/categories?per_page=100`, {
+      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/categories?per_page=100`, {
         next: { revalidate: 60 } // Revalidar cada 60 segundos
       });
 
@@ -140,7 +158,7 @@ class WordPressService {
 
   static async getTags(): Promise<TagsResponse> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/tags?per_page=100`, {
+      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/tags?per_page=100`, {
         next: { revalidate: 60 } // Revalidar cada 60 segundos
       });
 
@@ -186,7 +204,7 @@ class WordPressService {
 
   static async getTagBySlug(slug: string): Promise<number | null> {
     try {
-      const response = await fetch(`${WORDPRESS_API_BASE}/tags?slug=${slug}`, {
+      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/tags?slug=${slug}`, {
         next: { revalidate: 60 } // Revalidar cada 60 segundos
       });
 
@@ -209,7 +227,7 @@ class WordPressService {
 
   static async getHeroPosts(limit = 6): Promise<WordPressPost[]> {
     try {
-      const response = await fetch(
+      const response = await fetchWithRetry(
         `${WORDPRESS_API_BASE}/posts?_embed&per_page=${limit}&orderby=date&order=desc`,
         {
           next: { revalidate: 60 } // Revalidar cada 60 segundos

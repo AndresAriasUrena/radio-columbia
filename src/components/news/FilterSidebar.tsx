@@ -270,29 +270,6 @@ const FilterSidebar = ({
     return () => { ignore = true; clearInterval(id); };
   }, []);
 
-  // Fetch tabla posiciones
-  type StandingRow = { pos: number; team: string; played: number; wins: number; draws: number; losses: number; points: number; next?: string };
-  const [standings, setStandings] = useState<StandingRow[]>([]);
-  const [standingLoading, setStandingLoading] = useState<boolean>(true);
-  useEffect(() => {
-    let ignore = false;
-    const load = async () => {
-      try {
-        setStandingLoading(true);
-        const res = await fetch('/api/standings');
-        const data = await res.json();
-        if (!ignore && data?.rows) setStandings(data.rows);
-      } catch {
-        if (!ignore) setStandings([]);
-      } finally {
-        if (!ignore) setStandingLoading(false);
-      }
-    };
-    load();
-    const id = setInterval(load, 15 * 60 * 1000);
-    return () => { ignore = true; clearInterval(id); };
-  }, []);
-
   return (
     <>
   <div className={`relative text-[#D4D5DD] bg-[#1E305F] my-4 py-4 xl:py-0 rounded-2xl transition-all duration-500 ease-in-out ${

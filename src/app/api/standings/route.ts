@@ -6,25 +6,33 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const res = await fetch(
-      'https://www.thesportsdb.com/api/v1/json/123/lookuptable.php?l=4815',
+      'https://site.api.espn.com/apis/v2/sports/soccer/crc.1/standings',
       { next: { revalidate: 900 } }
     );
 
     if (!res.ok) return NextResponse.json({ rows: [] });
 
     const data = await res.json();
-    const table = data?.table;
-    if (!Array.isArray(table) || table.length === 0) return NextResponse.json({ rows: [] });
+    const entries = data?.children?.[0]?.standings?.entries;
+    if (!Array.isArray(entries) || entries.length === 0) return NextResponse.json({ rows: [] });
 
-    const rows = table.map((t: any) => ({
-      pos: parseInt(t.intRank) || 0,
-      team: t.strTeam || '',
-      played: parseInt(t.intPlayed) || 0,
-      wins: parseInt(t.intWin) || 0,
-      draws: parseInt(t.intDraw) || 0,
-      losses: parseInt(t.intLoss) || 0,
-      points: parseInt(t.intPoints) || 0,
-    }));
+    const rows = entries
+      .map((e: any) => {
+        const stats: Record<string, string> = {};
+        for (const s of e.stats || []) {
+          stats[s.name] = s.displayValue;
+        }
+        return {
+          pos: parseInt(stats.rank) || 0,
+          team: e.team?.displayName || '',
+          played: parseInt(stats.gamesPlayed) || 0,
+          wins: parseInt(stats.wins) || 0,
+          draws: parseInt(stats.ties) || 0,
+          losses: parseInt(stats.losses) || 0,
+          points: parseInt(stats.points) || 0,
+        };
+      })
+      .sort((a, b) => a.pos - b.pos);
 
     return NextResponse.json({ rows });
   } catch {

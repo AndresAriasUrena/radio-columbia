@@ -5,6 +5,11 @@ import { RSS_CONFIG } from '@/lib/rssConfig';
 const cache = new Map<string, { content: string; timestamp: number }>();
 const CACHE_DURATION = RSS_CONFIG.CACHE_DURATION;
 
+// Cuánto tiempo conservamos una respuesta vencida para usarla como respaldo.
+// YouTube responde 404 a las IPs de datacenter (Vercel) de forma intermitente,
+// así que preferimos servir contenido viejo antes que dejar el widget vacío.
+const STALE_MAX_AGE = 24 * 60 * 60 * 1000;
+
 async function fetchRSSDirect(url: string): Promise<string> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), RSS_CONFIG.REQUEST_TIMEOUT);
@@ -13,6 +18,9 @@ async function fetchRSSDirect(url: string): Promise<string> {
     const response = await fetch(url, {
       signal: controller.signal,
       headers: RSS_CONFIG.REQUEST_HEADERS,
+      // El Data Cache de Vercel sí persiste entre instancias (a diferencia del
+      // Map en memoria) y sirve la copia previa mientras revalida en segundo plano.
+      next: { revalidate: 3600 },
     });
 
     clearTimeout(timeoutId);
@@ -70,22 +78,32 @@ export async function GET(request: NextRequest) {
     if (cache.size > 100) {
       const now = Date.now();
       for (const [key, value] of cache.entries()) {
-        if (now - value.timestamp > CACHE_DURATION) {
+        if (now - value.timestamp > STALE_MAX_AGE) {
           cache.delete(key);
         }
       }
     }
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       content: rssContent,
       cached: false,
       timestamp: Date.now()
     });
   } catch (error) {
-    console.error('❌ Error fetching RSS:', error);
+    // Si tenemos una copia vencida pero reciente, servirla en vez de fallar.
+    if (cached && Date.now() - cached.timestamp < STALE_MAX_AGE) {
+      return NextResponse.json({
+        content: cached.content,
+        cached: true,
+        stale: true,
+        timestamp: cached.timestamp
+      });
+    }
+
+    console.error('❌ Error fetching RSS:', (error as Error).message, '| url:', url);
     return NextResponse.json(
       { error: `Failed to fetch RSS feed: ${(error as Error).message}` },
-      { status: 500 }
+      { status: 200 }
     );
   }
-} 
+}

@@ -5,11 +5,12 @@ import { PlayerProvider } from '@/lib/PlayerContext'
 import RadioPlayer from '@/components/RadioPlayer'
 import Script from 'next/script'
 import SplashPage from '@/components/SplashPage'
+import { GoogleTagManager } from '@next/third-parties/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-2T6Z9LG0JD';
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || 'GTM-TVF2TBQX';
 
 export const metadata = {
   title: 'Radio Columbia - Tu Estación de Radio Costarricense',
@@ -79,19 +80,8 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es-CR">
+      <GoogleTagManager gtmId={GTM-TVF2TBQX} />
       <head>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}');
-          `}
-        </Script>
         <Script
           id="schema-org"
           type="application/ld+json"

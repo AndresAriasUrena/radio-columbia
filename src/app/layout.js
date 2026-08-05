@@ -76,6 +76,7 @@ export const viewport = {
   themeColor: '#1E305F',
 }
 
+
 export default function RootLayout({ children }) {
   return (
     <html lang="es-CR">

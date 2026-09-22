@@ -13,7 +13,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
 
 export const metadata = {
   title: 'Radio Columbia - Tu Estación de Radio Costarricense',
-  description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Escucha radio en vivo las 24 horas y mantente informado con las noticias de Costa Rica.',
+  description: 'Radio Columbia - Un medio de comunicación líder en Costa Rica con amplia trayectoria en radio y plataformas digitales, especializado en noticias, deportes, entretenimiento y actualidad.',
   keywords: 'radio columbia, radio costa rica, noticias costa rica, deportes costa rica, radio en vivo, streaming, entretenimiento, noticias costarricenses',
   authors: [{ name: 'Radio Columbia' }],
   creator: 'Radio Columbia',
@@ -29,7 +29,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'Radio Columbia - Tu Estación de Radio Costarricense',
-    description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento. Escucha radio en vivo las 24 horas.',
+    description: 'Radio Columbia - Un medio de comunicación líder en Costa Rica con amplia trayectoria en radio y plataformas digitales, especializado en noticias, deportes, entretenimiento y actualidad.',
     url: SITE_URL,
     siteName: 'Radio Columbia',
     images: [
@@ -46,7 +46,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Radio Columbia - Tu Estación de Radio Costarricense',
-    description: 'Radio Columbia - Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento.',
+    description: 'Radio Columbia - Un medio de comunicación líder en Costa Rica con amplia trayectoria en radio y plataformas digitales, especializado en noticias, deportes, entretenimiento y actualidad.',
     creator: '@webcolumbia',
     images: ['/opengraph-image.jpg'],
   },
@@ -91,7 +91,7 @@ export default function RootLayout({ children }) {
             "@context": "https://schema.org",
             "@type": "RadioStation",
             "name": "Radio Columbia",
-            "description": "Tu estación de radio costarricense con las últimas noticias, deportes, música y entretenimiento",
+            "description": "Un medio de comunicación líder en Costa Rica con amplia trayectoria en radio y plataformas digitales, especializado en noticias, deportes, entretenimiento y actualidad.",
             "url": SITE_URL,
             "logo": `${SITE_URL}/assets/LogoColumbia.svg`,
             "sameAs": [

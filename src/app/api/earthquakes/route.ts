@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
-// No usar cache para obtener datos siempre frescos
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 function stripTags(input: string): string {
 	return input.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -25,13 +24,11 @@ export async function GET() {
 		let res: Response;
 		try {
 			res = await fetch(url, {
-				cache: 'no-store',
 				signal: controller.signal,
+				next: { revalidate: 60 },
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
 					'Accept': 'text/html,application/xhtml+xml',
-					'Cache-Control': 'no-cache, no-store, must-revalidate',
-					'Pragma': 'no-cache',
 				}
 			});
 		} finally {

@@ -69,7 +69,13 @@ function removeFeaturedImageFromContent(html: string, featuredImageUrl: string):
     return html.replace(imgRegex, '');
 }
 
+// Evita golpear WordPress con rutas de assets estáticos (íconos, feeds, etc.)
+// que un crawler o navegador pide pero que no calzan con el archivo estático
+// generado (p. ej. apple-touch-icon.png, ads.txt, feed).
+const NON_POST_SLUG_RE = /\.(png|jpg|jpeg|ico|xml|txt|webmanifest|json)$/i;
+
 async function getPostBySlug(slug: string): Promise<WordPressPost | null> {
+    if (NON_POST_SLUG_RE.test(slug)) return null;
     return await WordPressService.getPostBySlug(slug);
 }
 

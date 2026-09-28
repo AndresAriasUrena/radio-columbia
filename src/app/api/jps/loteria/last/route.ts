@@ -5,14 +5,14 @@ export const revalidate = 1800; // 30 min
 
 async function fetchApi() {
   const url = 'https://integration.jps.go.cr/api/App/loterianacional/last';
-  const res = await fetch(url, { cache: 'no-store', headers: { 'Accept': 'application/json' }, next: { revalidate } });
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' }, next: { revalidate } });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
 
 async function scrapeFallback() {
   const url = 'https://www.jps.go.cr/resultados/loteria-nacional';
-  const res = await fetch(url, { cache: 'no-store', next: { revalidate } });
+  const res = await fetch(url, { next: { revalidate } });
   if (!res.ok) return null;
   const html = await res.text();
   const fechaMatch = html.match(/(Domingo|Miércoles|Sábado)\s+\d{1,2}\s+de\s+\w+/i);

@@ -5,7 +5,7 @@ export const revalidate = 1800;
 
 async function fetchApi() {
   const url = 'https://integration.jps.go.cr/api/App/chances/last';
-  const res = await fetch(url, { cache: 'no-store', headers: { 'Accept': 'application/json' }, next: { revalidate } });
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' }, next: { revalidate } });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }

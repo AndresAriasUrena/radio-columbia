@@ -208,16 +208,7 @@ export default function Navbar() {
 
     const fetchQuakeAlert = async () => {
       try {
-        // Forzar actualización sin cache y con timestamp para evitar cache
-        const timestamp = new Date().getTime();
-        const response = await fetch(`/api/earthquakes?t=${timestamp}`, { 
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        });
+        const response = await fetch('/api/earthquakes');
         
         if (response.ok) {
           const data = await response.json();
@@ -322,11 +313,8 @@ export default function Navbar() {
     fetchQuakeAlert();
     fetchLotteryAlert();
 
-    // Actualizar alertas de terremotos cada 10 segundos para detectar terremotos recientes
-    const quakeInterval = setInterval(fetchQuakeAlert, 10 * 1000);
-
-    // Forzar una actualización inmediata al cargar la página
-    fetchQuakeAlert();
+    // Actualizar alertas de terremotos cada 2 minutos (el endpoint ya cachea 60s en el servidor)
+    const quakeInterval = setInterval(fetchQuakeAlert, 2 * 60 * 1000);
 
     return () => {
       clearInterval(quakeInterval);

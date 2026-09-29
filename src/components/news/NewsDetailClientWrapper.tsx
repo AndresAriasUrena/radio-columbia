@@ -30,14 +30,14 @@ export default function NewsDetailClientWrapper({ children }: NewsDetailClientWr
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row -my-4 md:pr-4">
+      <div className="flex flex-col xl:flex-row -my-4 md:pr-4">
         {/* Main content */}
         <div className="flex-1 overflow-hidden">
           {children}
         </div>
 
         {/* Desktop sidebar */}
-        <div className="hidden lg:block">
+        <div className="hidden xl:block">
           <FilterSidebar
             onFilterChange={handleFilterChange}
             isMobileOpen={false}

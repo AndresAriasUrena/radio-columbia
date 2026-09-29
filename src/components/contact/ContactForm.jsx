@@ -85,6 +85,14 @@ const ContactForm = () => {
                 </a>
               </p>
             </div>
+            <div className="text-center lg:text-left">
+              <p className="font-semibold text-[#2F3037] mb-1">Media Kit</p>
+              <p className="text-[#2F3037]/60 text-md">Descubre nuestras opciones de pauta:<br />
+                <a href="https://grupocolumbia.co.cr/media-kit" target="_blank" rel="noopener noreferrer" className="text-[#01A299] hover:underline">
+                  Ver Media Kit
+                </a>
+              </p>
+            </div>
           </div>
         </div>
         <div className="w-full lg:w-1/2">

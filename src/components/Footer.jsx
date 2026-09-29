@@ -23,6 +23,7 @@ const Footer = () => {
                                 <li><Link href="/about-us" className="hover:text-[#1E305F] transition-colors">Sobre Nosotros</Link></li>
                                 <li><Link href="/podcasts" className="hover:text-[#1E305F] transition-colors">Podcasts y Radionovelas</Link></li>
                                 <li><Link href="/contact" className="hover:text-[#1E305F] transition-colors">Contacto</Link></li>
+                                <li><a href="https://grupocolumbia.co.cr/media-kit" target="_blank" rel="noopener noreferrer" className="hover:text-[#1E305F] transition-colors">Media Kit</a></li>
                             </ul>
                         </div>
 

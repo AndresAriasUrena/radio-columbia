@@ -1,23 +1,57 @@
 import { WordPressPost, WordPressCategory, WordPressTag, PostsResponse, CategoriesResponse, TagsResponse, GetPostsOptions } from '@/types/wordpress';
 
-const WORDPRESS_API_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'https://radiodev.aurigital.com/wp-json/wp/v2';
+import { wordpressOrigin } from './wpOrigin';
 
-// El backend de WordPress rechaza conexiones (ECONNREFUSED) cuando recibe
-// muchas peticiones concurrentes. Reintentamos antes de rendirnos, ya que
-// suele recuperarse en milisegundos.
-async function fetchWithRetry(url: string, options: RequestInit = {}, retries = 2, delayMs = 300): Promise<Response> {
-  let lastError: unknown;
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      return await fetch(url, options);
-    } catch (error) {
-      lastError = error;
-      if (attempt < retries) {
-        await new Promise(resolve => setTimeout(resolve, delayMs * (attempt + 1)));
-      }
-    }
+const PROXY_BASE = '/api/wp';
+
+const isServer = typeof window === 'undefined';
+
+// Campos que realmente consumen los componentes. Recortar la respuesta baja el
+// payload ~38% y, sobre todo, mantiene cada entrada por debajo del límite de
+// 2 MB del Data Cache de Next.js (sin esto las consultas grandes no se cachean).
+const LIST_FIELDS = 'id,slug,date,modified,title,excerpt,author,categories,tags,link,_links,_embedded';
+const SINGLE_FIELDS = `${LIST_FIELDS},content`;
+
+// Ventana de respaldo. En operación normal el webhook de WordPress purga el
+// caché al publicar (/api/revalidate), así que esto solo actúa si se pierde
+// un webhook: en el peor caso el contenido queda 10 minutos desactualizado,
+// nunca roto.
+const FALLBACK_REVALIDATE = 600;
+
+export const WP_TAGS = {
+  all: 'wp',
+  posts: 'wp-posts',
+  categories: 'wp-categories',
+  tags: 'wp-tags',
+  post: (slug: string) => `wp-post-${slug}`,
+};
+
+/**
+ * Una sola petición, sin reintentos: reintentar contra un backend saturado
+ * multiplica la carga justo cuando no hay capacidad para absorberla.
+ *
+ * En el servidor vamos directo a WordPress usando el Data Cache de Next.js
+ * (etiquetado, para poder purgarlo al publicar). En el navegador vamos por
+ * /api/wp, que es quien cachea esa respuesta.
+ */
+async function wpFetch(path: string, tags: string[]): Promise<Response> {
+  if (isServer) {
+    return fetch(`${wordpressOrigin()}${path}`, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: FALLBACK_REVALIDATE, tags },
+    });
   }
-  throw lastError;
+
+  return fetch(`${PROXY_BASE}${path}`, { headers: { Accept: 'application/json' } });
+}
+
+/** Error de transporte: WordPress no respondió. Distinto de "no existe". */
+export class WordPressUnavailableError extends Error {
+  constructor(cause?: unknown) {
+    super('WordPress no está disponible');
+    this.name = 'WordPressUnavailableError';
+    this.cause = cause;
+  }
 }
 
 class WordPressService {
@@ -34,7 +68,7 @@ class WordPressService {
       include = []
     } = options;
 
-    let url = `${WORDPRESS_API_BASE}/posts?_embed&per_page=${perPage}&page=${page}`;
+    let url = `/posts?_embed&_fields=${LIST_FIELDS}&per_page=${perPage}&page=${page}`;
 
     if (orderBy === 'date') {
       url += '&orderby=date&order=desc';
@@ -65,9 +99,7 @@ class WordPressService {
     }
 
     try {
-      const response = await fetchWithRetry(url, {
-        next: { revalidate: 60 } // Revalidar cada 60 segundos
-      });
+      const response = await wpFetch(url, [WP_TAGS.all, WP_TAGS.posts]);
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -89,32 +121,42 @@ class WordPressService {
     }
   }
 
+  /**
+   * Devuelve el post o null si WordPress confirma que no existe.
+   * Lanza WordPressUnavailableError si la petición falló, para que quien
+   * llame pueda distinguir "no existe" (404 legítimo) de "backend caído"
+   * (no debe convertirse en 404).
+   */
   static async getPostBySlug(slug: string): Promise<WordPressPost | null> {
+    const url = `/posts?slug=${encodeURIComponent(slug)}&_embed&_fields=${SINGLE_FIELDS}`;
+
+    let response: Response;
     try {
-      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`, {
-        next: { revalidate: 60 } // Revalidar cada 60 segundos
-      });
+      response = await wpFetch(url, [WP_TAGS.all, WP_TAGS.posts, WP_TAGS.post(slug)]);
+    } catch (error) {
+      console.error(`WordPress unreachable fetching post "${slug}":`, error);
+      throw new WordPressUnavailableError(error);
+    }
 
-      if (!response.ok) {
-        console.error(`Error fetching post by slug "${slug}": ${response.status} ${response.statusText}`);
-        return null;
-      }
+    if (!response.ok) {
+      console.error(`Error fetching post by slug "${slug}": ${response.status} ${response.statusText}`);
+      throw new WordPressUnavailableError(`${response.status} ${response.statusText}`);
+    }
 
+    try {
       const data = await response.json();
       return data[0] || null;
     } catch (error) {
-      console.error('Error fetching post by slug:', error);
-      return null;
+      console.error(`Malformed response fetching post "${slug}":`, error);
+      throw new WordPressUnavailableError(error);
     }
   }
 
   static async getRelatedPosts(categoryId: number, excludeId: number, limit = 3): Promise<WordPressPost[]> {
     try {
-      const response = await fetchWithRetry(
-        `${WORDPRESS_API_BASE}/posts?categories=${categoryId}&exclude=${excludeId}&per_page=${limit}&orderby=date&order=desc&_embed`,
-        {
-          next: { revalidate: 60 } // Revalidar cada 60 segundos
-        }
+      const response = await wpFetch(
+        `/posts?categories=${categoryId}&exclude=${excludeId}&per_page=${limit}&orderby=date&order=desc&_embed&_fields=${LIST_FIELDS}`,
+        [WP_TAGS.all, WP_TAGS.posts]
       );
 
       if (!response.ok) {
@@ -129,18 +171,41 @@ class WordPressService {
     }
   }
 
+  /** Solo slug y modified: es todo lo que necesita el sitemap. 11 KB en vez de 1.66 MB. */
+  static async getPostSlugs(page = 1, perPage = 100): Promise<{ slugs: Array<{ slug: string; modified: string }>; totalPages: number }> {
+    try {
+      const response = await wpFetch(
+        `/posts?per_page=${perPage}&page=${page}&orderby=date&order=desc&_fields=slug,modified`,
+        [WP_TAGS.all, WP_TAGS.posts]
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      return {
+        slugs: await response.json(),
+        totalPages: parseInt(response.headers.get('X-WP-TotalPages') || '1'),
+      };
+    } catch (error) {
+      console.error('Error fetching post slugs:', error);
+      return { slugs: [], totalPages: 1 };
+    }
+  }
+
   static async getCategories(): Promise<CategoriesResponse> {
     try {
-      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/categories?per_page=100`, {
-        next: { revalidate: 60 } // Revalidar cada 60 segundos
-      });
+      const response = await wpFetch(
+        '/categories?per_page=100&_fields=id,name,slug,parent,count,description',
+        [WP_TAGS.all, WP_TAGS.categories]
+      );
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
 
       const categories: WordPressCategory[] = await response.json();
-      
+
       const categoriesMap: { [slug: string]: number } = {};
       categories.forEach(cat => {
         categoriesMap[cat.slug] = cat.id;
@@ -158,9 +223,10 @@ class WordPressService {
 
   static async getTags(): Promise<TagsResponse> {
     try {
-      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/tags?per_page=100`, {
-        next: { revalidate: 60 } // Revalidar cada 60 segundos
-      });
+      const response = await wpFetch(
+        '/tags?per_page=100&_fields=id,name,slug,count',
+        [WP_TAGS.all, WP_TAGS.tags]
+      );
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -204,9 +270,10 @@ class WordPressService {
 
   static async getTagBySlug(slug: string): Promise<number | null> {
     try {
-      const response = await fetchWithRetry(`${WORDPRESS_API_BASE}/tags?slug=${slug}`, {
-        next: { revalidate: 60 } // Revalidar cada 60 segundos
-      });
+      const response = await wpFetch(
+        `/tags?slug=${encodeURIComponent(slug)}&_fields=id,slug`,
+        [WP_TAGS.all, WP_TAGS.tags]
+      );
 
       if (!response.ok) {
         return null;
@@ -227,11 +294,9 @@ class WordPressService {
 
   static async getHeroPosts(limit = 6): Promise<WordPressPost[]> {
     try {
-      const response = await fetchWithRetry(
-        `${WORDPRESS_API_BASE}/posts?_embed&per_page=${limit}&orderby=date&order=desc`,
-        {
-          next: { revalidate: 60 } // Revalidar cada 60 segundos
-        }
+      const response = await wpFetch(
+        `/posts?_embed&_fields=${LIST_FIELDS}&per_page=${limit}&orderby=date&order=desc`,
+        [WP_TAGS.all, WP_TAGS.posts]
       );
 
       if (!response.ok) {
@@ -266,6 +331,9 @@ class WordPressService {
 
       // If there are multiple categories:
       // 1. First, try to find a subcategory (one with a parent)
+      //    OJO: los términos embebidos llegan en context=embed, que no incluye
+      //    `parent`, así que esta rama nunca se cumple. Se conserva por si se
+      //    deja de usar _embed; el filtro de abajo es el que hace el trabajo.
       const subcategory = categories.find((cat: any) => cat.parent && cat.parent !== 0);
       if (subcategory) {
         return subcategory.name;
@@ -366,4 +434,4 @@ class WordPressService {
   }
 }
 
-export default WordPressService; 
+export default WordPressService;

@@ -74,6 +74,14 @@ function removeFeaturedImageFromContent(html: string, featuredImageUrl: string):
 // generado (p. ej. apple-touch-icon.png, ads.txt, feed).
 const NON_POST_SLUG_RE = /\.(png|jpg|jpeg|ico|xml|txt|webmanifest|json)$/i;
 
+// Devuelve null SOLO si WordPress confirma que el post no existe.
+//
+// Si WordPress no responde, getPostBySlug lanza WordPressUnavailableError y
+// dejamos que propague a propósito: no debe convertirse en notFound(). Antes
+// cualquier fallo de red acababa en un 404 cacheado, así que durante la caída
+// todos los artículos reales devolvían 404 —justo mientras Google rastreaba—.
+// Al propagar, el ISR de Next.js sigue sirviendo la última versión buena de
+// las páginas ya generadas y nunca cachea un 404 falso.
 async function getPostBySlug(slug: string): Promise<WordPressPost | null> {
     if (NON_POST_SLUG_RE.test(slug)) return null;
     return await WordPressService.getPostBySlug(slug);

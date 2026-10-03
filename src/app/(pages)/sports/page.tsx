@@ -9,8 +9,6 @@ import NewsGrid from '@/components/news/NewsGrid';
 import { FilterData } from '@/types/wordpress';
 import { Search } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 function NewsContent({ title }: { title: string }) {
   const [filters, setFilters] = useState<FilterData>({ categories: [] });
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);

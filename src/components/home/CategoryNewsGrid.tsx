@@ -64,30 +64,71 @@ export default function CategoryNewsGrid({
       const newDisplayedIds = new Set(currentDisplayedIds);
       const newCategoryMap = new Map(currentCategoryMap);
 
-      // Procesar cada categoría de manera secuencial para evitar duplicados
-      for (const category of batch) {
-        try {
-          // Intentar obtener los primeros 5 posts de la categoría para tener opciones
-          const result = await WordPressService.getPosts({
-            page: 1,
-            perPage: 5,
-            categories: [category.id],
-            orderBy: 'date'
-          });
-
-          // Buscar el primer post que no hayamos mostrado aún
-          const uniquePost = result.posts.find(post => !newDisplayedIds.has(post.id));
-
-          if (uniquePost) {
-            newPosts.push(uniquePost);
-            newDisplayedIds.add(uniquePost.id);
-            // Store which category was used to load this post
-            newCategoryMap.set(uniquePost.id, category.name);
-          }
-        } catch (error) {
-          console.error(`Error loading post for category ${category.name}:`, error);
-        }
+      // Una sola petición para todo el lote, en vez de una por categoría.
+      // Antes esto eran hasta 9 llamadas secuenciales (~9 s y ~700 KB); ahora
+      // es una (~1.7 s y ~310 KB) y el agrupado se hace en memoria con los
+      // IDs de categoría que ya trae cada post.
+      let pool: WordPressPost[] = [];
+      try {
+        const result = await WordPressService.getPosts({
+          page: 1,
+          perPage: Math.min(50, Math.max(batch.length * 5, 10)),
+          categories: batch.map(category => category.id),
+          orderBy: 'date'
+        });
+        pool = result.posts;
+      } catch (error) {
+        console.error('Error loading posts for category batch:', error);
       }
+
+      // Se resuelve por posición para conservar el orden de las tarjetas
+      // aunque algunas categorías se completen en la segunda vuelta.
+      const picked: Array<WordPressPost | undefined> = batch.map(() => undefined);
+
+      const take = (index: number, candidates: WordPressPost[]) => {
+        const category = batch[index];
+        const post = candidates.find(
+          candidate => !newDisplayedIds.has(candidate.id) && candidate.categories?.includes(category.id)
+        );
+        if (!post) return false;
+        picked[index] = post;
+        newDisplayedIds.add(post.id);
+        newCategoryMap.set(post.id, category.name);
+        return true;
+      };
+
+      const missing = batch.reduce<number[]>((acc, _category, index) => {
+        if (!take(index, pool)) acc.push(index);
+        return acc;
+      }, []);
+
+      // Las categorías con poco volumen (unos cientos de posts frente a miles)
+      // quedan fuera del lote porque las grandes copan los más recientes. Son
+      // pocas, así que se piden en paralelo —no en serie— para no sumar un
+      // segundo por categoría.
+      if (missing.length > 0) {
+        const extras = await Promise.all(
+          missing.map(index =>
+            WordPressService.getPosts({
+              page: 1,
+              perPage: 5,
+              categories: [batch[index].id],
+              orderBy: 'date'
+            })
+              .then(result => result.posts)
+              .catch(error => {
+                console.error(`Error loading post for category ${batch[index].name}:`, error);
+                return [] as WordPressPost[];
+              })
+          )
+        );
+
+        missing.forEach((index, i) => take(index, extras[i]));
+      }
+
+      picked.forEach(post => {
+        if (post) newPosts.push(post);
+      });
 
       if (startIndex === 0) {
         setPosts(newPosts);

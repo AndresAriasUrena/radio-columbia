@@ -7,6 +7,9 @@ export interface WordPressPost {
   date: string;
   modified?: string;
   author: number;
+  link?: string;
+  /** IDs de categoría. Permite agrupar en memoria en vez de pedir por categoría. */
+  categories?: number[];
   tags?: number[];
   _embedded?: {
     author?: Array<{ name: string }>;

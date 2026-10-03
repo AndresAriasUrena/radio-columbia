@@ -42,65 +42,27 @@ export default async function sitemap() {
     },
   ];
 
+  // getPostSlugs pide solo `slug` y `modified`. La versión anterior usaba
+  // getPosts, que añade `_embed`, así que cada página traía 1.66 MB de medios,
+  // autores y términos que el sitemap nunca usa: 11 KB en vez de 1.66 MB.
   let allPosts = [];
   try {
-    // Fetch solo las primeras 2 páginas con timeout
-    const fetchWithTimeout = (promise, timeout = 10000) => {
-      return Promise.race([
-        promise,
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout')), timeout)
-        )
-      ]);
-    };
+    const PAGES = 3;
+    const first = await WordPressService.getPostSlugs(1, 100);
+    allPosts = [...first.slugs];
 
-    const firstBatch = await fetchWithTimeout(
-      WordPressService.getPosts({
-        page: 1,
-        perPage: 100,
-        orderBy: 'date',
-        order: 'desc'
-      })
+    const remaining = Array.from(
+      { length: Math.max(Math.min(first.totalPages, PAGES) - 1, 0) },
+      (_, i) => i + 2
     );
 
-    allPosts = [...firstBatch.posts];
+    const results = await Promise.all(
+      remaining.map(page => WordPressService.getPostSlugs(page, 100))
+    );
 
-    // Limitar a máximo 3 páginas para evitar timeouts
-    const maxPages = Math.min(firstBatch.totalPages, 3);
-
-    if (maxPages > 1) {
-      const remainingPages = Array.from(
-        { length: maxPages - 1 },
-        (_, i) => i + 2
-      );
-
-      // Fetch en paralelo con límite de concurrencia
-      const batchSize = 2;
-      for (let i = 0; i < remainingPages.length; i += batchSize) {
-        const batch = remainingPages.slice(i, i + batchSize);
-        const promises = batch.map(page =>
-          fetchWithTimeout(
-            WordPressService.getPosts({
-              page,
-              perPage: 100,
-              orderBy: 'date',
-              order: 'desc'
-            }),
-            10000
-          ).catch(error => {
-            console.error(`Error fetching page ${page}:`, error);
-            return { posts: [] };
-          })
-        );
-
-        const results = await Promise.all(promises);
-        results.forEach(result => {
-          if (result.posts) {
-            allPosts = [...allPosts, ...result.posts];
-          }
-        });
-      }
-    }
+    results.forEach(result => {
+      allPosts = [...allPosts, ...result.slugs];
+    });
   } catch (error) {
     console.error('Error fetching posts for sitemap:', error);
   }

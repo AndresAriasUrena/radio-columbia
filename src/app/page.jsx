@@ -9,8 +9,6 @@ import NewsGridWithImage from '@/components/home/NewsGridWithImage';
 import FilterSidebar from '@/components/news/FilterSidebar';
 import { Search } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 function HomeContent() {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);

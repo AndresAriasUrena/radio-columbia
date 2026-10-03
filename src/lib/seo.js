@@ -1,6 +1,21 @@
+// Sin barra final, siempre. NEXT_PUBLIC_SITE_URL puede venir configurada con
+// barra o sin ella, y de eso dependía que los canonical salieran bien: el
+// código concatenaba asumiendo que la traía, así que cuando no la traía
+// quedaba "https://columbia.co.crmi-noticia". Normalizamos acá y armamos
+// todas las URLs con absoluteUrl().
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr').replace(/\/+$/, '');
+
+/** Une el dominio del sitio con una ruta, sin importar cómo venga cada parte. */
+export const absoluteUrl = (path = '') => {
+  if (!path) return `${SITE_URL}/`;
+  // Las imágenes destacadas ya llegan absolutas desde WordPress.
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${SITE_URL}/${String(path).replace(/^\/+/, '')}`;
+};
+
 const siteConfig = {
   siteName: 'Radio Columbia',
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr/',
+  siteUrl: `${SITE_URL}/`,
   description: 'Radio Columbia - Un medio de comunicación líder en Costa Rica con amplia trayectoria en radio y plataformas digitales, especializado en noticias, deportes, entretenimiento y actualidad.',
   keywords: 'radio columbia, radio costa rica, noticias costa rica, deportes costa rica, música, entretenimiento, streaming, radio en vivo, noticias costarricenses',
   author: 'Radio Columbia',
@@ -30,8 +45,8 @@ export const generatePageMetadata = ({
 }) => {
   const pageTitle = title ? `${title} | ${siteConfig.siteName}` : siteConfig.siteName;
   const pageDescription = description || siteConfig.description;
-  const pageImage = image || `${siteConfig.siteUrl}opengraph-image.jpg`;
-  const pageUrl = `${siteConfig.siteUrl}${path.startsWith('/') ? path.slice(1) : path}`;
+  const pageImage = image || absoluteUrl('opengraph-image.jpg');
+  const pageUrl = absoluteUrl(path);
   const pageKeywords = keywords || siteConfig.keywords;
 
   const metadata = {
@@ -41,7 +56,7 @@ export const generatePageMetadata = ({
     authors: [{ name: author || siteConfig.author }],
     creator: siteConfig.author,
     publisher: siteConfig.siteName,
-    metadataBase: new URL(siteConfig.siteUrl),
+    metadataBase: new URL(`${SITE_URL}/`),
     alternates: {
       canonical: pageUrl,
     },
@@ -101,7 +116,7 @@ export const generatePageMetadata = ({
 export const generateNewsSchema = (post) => {
   const author = post._embedded?.author?.[0]?.name || 'Radio Columbia';
   const category = post._embedded?.['wp:term']?.[0]?.[0]?.name || 'Noticias';
-  const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || `${siteConfig.siteUrl}opengraph-image.jpg`;
+  const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || absoluteUrl('opengraph-image.jpg');
   
   return {
     '@context': 'https://schema.org',
@@ -120,12 +135,13 @@ export const generateNewsSchema = (post) => {
       name: siteConfig.siteName,
       logo: {
         '@type': 'ImageObject',
-        url: `${siteConfig.siteUrl}${siteConfig.logo}`,
+        url: absoluteUrl(siteConfig.logo),
       },
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `${siteConfig.siteUrl}news/${post.slug}`,
+      // Los artículos viven en la raíz (/mi-noticia), no bajo /news/.
+      '@id': absoluteUrl(post.slug),
     },
     articleSection: category,
     inLanguage: 'es-CR',
@@ -138,7 +154,7 @@ export const generateOrganizationSchema = () => {
     '@type': 'Organization',
     name: siteConfig.siteName,
     url: siteConfig.siteUrl,
-    logo: `${siteConfig.siteUrl}${siteConfig.logo}`,
+    logo: absoluteUrl(siteConfig.logo),
     description: siteConfig.description,
     sameAs: [
       siteConfig.social.facebook,
@@ -166,7 +182,7 @@ export const generateWebsiteSchema = () => {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${siteConfig.siteUrl}news?search={search_term_string}`,
+        urlTemplate: absoluteUrl('news?search={search_term_string}'),
       },
       'query-input': 'required name=search_term_string',
     },

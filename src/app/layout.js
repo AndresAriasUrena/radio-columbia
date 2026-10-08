@@ -11,6 +11,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://columbia.co.cr';
 
+// Propiedad de GA4 de Radio Columbia. Se mide directo con gtag y NO desde el
+// contenedor de GTM: entre el 5 de agosto y el 7 de octubre de 2026 el sitio
+// quedó sin medición porque se quitó este bloque y el contenedor de GTM nunca
+// llegó a tener una etiqueta publicada.
+//
+// IMPORTANTE: si algún día se configura GA4 dentro de GTM, hay que borrar este
+// bloque en el mismo cambio. Las dos cosas a la vez cuentan cada visita doble.
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-2T6Z9LG0JD';
+
 export const metadata = {
   title: 'Radio Columbia - Tu Estación de Radio Costarricense',
   description: 'Radio Columbia - Un medio de comunicación líder en Costa Rica con amplia trayectoria en radio y plataformas digitales, especializado en noticias, deportes, entretenimiento y actualidad.',
@@ -82,6 +91,18 @@ export default function RootLayout({ children }) {
     <html lang="es-CR">
       <GoogleTagManager gtmId="GTM-TVF2TBQX" />
       <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <Script
           id="schema-org"
           type="application/ld+json"

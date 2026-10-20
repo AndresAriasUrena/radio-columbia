@@ -4,6 +4,7 @@ import { useEffect, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PodcastGrid from '@/components/podcasts/PodcastGrid';
+import ScheduleGrid from '@/components/podcasts/ScheduleGrid';
 
 function PodcastsContent() {
   useEffect(() => {
@@ -30,6 +31,7 @@ function PodcastsContent() {
             <PodcastGrid />
           </Suspense>
         </div>
+        <ScheduleGrid />
       </div>
     </div>
   );

@@ -49,8 +49,14 @@ export async function POST(req: NextRequest) {
     revalidatePath(`/${slug}`);
   }
 
-  // El sitemap también cambia al publicar.
-  revalidatePath('/sitemap.xml');
+  // El sitemap NO se purga acá, a propósito.
+  //
+  // Vive en /sitemap/0.xml y /sitemap/1.xml, y regenerar cada uno cuesta 50
+  // llamadas a WordPress. Purgarlo en cada publicación serían miles de
+  // llamadas diarias para algo que Google lee una o dos veces al día.
+  // El ciclo diario de sitemap.js (revalidate = 86400) es la frecuencia
+  // correcta; una nota nueva entra al sitemap dentro de las 24 horas y
+  // mientras tanto se descubre por la portada y los enlaces internos.
 
   return Response.json({
     ok: true,

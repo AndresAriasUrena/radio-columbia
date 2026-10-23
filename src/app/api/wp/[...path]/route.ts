@@ -145,6 +145,9 @@ export async function GET(
       'x-wp-totalpages': res.headers.get('x-wp-totalpages') ?? '1',
       'access-control-expose-headers': 'x-wp-total, x-wp-totalpages',
       'cache-control': CACHE_POLICY[collection] ?? 'private, no-store',
+      // Googlebot necesita PODER leer esto para renderizar las páginas, pero
+      // el JSON en sí no debe aparecer en los resultados de búsqueda.
+      'x-robots-tag': 'noindex',
     },
   });
 }

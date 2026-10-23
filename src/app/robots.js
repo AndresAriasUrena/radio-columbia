@@ -25,7 +25,13 @@ export default async function robots() {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
+        // /api/wp/ TIENE que estar permitido aunque /api/ esté bloqueado.
+        // La portada, /news y /sports se arman en el navegador pidiendo datos
+        // a /api/wp, y Googlebot respeta el robots.txt también para esas
+        // peticiones al renderizar. Con /api/ bloqueado sin esta excepción,
+        // Google renderiza las páginas vacías: "No se encontraron noticias".
+        // Gana por ser la regla más específica (/api/wp/ es más larga que /api/).
+        allow: ['/', '/api/wp/'],
         // Ojo con lo que se agrega acá. Esta lista tenía '*.xml$', que bloqueaba
         // el propio sitemap declarado abajo, y '/_next/', que impedía a Google
         // descargar el JavaScript. Como la portada, /news y /sports se arman en

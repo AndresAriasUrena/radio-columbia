@@ -132,6 +132,14 @@ export default function Navbar() {
   const parseLotteryDate = (fechaStr: string): Date | null => {
     if (!fechaStr) return null;
 
+    // Formato de la API (`2026-11-01T00:00:00`). Se construye en hora local y no con
+    // `new Date(iso)`, que interpretaría la medianoche como UTC y restaría un día en CR.
+    const iso = fechaStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (iso) {
+      // Igual que la rama de texto: los sorteos se celebran de noche.
+      return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]), 20, 0, 0);
+    }
+
     const meses: Record<string, number> = {
       enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
       julio: 6, agosto: 7, septiembre: 8, setiembre: 8, octubre: 9, noviembre: 10, diciembre: 11

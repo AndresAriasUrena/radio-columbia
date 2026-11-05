@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IoCalendarOutline } from 'react-icons/io5';
 
 interface Prize { rank: number; numero: string; serie: string; premio?: any }
-interface LotteryResp { fecha: string; premios: Prize[] }
+interface LotteryResp { fecha: string; premios: Prize[]; stale?: boolean }
 
 type Kind = 'loteria' | 'chances';
 
@@ -81,6 +81,14 @@ function Block({ kind, title }: { kind: Kind; title: string }) {
           {formatFecha(data?.fecha)}
         </div>
       </div>
+      {!loading && data?.stale && (data?.premios?.length ?? 0) > 0 && (
+        <div className="mt-2 text-xs text-[#D4D5DD]/60">Último sorteo disponible</div>
+      )}
+      {!loading && (data?.premios?.length ?? 0) === 0 && (
+        <div className="mt-5 max-w-[260px] text-center text-sm text-[#D4D5DD]/70">
+          Resultados no disponibles por el momento.
+        </div>
+      )}
       <div className="mt-5 space-y-4">
         {(loading ? [1,2,3] : (data?.premios || [])).slice(0,3).map((p, idx) => (
           <div key={idx} className="bg-[#FFFFFF]/10 rounded-2xl px-5 py-5 flex items-center gap-4">

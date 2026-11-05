@@ -90,10 +90,36 @@ Cache tags are defined in one place, `WP_TAGS` in `wordpressService.ts`: `wp`, `
 - Proxy fallback system for CORS issues
 - Two categories: 'podcast' and 'radionovela'
 
-**External APIs** (in `src/app/api/*`)
+**Lottery results** (`src/lib/jpsDraws.ts`, served by `/api/jps/loteria/last` and
+`/api/jps/chances/last`)
+
+Both routes are thin wrappers over `getLastDraw(game)`. Two sources, tried in the order
+of `SOURCE_ORDER`, with the first *current* result winning:
+
+| Source | Shape |
+| --- | --- |
+| `integration.jps.go.cr` (official) | JSON; top three prizes are `tipo` 1/2/3 |
+| `nacionalloteria.com` (fallback) | HTML; index page → `?del-dia=<ISO>` → prize table |
+
+- **`SOURCE_ORDER` currently puts the fallback first, and that is temporary.** The
+  official API has returned 403 to server-to-server clients since mid-October 2026 (a
+  WAF filtering on TLS fingerprint / IP reputation — request headers make no
+  difference). Put `'jps'` back in front once JPS allowlists Vercel's egress IPs; the
+  official API is the correct source and the fallback scrapes a third party's markup.
+- **Map prizes by `tipo`, never by array index or `orden`.** In the Lotería Nacional
+  payload `tipo` 2 appears before `tipo` 1, and `orden` 1 is a minor ₡400.000 prize.
+- **Keep the freshness check in `getLastDraw`.** Next's Data Cache retains the last
+  successful response when a revalidation fails, so a dead upstream otherwise serves a
+  weeks-old draw forever — that is exactly how the widgets froze on 13 October 2026.
+  A draw older than `MAX_DRAW_AGE_DAYS` is treated as a miss and the next source is
+  tried; if none is current the newest is returned with `stale: true` so the UI can
+  avoid presenting it as today's draw.
+- `fecha` must stay in local-midnight form (`2026-11-01T00:00:00`, no `Z`). Browsers
+  parse a bare `YYYY-MM-DD` as UTC, which renders the previous day in Costa Rica.
+  `parseLotteryDate` in `Navbar.tsx` accepts this form and Spanish-text dates.
+
+**Other external APIs** (in `src/app/api/*`)
 - `/api/earthquakes` — Seismic data
-- `/api/jps/chances/last` — Lottery results (Chances)
-- `/api/jps/loteria/last` — Lottery results (Loteria)
 - `/api/rss` — RSS feed proxy
 - `/api/standings` — Sports standings
 - `/api/weather` — Weather by city
